@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; background: #FAFAF4; color: #16233A; font-family: 'Archivo', sans-serif; font-weight: 500; }
+    a { color: #2244AA; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+    a:hover { color: #16233A; }
+    ::selection { background: rgba(34,68,170,0.18); }
+    button { font-family: inherit; }
+    input { font-family: inherit; }
+    input::placeholder { color: rgba(22,35,58,0.7); font-weight: 500; }
+  </style>
+</helmet>
+
+<!-- Masthead -->
+<div style="background: #16233A; color: #FAFAF4">
+  <div style="max-width: 920px; margin: 0 auto; padding: {{ bandPad }}; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.12em">RESEARCH RECORD — NEW INQUIRY</div>
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.12em; color: rgba(250,250,244,0.72)">MUSIC · BOOKS · FILM</div>
+    </div>
+    <div style="font-weight: 900; font-size: {{ mastheadSize }}; line-height: 1; letter-spacing: -0.01em; text-transform: uppercase">Can I use this?<span style="color: #8FACF2">_</span></div>
+    <div style="font-size: 21px; font-weight: 500; line-height: 1.4; max-width: 44ch; text-wrap: pretty; color: #FAFAF4">Researches whether a song, book, or film is yours to use — layer by layer, with the records to prove it.</div>
+  </div>
+</div>
+
+<div style="max-width: 920px; margin: 0 auto; padding: {{ docPad }}">
+
+  <!-- The inquiry form -->
+  <div style="margin-top: 56px">
+    <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; margin-bottom: 14px">SUBJECT OF INQUIRY</div>
+    <input ref="{{ inputRef }}" value="{{ query }}" onChange="{{ onQuery }}" onKeyDown="{{ onKey }}" placeholder="Title, author or artist, year if you know it" aria-label="Subject of inquiry" style="width: 100%; box-sizing: border-box; background: transparent; border: none; border-bottom: 2px solid #16233A; padding: 6px 0 14px 0; font-size: {{ inputSize }}; font-weight: 600; color: #16233A; outline: none" style-focus="border-bottom: 2px solid #2244AA" />
+    <div style="display: flex; flex-direction: column; gap: 22px; margin-top: 32px">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(22,35,58,0.7)">PURPOSE OF USE</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <sc-for list="{{ intentOptions }}" as="opt" hint-placeholder-count="3">
+            <button onClick="{{ opt.onSelect }}" aria-pressed="{{ opt.selected }}" style="{{ opt.style }}" style-hover="border-color: #2244AA" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ opt.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; gap: 24px 40px; flex-wrap: wrap">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(22,35,58,0.7)">TERRITORY</div>
+          <div style="display: flex; gap: 8px">
+            <sc-for list="{{ jurOptions }}" as="opt" hint-placeholder-count="3">
+              <button onClick="{{ opt.onSelect }}" aria-pressed="{{ opt.selected }}" style="{{ opt.style }}" style-hover="border-color: #2244AA" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ opt.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 28px">
+        <a href="Progress Screen.dc.html" onClick="{{ onBegin }}" style="display: inline-block; background: #2244AA; color: #FAFAF4; text-decoration: none; border-radius: 6px; padding: 14px 26px; font-weight: 600; font-size: 16px; letter-spacing: 0.04em" style-hover="background: #16233A; color: #FAFAF4" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">Begin research</a>
+      </div>
+    </div>
+    <div style="font-size: 16px; line-height: 1.55; color: rgba(22,35,58,0.7); margin-top: 24px; max-width: 62ch">Research takes 30–90 seconds against the public record — copyright registries, renewal catalogs, discographies, chain-of-title filings. You’ll watch it happen.</div>
+  </div>
+
+  <!-- Examples: the pre-filled register -->
+  <div style="margin-top: 64px">
+    <div style="border-bottom: 1px solid #16233A; padding-bottom: 14px; display: flex; flex-direction: column; gap: 6px">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em">OR OPEN AN EXISTING RECORD</div>
+      <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">Inquiries already researched — open one to see how a record reads.</div>
+    </div>
+    <div style="display: flex; flex-direction: column">
+      <sc-for list="{{ examples }}" as="ex" hint-placeholder-count="4">
+        <a href="{{ ex.href }}" onClick="{{ ex.onClick }}" style="display: flex; flex-direction: column; gap: 6px; padding: 20px 4px; border-top: 1px solid rgba(22,35,58,0.2); text-decoration: none; color: #16233A" style-hover="background: rgba(34,68,170,0.05); color: #16233A">
+          <div style="display: flex; gap: 8px 14px; align-items: flex-start; flex-wrap: wrap">
+            <div style="font-weight: 700; font-size: 21px; flex: 1 1 240px; min-width: 0">{{ ex.title }}</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; color: rgba(22,35,58,0.7)">{{ ex.meta }}</div>
+            <div style="margin-left: auto; font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em; color: {{ ex.stampColor }}; white-space: nowrap">{{ ex.stamp }}</div>
+          </div>
+          <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7); max-width: 66ch">{{ ex.note }}</div>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- Scope -->
+  <div style="margin-top: 64px; border-top: 2px dashed rgba(22,35,58,0.2); padding-top: 20px; display: flex; flex-direction: column; gap: 8px">
+    <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(22,35,58,0.7)">SCOPE OF THE REGISTER</div>
+    <div style="font-size: 16px; line-height: 1.55; color: rgba(22,35,58,0.7); max-width: 66ch">Covers music — compositions and recordings, separately — and books and film. Territories: US, UK, EU. This is research, not legal advice.</div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { query: '', intent: 'doc', jur: 'US', narrow: false };
+
+  componentDidMount() {
+    this.mqNarrow = window.matchMedia('(max-width: 560px)');
+    this.onMq = () => this.setState({ narrow: this.mqNarrow.matches });
+    this.mqNarrow.addEventListener('change', this.onMq);
+    this.setState({ narrow: this.mqNarrow.matches });
+  }
+  componentWillUnmount() { if (this.mqNarrow) this.mqNarrow.removeEventListener('change', this.onMq); }
+
+  renderVals() {
+    const { query, intent, jur, narrow } = this.state;
+    const intentLabels = { doc: 'Documentary — distributed', sample: 'Sample — commercial release', rerecord: 'New recording — you perform it' };
+    const optStyle = (sel) => `cursor: pointer; padding: 10px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; transition: border-color 0.15s ease; ${sel ? 'background: #2244AA; color: #FAFAF4; border: 1px solid #2244AA;' : 'background: transparent; color: #16233A; border: 1px solid rgba(22,35,58,0.7);'}`;
+    return {
+      bandPad: narrow ? '24px 16px 36px 16px' : '28px 24px 48px 24px',
+      docPad: narrow ? '0 16px 64px 16px' : '0 24px 80px 24px',
+      mastheadSize: narrow ? '38px' : '64px',
+      inputSize: narrow ? '21px' : '28px',
+      query,
+      inputRef: (el) => { this.inputEl = el; },
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      onKey: (e) => {
+        if (e.key === 'Enter' && e.target.value.trim()) {
+          if (this.props.onBegin) this.props.onBegin(); else window.location.href = 'Progress Screen.dc.html';
+        }
+      },
+      onBegin: (e) => { if (this.props.onBegin) { e.preventDefault(); this.props.onBegin(); } },
+      intentOptions: Object.keys(intentLabels).map(k => ({ key: k, label: intentLabels[k], selected: intent === k, style: optStyle(intent === k), onSelect: () => this.setState({ intent: k }) })),
+      jurOptions: ['US', 'UK', 'EU'].map(k => ({ key: k, label: k, selected: jur === k, style: optStyle(jur === k), onSelect: () => this.setState({ jur: k }) })),
+      examples: this.decorateExamples([
+        { title: 'West End Blues — Louis Armstrong', meta: 'recording · 1928 · OKeh 8597', stamp: 'License required', stampColor: '#6D28D9', note: 'The song is public domain; this recording of it is not. One search, two separately-owned works with different answers — the case this product exists for.', href: 'Result Screen v3.dc.html' },
+        { title: 'The Great Gatsby — F. Scott Fitzgerald', meta: 'novel · 1925 · Scribner’s', stamp: 'Clear', stampColor: '#1E6B47', note: 'The text entered the US public domain in 2021. The 2013 film, its score, and its cover art did not — each is its own layer.', href: 'Progress Screen.dc.html' },
+        { title: 'Rhapsody in Blue — George Gershwin', meta: 'composition · 1924', stamp: 'Clear — conditions', stampColor: '#1E6B47', note: 'The composition is free in the US since 2020 — but only the 1924 version. The familiar orchestration is from 1942 and still protected.', href: 'Progress Screen.dc.html' },
+        { title: 'Steamboat Willie — Walt Disney', meta: 'film · 1928', stamp: 'Clear — conditions', stampColor: '#1E6B47', note: 'The film is public domain since 2024. Later versions of the same character are not, and trademark claims survive copyright expiry.', href: 'Progress Screen.dc.html' },
+      ]),
+    };
+  }
+
+  decorateExamples(list) {
+    return list.map(ex => ({
+      ...ex,
+      onClick: (e) => {
+        const cb = ex.href.indexOf('Result') === 0 ? this.props.onOpenResult : this.props.onBegin;
+        if (cb) { e.preventDefault(); cb(); }
+      },
+    }));
+  }
+}
+</script>
+</body>
+</html>

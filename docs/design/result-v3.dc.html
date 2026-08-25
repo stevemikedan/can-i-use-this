@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; background: #FAFAF4; color: #16233A; font-family: 'Archivo', sans-serif; font-weight: 500; }
+    a { color: #2244AA; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+    a:hover { color: #16233A; }
+    ::selection { background: rgba(34,68,170,0.18); }
+    button { font-family: inherit; }
+  </style>
+</helmet>
+
+<!-- Verdict band -->
+<div style="background: #16233A; color: #FAFAF4">
+  <div style="max-width: 920px; margin: 0 auto; padding: {{ bandPad }}; display: flex; flex-direction: column; gap: 36px">
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.12em">CAN I USE THIS? — RESEARCH RECORD</div>
+        <div style="display: flex; gap: 20px; align-items: baseline; flex-wrap: wrap">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; color: rgba(250,250,244,0.72)">{{ freshness }}</div>
+          <a href="Entry Screen.dc.html" onClick="{{ onNewInquiry }}" style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: #8FACF2">NEW INQUIRY</a>
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: #8FACF2">QUERY</div>
+        <div style="font-size: 16px; font-weight: 500; color: #FAFAF4">West End Blues — Louis Armstrong &amp; His Hot Five (1928)</div>
+      </div>
+    </div>
+    <div>
+      <div ref="{{ verdictRef }}" style="font-weight: 900; font-size: 64px; line-height: 1; letter-spacing: -0.01em; text-transform: uppercase; text-wrap: balance">{{ verdictWord }}<span style="color: #8FACF2">.</span></div>
+      <div style="font-size: 28px; font-weight: 500; line-height: 1.3; margin-top: 20px; max-width: 40ch; text-wrap: pretty; color: #FAFAF4">{{ headline }}</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 22px">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(250,250,244,0.72)">PURPOSE OF USE</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
+          <sc-for list="{{ intentOptions }}" as="opt" hint-placeholder-count="3">
+            <button onClick="{{ opt.onSelect }}" aria-pressed="{{ opt.selected }}" style="{{ opt.style }}" style-hover="filter: brightness(1.12)" style-focus="outline: 2px solid #8FACF2; outline-offset: 2px">{{ opt.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; gap: 40px; flex-wrap: wrap">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(250,250,244,0.72)">TERRITORY</div>
+          <div style="display: flex; gap: 8px">
+            <sc-for list="{{ jurOptions }}" as="opt" hint-placeholder-count="3">
+              <button onClick="{{ opt.onSelect }}" aria-pressed="{{ opt.selected }}" style="{{ opt.style }}" style-hover="filter: brightness(1.12)" style-focus="outline: 2px solid #8FACF2; outline-offset: 2px">{{ opt.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(250,250,244,0.72)">CONFIDENCE</div>
+          <div style="display: flex; align-items: center; gap: 8px; min-height: 40px">
+            <div style="display: flex; gap: 3px"><sc-for list="{{ overallTicks }}" as="t" hint-placeholder-count="4"><div style="width: 6px; height: 16px; background: {{ t.bgDark }}"></div></sc-for></div>
+            <div style="font-size: 16px; font-weight: 500">{{ overallConf }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="max-width: 920px; margin: 0 auto; padding: {{ docPad }}">
+
+  <!-- Layer ledger -->
+  <div style="margin-top: 56px">
+    <div style="display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid #16233A; padding-bottom: 14px">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em">RIGHTS LAYERS</div>
+      <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">One search is several separately-owned works. The answer rolls up from these.</div>
+    </div>
+
+    <sc-for list="{{ requiredRows }}" as="row" hint-placeholder-count="2">
+      <div style="{{ row.wrapStyle }}">
+        <sc-if value="{{ row.blocking }}" hint-placeholder-val="{{ false }}">
+          <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.12em; color: #B3261E; margin-bottom: 18px">BLOCKING — THIS LAYER SETS THE ANSWER</div>
+        </sc-if>
+        <div style="display: flex; gap: 24px 32px; flex-wrap: wrap">
+          <div style="flex: 0 1 240px; min-width: 180px; display: flex; flex-direction: column; gap: 8px">
+            <div style="font-weight: 700; font-size: 28px; line-height: 1.05; text-transform: uppercase; letter-spacing: 0.01em; color: {{ row.stamp.color }}; border-bottom: {{ row.stamp.underline }}; padding-bottom: 8px; align-self: flex-start; text-wrap: balance">{{ row.stamp.word }}</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; letter-spacing: 0.06em; color: rgba(22,35,58,0.7)">{{ row.expiry }}</div>
+          </div>
+          <div style="flex: 1 1 380px; min-width: 240px; display: flex; flex-direction: column; gap: 10px">
+            <div style="display: flex; gap: 6px 14px; align-items: baseline; flex-wrap: wrap">
+              <div style="font-weight: 700; font-size: 21px">{{ row.title }}</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; color: rgba(22,35,58,0.7)">{{ row.sub }}</div>
+            </div>
+            <div style="font-size: 16px; line-height: 1.55; max-width: 62ch; text-wrap: pretty">{{ row.rule }}</div>
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-top: 2px">
+              <div style="display: flex; align-items: center; gap: 7px">
+                <div style="display: flex; gap: 3px"><sc-for list="{{ row.confTicks }}" as="t" hint-placeholder-count="4"><div style="width: 5px; height: 13px; background: {{ t.bg }}"></div></sc-for></div>
+                <div style="font-size: 12px; font-weight: 500; color: rgba(22,35,58,0.7)">{{ row.confLabel }}</div>
+              </div>
+              <button onClick="{{ row.toggle }}" aria-expanded="{{ row.expanded }}" style="background: none; border: none; padding: 2px 0; cursor: pointer; font-size: 16px; font-weight: 600; color: #2244AA; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px" style-hover="color: #16233A" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ row.toggleLabel }}</button>
+            </div>
+            <sc-if value="{{ row.expanded }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top: 14px; border-top: 1px solid rgba(22,35,58,0.2); padding-top: 18px; display: flex; flex-direction: column; gap: 24px">
+                <div>
+                  <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; margin-bottom: 10px">RIGHTS HOLDERS</div>
+                  <sc-if value="{{ row.holdersNote }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size: 16px; font-style: italic; color: rgba(22,35,58,0.7); margin-bottom: 8px">{{ row.holdersNote }}</div>
+                  </sc-if>
+                  <div style="display: flex; flex-direction: column">
+                    <sc-for list="{{ row.holders }}" as="h" hint-placeholder-count="2">
+                      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 12px 0; border-top: 1px dashed rgba(22,35,58,0.2)">
+                        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap">
+                          <div style="font-weight: 600; font-size: 16px">{{ h.name }}</div>
+                          <div style="font-size: 12px; font-weight: 500; color: rgba(22,35,58,0.7)">{{ h.role }}</div>
+                          <sc-if value="{{ h.admin }}" hint-placeholder-val="{{ false }}">
+                            <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.06em; background: #16233A; color: #FAFAF4; border-radius: 6px; padding: 2px 8px; white-space: nowrap">ADMINISTERS LICENSING</div>
+                          </sc-if>
+                        </div>
+                        <div style="display: flex; gap: 6px 18px; align-items: flex-start; flex-wrap: wrap; font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; line-height: 1.5">
+                          <div style="font-weight: 500; color: #16233A">share {{ h.share }}</div>
+                          <div style="color: rgba(22,35,58,0.7)">{{ h.territory }}</div>
+                          <div style="color: rgba(22,35,58,0.7)">{{ h.enforcement }}</div>
+                        </div>
+                        <sc-if value="{{ h.hasContact }}" hint-placeholder-val="{{ false }}">
+                          <div style="font-size: 16px"><a href="{{ h.contactHref }}" target="_blank" rel="noopener">{{ h.contactLabel }}</a> <span style="font-size: 12px; font-weight: 500; color: rgba(22,35,58,0.7)">↗ licensing contact</span></div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; margin-bottom: 10px">EVIDENCE</div>
+                  <div style="display: flex; flex-direction: column; gap: 18px">
+                    <sc-for list="{{ row.evidence }}" as="ev" hint-placeholder-count="2">
+                      <div style="border-left: 2px solid rgba(22,35,58,0.2); padding-left: 16px">
+                        <div style="display: flex; gap: 6px 10px; align-items: flex-start; flex-wrap: wrap">
+                          <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.12em; line-height: 1.5; color: rgba(22,35,58,0.7)">{{ ev.fact }}</div>
+                          <div style="display: flex; gap: 6px; align-items: center; margin-top: 3px">
+                            <div style="display: flex; gap: 2px"><sc-for list="{{ ev.confTicks }}" as="t" hint-placeholder-count="4"><div style="width: 4px; height: 11px; background: {{ t.bg }}"></div></sc-for></div>
+                            <div style="font-size: 12px; font-weight: 500; line-height: 1; color: rgba(22,35,58,0.7)">{{ ev.confLabel }}</div>
+                          </div>
+                        </div>
+                        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 16px; margin-top: 6px">{{ ev.value }}</div>
+                        <sc-if value="{{ ev.hasReasoning }}" hint-placeholder-val="{{ false }}">
+                          <div style="font-size: 16px; line-height: 1.55; color: rgba(22,35,58,0.7); margin-top: 6px; max-width: 60ch">{{ ev.reasoning }}</div>
+                        </sc-if>
+                        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px">
+                          <sc-for list="{{ ev.sources }}" as="s" hint-placeholder-count="1">
+                            <div style="font-size: 16px; display: flex; gap: 6px 10px; align-items: baseline; flex-wrap: wrap">
+                              <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.08em; border: 1px solid rgba(22,35,58,0.2); border-radius: 6px; padding: 1px 7px; white-space: nowrap">{{ s.tier }}</div>
+                              <sc-if value="{{ s.hasHref }}" hint-placeholder-val="{{ true }}"><a href="{{ s.href }}" target="_blank" rel="noopener">{{ s.name }}</a></sc-if>
+                              <sc-if value="{{ s.noHref }}" hint-placeholder-val="{{ false }}"><span>{{ s.name }}</span></sc-if>
+                              <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; color: rgba(22,35,58,0.7)">retrieved {{ s.retrieved }}</span>
+                              <sc-if value="{{ s.hasExcerpt }}" hint-placeholder-val="{{ false }}">
+                                <span style="flex-basis: 100%; font-style: italic; color: rgba(22,35,58,0.7); font-size: 16px">“{{ s.excerpt }}”</span>
+                              </sc-if>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+
+    <!-- Clearance, next to the layers it describes -->
+    <div style="border-top: 1px solid rgba(22,35,58,0.2); padding: 20px 4px; display: flex; gap: 12px 32px; flex-wrap: wrap; align-items: baseline">
+      <div style="flex: 0 1 240px; min-width: 180px; font-weight: 600; font-size: 12px; letter-spacing: 0.14em">CLEARANCE</div>
+      <div style="flex: 1 1 380px; min-width: 240px; font-size: 16px; line-height: 1.55; max-width: 62ch">{{ clearanceText }}</div>
+    </div>
+
+    <!-- Non-required -->
+    <sc-for list="{{ nonRequiredRows }}" as="row" hint-placeholder-count="1">
+      <div style="border-top: 2px dashed rgba(22,35,58,0.2); padding: 24px 4px 8px 4px">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.12em; color: rgba(22,35,58,0.7); margin-bottom: 14px">NOT REQUIRED FOR THIS PURPOSE — SHOWN FOR REFERENCE, EXCLUDED FROM THE ANSWER</div>
+        <div style="display: flex; gap: 16px 32px; flex-wrap: wrap">
+          <div style="flex: 0 1 240px; min-width: 180px">
+            <div style="font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em; color: {{ row.stamp.color }}">{{ row.stamp.word }}</div>
+          </div>
+          <div style="flex: 1 1 380px; min-width: 240px">
+            <div style="display: flex; gap: 6px 14px; align-items: baseline; flex-wrap: wrap">
+              <div style="font-weight: 700; font-size: 21px; color: rgba(22,35,58,0.7)">{{ row.title }}</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; color: rgba(22,35,58,0.7)">{{ row.sub }}</div>
+            </div>
+            <div style="font-size: 16px; line-height: 1.55; color: rgba(22,35,58,0.7); margin-top: 6px; max-width: 62ch">{{ row.rule }} {{ row.reason }}</div>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- Open questions -->
+  <div style="margin-top: 64px">
+    <div style="border-bottom: 1px solid #16233A; padding-bottom: 14px; display: flex; flex-direction: column; gap: 6px">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em">OPEN QUESTIONS — {{ unresolvedCount }}</div>
+      <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">What research couldn’t settle, and exactly where to settle it.</div>
+    </div>
+    <sc-for list="{{ unresolved }}" as="q" hint-placeholder-count="1">
+      <div style="padding: 28px 0 8px 0">
+        <div style="display: flex; gap: 10px 16px; align-items: flex-start; flex-wrap: wrap">
+          <div style="font-weight: 700; font-size: 21px; flex: 1 1 240px; max-width: 48ch; text-wrap: pretty">{{ q.question }}</div>
+          <div style="margin-left: auto; font-weight: 600; font-size: 12px; letter-spacing: 0.1em; border: 1px solid rgba(22,35,58,0.2); border-radius: 6px; padding: 3px 9px; white-space: nowrap">EFFORT: {{ q.effort }}</div>
+        </div>
+        <div style="font-size: 16px; line-height: 1.55; margin-top: 10px; max-width: 68ch">{{ q.why }}</div>
+        <div style="font-size: 16px; line-height: 1.55; margin-top: 6px; color: rgba(22,35,58,0.7); max-width: 68ch">{{ q.change }}</div>
+        <div style="margin-top: 18px; border: 1px dashed rgba(22,35,58,0.2); border-radius: 6px; padding: 16px 18px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 16px; flex: 1 1 320px; min-width: 220px; line-height: 1.5">{{ q.terms }}</div>
+          <button onClick="{{ q.copy }}" style="font-weight: 600; font-size: 12px; letter-spacing: 0.08em; background: #2244AA; color: #FAFAF4; border: none; border-radius: 6px; padding: 11px 18px; cursor: pointer" style-hover="background: #16233A" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ q.copyLabel }}</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px">
+          <sc-for list="{{ q.links }}" as="l" hint-placeholder-count="1">
+            <div style="font-size: 16px; display: flex; gap: 6px 10px; align-items: baseline; flex-wrap: wrap">
+              <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.08em; border: 1px solid rgba(22,35,58,0.2); border-radius: 6px; padding: 1px 7px; white-space: nowrap">{{ l.tier }}</div>
+              <a href="{{ l.href }}" target="_blank" rel="noopener">{{ l.name }}</a>
+              <sc-if value="{{ l.hasNote }}" hint-placeholder-val="{{ false }}"><span style="flex-basis: 100%; color: rgba(22,35,58,0.7); font-size: 16px; line-height: 1.5; max-width: 64ch">{{ l.note }}</span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- Alternatives -->
+  <sc-if value="{{ showAlternatives }}" hint-placeholder-val="{{ true }}">
+    <div style="margin-top: 64px">
+      <div style="border-bottom: 1px solid #16233A; padding-bottom: 14px; display: flex; flex-direction: column; gap: 6px">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em">ALTERNATIVES</div>
+        <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">The same job without the rights problem.</div>
+      </div>
+      <div style="display: flex; flex-direction: column">
+        <sc-for list="{{ alternatives }}" as="alt" hint-placeholder-count="2">
+          <div style="display: flex; gap: 8px 16px; align-items: baseline; flex-wrap: wrap; padding: 16px 0; border-top: 1px solid rgba(22,35,58,0.2)">
+            <div style="font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em; color: #1E6B47; flex: 0 0 auto">CLEAR</div>
+            <div style="font-weight: 600; font-size: 16px">{{ alt.title }}</div>
+            <div style="font-size: 12px; font-weight: 500; color: rgba(22,35,58,0.7)">{{ alt.creator }}</div>
+            <div style="font-size: 16px; color: rgba(22,35,58,0.7); flex: 1 1 100%; max-width: 70ch; line-height: 1.5">{{ alt.why }}<sc-if value="{{ alt.hasLink }}" hint-placeholder-val="{{ false }}"><span> — <a href="{{ alt.href }}" target="_blank" rel="noopener">{{ alt.linkLabel }}</a> ↗</span></sc-if></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Records: verify + act -->
+  <div style="margin-top: 64px">
+    <div style="border-bottom: 1px solid #16233A; padding-bottom: 14px; display: flex; flex-direction: column; gap: 6px">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em">GO TO THE RECORDS</div>
+      <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">The records behind this verdict — check them, then act.</div>
+    </div>
+    <div style="display: flex; gap: 32px 48px; flex-wrap: wrap; padding-top: 22px">
+      <sc-for list="{{ handoff }}" as="group" hint-placeholder-count="2">
+        <div style="flex: 1 1 320px; min-width: 240px">
+          <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; margin-bottom: 4px">{{ group.title }}</div>
+          <div style="font-size: 16px; color: rgba(22,35,58,0.7); margin-bottom: 14px">{{ group.sub }}</div>
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <sc-for list="{{ group.items }}" as="l" hint-placeholder-count="2">
+              <div style="font-size: 16px; display: flex; gap: 6px 10px; align-items: baseline; flex-wrap: wrap">
+                <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.08em; border: 1px solid rgba(22,35,58,0.2); border-radius: 6px; padding: 1px 7px; white-space: nowrap">{{ l.tier }}</div>
+                <a href="{{ l.href }}" target="_blank" rel="noopener">{{ l.name }}</a>
+                <sc-if value="{{ l.hasNote }}" hint-placeholder-val="{{ false }}"><span style="flex-basis: 100%; color: rgba(22,35,58,0.7); font-size: 16px; line-height: 1.5">{{ l.note }}</span></sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="margin-top: 56px; font-size: 12px; font-weight: 500; line-height: 1.7; color: rgba(22,35,58,0.7); max-width: 78ch">This is research, not legal advice. Determinations are built from public records and can be wrong where those records are wrong or incomplete. For a distributed production, have a clearance professional confirm before you rely on it.</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;cached&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;State&quot;}}">
+class Component extends DCLogic {
+  state = { jur: 'US', intent: 'doc', expanded: {}, copied: false, narrow: false };
+
+  componentDidMount() {
+    this.mqMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.mqNarrow = window.matchMedia('(max-width: 560px)');
+    this.onMq = () => this.setState({ narrow: this.mqNarrow.matches });
+    this.mqNarrow.addEventListener('change', this.onMq);
+    this.setState({ narrow: this.mqNarrow.matches });
+    this.verdictEl = null;
+  }
+  componentWillUnmount() { if (this.mqNarrow) this.mqNarrow.removeEventListener('change', this.onMq); }
+
+  restamp() {
+    if (this.mqMotion && this.mqMotion.matches) return;
+    if (this.verdictEl && this.verdictEl.animate) {
+      this.verdictEl.animate([{ opacity: 0.15 }, { opacity: 1 }], { duration: 140, easing: 'ease-out' });
+    }
+  }
+
+  stampFor(v) {
+    return {
+      clear: { word: 'Clear', color: '#1E6B47', underline: '4px solid #1E6B47' },
+      conditions: { word: 'Clear — conditions', color: '#1E6B47', underline: '4px solid #1E6B47' },
+      license: { word: 'License required', color: '#6D28D9', underline: '4px solid #6D28D9' },
+      restricted: { word: 'Restricted', color: '#B3261E', underline: '4px solid #B3261E' },
+      undetermined: { word: 'Not determined', color: '#16233A', underline: '2px dashed #16233A' },
+    }[v];
+  }
+  sev(v) { return { clear: 0, conditions: 1, license: 2, restricted: 3, undetermined: 2.5 }[v]; }
+  ticks(level) {
+    const n = { high: 4, medium: 3, low: 2, none: 1 }[level] || 0;
+    return [0, 1, 2, 3].map(i => ({
+      bg: i < n ? '#16233A' : 'rgba(22,35,58,0.2)',
+      bgDark: i < n ? '#8FACF2' : 'rgba(250,250,244,0.25)',
+    }));
+  }
+
+  layerData() {
+    const jur = this.state.jur;
+    const dahr = { name: 'DAHR — Discography of American Historical Recordings (UCSB)', tier: 'DEEP LINK', href: 'https://adp.library.ucsb.edu/index.php/matrix/detail/2000132734/W400967-West_end_blues', hasHref: true, noHref: false, retrieved: '22 Aug 2026', hasExcerpt: true, excerpt: 'Louis Armstrong and His Hot Five. OKeh 8597. Recorded 28 June 1928, Chicago, Ill. Matrix W-400967.' };
+    const comp = {
+      id: 'comp', title: 'Composition', sub: '“West End Blues” · 1928 · Oliver / Williams',
+      ...(jur === 'US' ? {
+        verdict: 'clear', conf: 'medium', confLabel: 'medium confidence',
+        rule: 'Published in 1928 — before 1931 — so US copyright in the song itself has expired. Anyone may perform, record, or license the composition.',
+        expiry: 'EXPIRED 1 JAN 2024',
+        holdersNote: 'No active rights holder — the copyright has expired. Original parties, for the record:',
+        holders: [
+          { name: 'Joe “King” Oliver', role: 'composer', admin: false, share: '—', territory: '—', enforcement: '—', hasContact: false },
+          { name: 'Clarence Williams Music Publishing Co.', role: 'original publisher (1928)', admin: false, share: '—', territory: '—', enforcement: '—', hasContact: false },
+        ],
+        evidence: [{
+          fact: 'FIRST PUBLICATION', value: '1928 — Clarence Williams Music Publishing Co., New York', conf: 'medium',
+          hasReasoning: true, reasoning: 'A 1928 registration appears in the Catalog of Copyright Entries. Publication (not just registration) before 1931 is what puts the song in the public domain — see the open question below.',
+          sources: [{ name: 'Catalog of Copyright Entries, 1928 — Musical Compositions (scanned)', tier: 'GUIDED MANUAL', href: 'https://archive.org/details/catalogofcopyri1928libr', hasHref: true, noHref: false, retrieved: '23 Aug 2026', hasExcerpt: false }],
+        }],
+      } : {
+        verdict: 'license', conf: 'medium', confLabel: 'medium confidence',
+        rule: 'Here the term runs 70 years past the death of the last surviving author. Clarence Williams died in 1965, so the composition is protected until 1 January 2036.',
+        expiry: 'EXPIRES 1 JAN 2036',
+        holdersNote: false,
+        holders: [
+          { name: 'Universal Music Publishing Group', role: 'publisher — Clarence Williams catalogue', admin: true, share: '100% (assumed)', territory: 'UK & EU', enforcement: 'enforcement: standard', hasContact: true, contactLabel: 'UMPG synchronization requests', contactHref: 'https://www.umusicpub.com/' },
+          { name: 'Estate of Joe “King” Oliver', role: 'author’s estate', admin: false, share: 'unverified', territory: '—', enforcement: 'enforcement: unknown', hasContact: false },
+        ],
+        evidence: [{
+          fact: 'LAST SURVIVING AUTHOR', value: 'Clarence Williams, d. 6 November 1965', conf: 'high',
+          hasReasoning: false, reasoning: '',
+          sources: [{ name: 'Library of Congress name authority file', tier: 'DEEP LINK', href: 'https://id.loc.gov/', hasHref: true, noHref: false, retrieved: '22 Aug 2026', hasExcerpt: false }],
+        }],
+      }),
+    };
+    const rec = {
+      id: 'rec', title: 'Sound recording', sub: 'Louis Armstrong & His Hot Five · 28 Jun 1928 · OKeh 8597',
+      ...(jur === 'US' ? {
+        verdict: 'license', conf: 'high', confLabel: 'high confidence',
+        rule: 'A recording published in 1928 is protected in the US for 100 years under the Music Modernization Act. This master needs a license until 1 January 2029.',
+        expiry: 'EXPIRES 1 JAN 2029',
+        holdersNote: false,
+        holders: [
+          { name: 'Sony Music Entertainment', role: 'label — master owner', admin: true, share: '100%', territory: 'worldwide', enforcement: 'enforcement: aggressive', hasContact: true, contactLabel: 'Sony Music licensing', contactHref: 'https://www.sonymusic.com/' },
+        ],
+        evidence: [
+          { fact: 'RECORDING DATE & ISSUE', value: '28 June 1928 · OKeh 8597 · matrix W-400967-B', conf: 'high', hasReasoning: false, reasoning: '', sources: [dahr] },
+          { fact: 'CURRENT MASTER OWNER', value: 'Sony Music Entertainment', conf: 'medium', hasReasoning: true,
+            reasoning: 'Chain of title runs OKeh → Columbia → CBS Records → Sony. The ℗ line on the 2006 Legacy reissue credits Sony BMG; no conflicting claim found.',
+            sources: [
+              { name: '℗ line — “The Complete Hot Five and Hot Seven Recordings” (Legacy, 2006)', tier: 'LABEL COPY', hasHref: false, noHref: true, href: '', retrieved: '22 Aug 2026', hasExcerpt: true, excerpt: '℗ 2006 Sony BMG Music Entertainment' },
+              { name: 'US Copyright Office — recorded documents', tier: 'PRE-FILLED SEARCH', href: 'https://publicrecords.copyright.gov/', hasHref: true, noHref: false, retrieved: '22 Aug 2026', hasExcerpt: false },
+            ] },
+        ],
+      } : {
+        verdict: 'clear', conf: 'high', confLabel: 'high confidence',
+        rule: jur === 'UK'
+          ? 'The UK sound-recording term — 70 years from release — ran out in 1999. The 2013 term extension applies only to recordings still protected in November 2013, so it did not revive this one.'
+          : 'The EU sound-recording term ran out decades ago; the 2011 term-extension directive was not retroactive and did not revive it.',
+        expiry: jur === 'UK' ? 'EXPIRED 1 JAN 1999' : 'EXPIRED 1 JAN 1979',
+        holdersNote: 'No active rights holder in this territory — the recording copyright has expired.',
+        holders: [{ name: 'Sony Music Entertainment', role: 'master owner (US rights only)', admin: false, share: '—', territory: 'US', enforcement: '—', hasContact: false }],
+        evidence: [
+          { fact: 'TERM CALCULATION', value: '1928 + 70 years → expired', conf: 'high', hasReasoning: true,
+            reasoning: 'Directive 2011/77/EU extended recording terms to 70 years only for recordings still in copyright on 1 November 2013.',
+            sources: [dahr] },
+        ],
+      }),
+    };
+    const rem = {
+      id: 'rem', title: 'Remaster', sub: '“The Complete Hot Five…” · Legacy/Columbia · 2006',
+      verdict: 'clear', conf: 'medium', confLabel: 'medium confidence',
+      rule: 'A straight remaster of an existing recording adds no copyright of its own in this territory.',
+      expiry: '—', requiredNever: true, notReq: 'It adds no rights of its own.',
+      holdersNote: false, holders: [], evidence: [],
+    };
+    return { comp, rec, rem };
+  }
+
+  renderVals() {
+    const { jur, intent, expanded, copied, narrow } = this.state;
+    const { comp, rec, rem } = this.layerData();
+
+    const requiredIds = intent === 'rerecord' ? ['comp'] : ['comp', 'rec'];
+    const all = [comp, rec];
+    const required = all.filter(l => requiredIds.includes(l.id));
+    const nonReq = all.filter(l => !requiredIds.includes(l.id)).map(l => ({ ...l, notReq: 'You won’t use this master.' })).concat([rem]);
+
+    const worst = Math.max(...required.map(l => this.sev(l.verdict)));
+    const overallVerdict = required.find(l => this.sev(l.verdict) === worst).verdict;
+    const blockingIds = worst > 0 ? required.filter(l => this.sev(l.verdict) === worst).map(l => l.id) : [];
+
+    const blockPad = narrow ? '18px 16px' : '24px 28px';
+    const mkRow = (l) => {
+      const isOpen = !!expanded[l.id];
+      const blocking = blockingIds.includes(l.id);
+      return {
+        ...l,
+        stamp: this.stampFor(l.verdict),
+        confTicks: this.ticks(l.conf),
+        blocking,
+        wrapStyle: blocking
+          ? `margin: 28px 0; border: 1px solid rgba(22,35,58,0.2); border-left: 4px solid #B3261E; border-radius: 6px; padding: ${blockPad}`
+          : 'padding: 28px 4px; border-top: 1px solid rgba(22,35,58,0.2)',
+        expanded: isOpen,
+        toggleLabel: isOpen ? 'Hide holders & evidence' : 'Holders & evidence',
+        toggle: () => this.setState(s => ({ expanded: { ...s.expanded, [l.id]: !s.expanded[l.id] } })),
+      };
+    };
+    const rows = required.map(mkRow);
+    if (rows.length && !rows[0].blocking) rows[0].wrapStyle = 'padding: 28px 4px 28px 4px; border-top: none';
+
+    const headline = jur === 'US'
+      ? (intent === 'rerecord'
+        ? 'The song is public domain in the US. A new recording you make raises no rights here.'
+        : 'The song itself is public domain — this 1928 recording of it is not.')
+      : (intent === 'rerecord'
+        ? 'The composition is still in copyright here until 2036. A new recording doesn’t change that.'
+        : 'Here the recording is out of copyright — the song it records is not.');
+
+    const verdictWords = { clear: 'Clear', conditions: 'Clear — conditions', license: 'License required', restricted: 'Restricted', undetermined: 'Not determined' };
+    const intentLabels = { doc: 'Documentary — distributed', sample: 'Sample — commercial release', rerecord: 'New recording — you perform it' };
+    const optStyle = (sel) => `cursor: pointer; padding: 10px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; transition: background 0.15s ease; ${sel ? 'background: #8FACF2; color: #16233A; border: 1px solid #8FACF2;' : 'background: transparent; color: #8FACF2; border: 1px solid #8FACF2;'}`;
+    const pick = (patch) => { this.setState(patch); requestAnimationFrame(() => this.restamp()); };
+
+    const overallConfLevel = jur === 'US' ? 'high' : 'medium';
+
+    const clearanceText = blockingIds.length === 0
+      ? 'Nothing to clear for this purpose.'
+      : (jur === 'US'
+        ? '1 party to clear · no unclaimed shares · Moderate — a major-label master for a distributed film typically quotes in the mid four figures and takes 4–8 weeks.'
+        : '1 party to clear · no unclaimed shares · Moderate — one synchronization license from the publisher covers it; the master itself is free in this territory.');
+
+    const unresolved = (jur === 'US' ? [{
+      question: 'Was “West End Blues” first published in 1928, or only registered?',
+      effort: 'HOURS',
+      why: 'Public-domain status in the US rests on publication before 1931. Registration alone, or a first publication after 1930, would restart the clock.',
+      change: 'A verified 1928 publication raises the composition verdict to high confidence. A first publication after 1930 would flip it to License required.',
+      terms: '“West End Blues” · Williams, Clarence — Catalog of Copyright Entries, Musical Compositions, 1928, Part 3',
+      links: [{ tier: 'GUIDED MANUAL', name: 'Catalog of Copyright Entries, 1928 scans — Internet Archive', href: 'https://archive.org/details/catalogofcopyri1928libr', hasNote: true, note: 'A scanned card catalog with no machine search. Open the 1928 “Musical Compositions” volume and search the page images for the string above. Affects the Composition layer.' }],
+    }] : [{
+      question: 'Who currently administers the Clarence Williams publishing catalogue?',
+      effort: 'MINUTES',
+      why: 'The catalogue has changed hands at least twice since 1965, and the administrator — not the nominal publisher — is the party who can actually grant a license.',
+      change: 'Doesn’t change the verdict, only who answers the request. Sending it to the wrong entity costs weeks.',
+      terms: '“West End Blues” — PRS for Music works search · ICE works database',
+      links: [{ tier: 'PRE-FILLED SEARCH', name: 'PRS for Music — works search', href: 'https://www.prsformusic.com/', hasNote: true, note: 'Affects the Composition layer.' }],
+    }]).map(q => ({
+      ...q,
+      copyLabel: copied ? 'COPIED ✓' : 'COPY SEARCH',
+      copy: () => {
+        navigator.clipboard && navigator.clipboard.writeText(q.terms);
+        this.setState({ copied: true });
+        clearTimeout(this.copyT); this.copyT = setTimeout(() => this.setState({ copied: false }), 1600);
+      },
+    }));
+
+    const alternatives = jur === 'US' ? [
+      { title: 'Dippermouth Blues (1923)', creator: 'King Oliver’s Creole Jazz Band', why: 'Same King Oliver cornet lineage and era; recording and composition are both public domain in the US.', hasLink: true, href: 'https://adp.library.ucsb.edu/', linkLabel: 'DAHR record' },
+      { title: 'Commission a new recording', creator: '“West End Blues” — the composition', why: 'The song is free here; only this master is not. A recording you commission is yours to use.', hasLink: false, href: '', linkLabel: '' },
+    ] : [
+      { title: 'Backwater Blues (1927)', creator: 'Bessie Smith', why: 'Sole writer died in 1937 — composition and recording are both out of copyright in the UK and EU.', hasLink: true, href: 'https://adp.library.ucsb.edu/', linkLabel: 'DAHR record' },
+    ];
+
+    const mkLink = (l) => ({ ...l, hasNote: !!l.note });
+    const handoff = [
+      { title: 'VERIFY', sub: 'Check what we determined.', items: [
+        { tier: 'DEEP LINK', name: 'DAHR — OKeh 8597 master entry', href: 'https://adp.library.ucsb.edu/index.php/matrix/detail/2000132734/W400967-West_end_blues', note: '' },
+        { tier: 'PRE-FILLED SEARCH', name: 'USCO public records — “West End Blues”', href: 'https://publicrecords.copyright.gov/', note: '' },
+      ].map(mkLink) },
+      { title: 'ACT', sub: 'Start the license.', items: [
+        jur === 'US'
+          ? { tier: 'DEEP LINK', name: 'Sony Music — synchronization licensing', href: 'https://www.sonymusic.com/', note: 'The administrator for this master. Quote the matrix number W-400967-B.' }
+          : { tier: 'DEEP LINK', name: 'UMPG — synchronization requests', href: 'https://www.umusicpub.com/', note: 'Administrator of the Clarence Williams catalogue (unverified — see open question).' },
+      ].map(mkLink) },
+    ];
+
+    return {
+      bandPad: narrow ? '24px 16px 36px 16px' : '28px 24px 48px 24px',
+      docPad: narrow ? '0 16px 64px 16px' : '0 24px 80px 24px',
+      freshness: (this.props.cached ?? false) ? 'researched 12 aug 2026 · cached' : 'researched 24 aug 2026 · fresh',
+      headline,
+      verdictWord: verdictWords[overallVerdict],
+      verdictRef: (el) => { this.verdictEl = el; },
+      onNewInquiry: (e) => { if (this.props.onNewInquiry) { e.preventDefault(); this.props.onNewInquiry(); } },
+      overallConf: `${overallConfLevel} confidence`,
+      overallTicks: this.ticks(overallConfLevel),
+      clearanceText,
+      intentOptions: Object.keys(intentLabels).map(k => ({ key: k, label: intentLabels[k], selected: intent === k, style: optStyle(intent === k), onSelect: () => pick({ intent: k }) })),
+      jurOptions: ['US', 'UK', 'EU'].map(k => ({ key: k, label: k, selected: jur === k, style: optStyle(jur === k), onSelect: () => pick({ jur: k }) })),
+      requiredRows: rows,
+      nonRequiredRows: nonReq.map(l => ({ ...l, stamp: this.stampFor(l.verdict), reason: l.notReq })),
+      unresolvedCount: unresolved.length,
+      unresolved,
+      showAlternatives: blockingIds.length > 0,
+      alternatives,
+      handoff,
+    };
+  }
+}
+</script>
+</body>
+</html>

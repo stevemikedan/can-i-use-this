@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; background: #FAFAF4; color: #16233A; font-family: 'Archivo', sans-serif; font-weight: 500; }
+    a { color: #2244AA; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+    a:hover { color: #16233A; }
+    ::selection { background: rgba(34,68,170,0.18); }
+    button { font-family: inherit; }
+    @keyframes caret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+</helmet>
+
+<!-- Band: query + clock -->
+<div style="background: #16233A; color: #FAFAF4">
+  <div style="max-width: 920px; margin: 0 auto; padding: {{ bandPad }}; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.12em">CAN I USE THIS? — RESEARCH IN PROGRESS</div>
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.12em; color: rgba(250,250,244,0.72)">US · DOCUMENTARY</div>
+    </div>
+    <div style="display: flex; gap: 24px 48px; align-items: flex-end; flex-wrap: wrap">
+      <div style="flex: 1 1 380px; min-width: 240px; display: flex; flex-direction: column; gap: 10px">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: #8FACF2">QUERY</div>
+        <div style="font-weight: 700; font-size: 28px; line-height: 1.2; text-wrap: balance">West End Blues — Louis Armstrong &amp; His Hot Five (1928)</div>
+        <div style="font-size: 16px; font-weight: 500; color: #FAFAF4">{{ stageLine }}</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(250,250,244,0.72)">ELAPSED</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 38px; line-height: 1">{{ clock }}</div>
+        <div style="font-size: 12px; font-weight: 500; color: rgba(250,250,244,0.72)">typically 30–90 seconds</div>
+      </div>
+    </div>
+    <!-- Layer strip: stamps land as layers resolve -->
+    <div style="display: flex; gap: 12px; flex-wrap: wrap">
+      <sc-for list="{{ layerChips }}" as="ch" hint-placeholder-count="3">
+        <div style="{{ ch.style }}">
+          <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.1em">{{ ch.name }}</div>
+          <div style="font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 0.04em; color: {{ ch.color }}">{{ ch.word }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+
+<div style="max-width: 920px; margin: 0 auto; padding: {{ docPad }}">
+
+  <!-- Demo scrubber (design artifact, not product UI) -->
+  <div style="margin-top: 24px; display: flex; gap: 8px 12px; align-items: center; flex-wrap: wrap">
+    <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(22,35,58,0.7)">DEMO — JUMP TO MOMENT</div>
+    <sc-for list="{{ moments }}" as="m" hint-placeholder-count="3">
+      <button onClick="{{ m.onSelect }}" style="{{ m.style }}" style-hover="border-color: #2244AA" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ m.label }}</button>
+    </sc-for>
+    <button onClick="{{ togglePlay }}" style="{{ playStyle }}" style-hover="border-color: #2244AA" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ playLabel }}</button>
+  </div>
+
+  <!-- Accession log -->
+  <div style="margin-top: 40px">
+    <div style="border-bottom: 1px solid #16233A; padding-bottom: 14px; display: flex; flex-direction: column; gap: 6px">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em">ACCESSION LOG</div>
+      <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">Every source consulted is entered here as it returns. Failures stay on the record, struck through — corrected, never erased.</div>
+    </div>
+
+    <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="4">
+      <div style="padding: 22px 0 6px 0; border-top: 1px solid rgba(22,35,58,0.2)">
+        <div style="display: flex; gap: 8px 14px; align-items: baseline; flex-wrap: wrap; margin-bottom: 6px">
+          <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: {{ sec.titleColor }}">{{ sec.title }}</div>
+          <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: {{ sec.statusColor }}">{{ sec.status }}</div>
+        </div>
+        <div style="display: flex; flex-direction: column">
+          <sc-for list="{{ sec.lines }}" as="ln" hint-placeholder-count="2">
+            <div style="display: flex; gap: 6px 14px; align-items: baseline; flex-wrap: wrap; padding: 9px 0; border-top: 1px dashed rgba(22,35,58,0.2)">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; color: rgba(22,35,58,0.7); flex: 0 0 44px">{{ ln.ts }}</div>
+              <div style="flex: 1 1 300px; min-width: 200px">
+                <div style="font-size: 16px; font-weight: 600; {{ ln.nameStyle }}">{{ ln.source }}</div>
+                <sc-if value="{{ ln.hasNote }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size: 16px; line-height: 1.5; margin-top: 2px; {{ ln.noteStyle }}">{{ ln.note }}</div>
+                </sc-if>
+              </div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; white-space: nowrap; color: {{ ln.markColor }}">{{ ln.mark }}</div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ sec.showCaret }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; gap: 14px; align-items: baseline; padding: 9px 0; border-top: 1px dashed rgba(22,35,58,0.2)">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; color: rgba(22,35,58,0.7); flex: 0 0 44px">{{ caretTs }}</div>
+              <div style="font-size: 16px; font-weight: 600; color: #2244AA">{{ sec.caretText }}<span style="animation: caret 1s step-end infinite">▊</span></div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+
+    <sc-if value="{{ complete }}" hint-placeholder-val="{{ false }}">
+      <div style="border-top: 1px solid rgba(22,35,58,0.2); padding: 22px 0; display: flex; gap: 8px 16px; align-items: baseline; flex-wrap: wrap">
+        <div style="font-weight: 700; font-size: 21px; text-transform: uppercase; letter-spacing: 0.02em; color: #1E6B47">Record complete</div>
+        <a href="Result Screen v3.dc.html" onClick="{{ onOpenResult }}" style="font-size: 16px; font-weight: 600">Open the research record →</a>
+      </div>
+    </sc-if>
+
+    <!-- Running tally -->
+    <div style="border-top: 2px solid #16233A; margin-top: 8px; padding-top: 14px; display: flex; gap: 10px 32px; flex-wrap: wrap; align-items: baseline">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(22,35,58,0.7)">RUNNING TALLY</div>
+      <div style="font-size: 12px; font-weight: 600">sources consulted <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-weight: 500">{{ tallySources }}</span></div>
+      <div style="font-size: 12px; font-weight: 600">records retrieved <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-weight: 500">{{ tallyRecords }}</span></div>
+      <div style="font-size: 12px; font-weight: 600">failures on record <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-weight: 500">{{ tallyFails }}</span></div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1280, &quot;height&quot;: 900}}">
+class Component extends DCLogic {
+  state = { t: 5, playing: true, narrow: false };
+
+  componentDidMount() {
+    if (typeof (this.props.startAt) === 'number') this.setState({ t: this.props.startAt });
+    this.mqNarrow = window.matchMedia('(max-width: 560px)');
+    this.onMq = () => this.setState({ narrow: this.mqNarrow.matches });
+    this.mqNarrow.addEventListener('change', this.onMq);
+    this.setState({ narrow: this.mqNarrow.matches });
+    this.timer = setInterval(() => {
+      if (this.state.playing && this.state.t < 80) this.setState(s => ({ t: s.t + 1 }));
+    }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    if (this.mqNarrow) this.mqNarrow.removeEventListener('change', this.onMq);
+  }
+
+  fmt(s) { return `${String(Math.floor(s / 60)).padStart(1, '0')}:${String(s % 60).padStart(2, '0')}`; }
+
+  events() {
+    return [
+      { t: 2, sec: 0, ts: '0:02', source: 'MusicBrainz — recording index', note: 'Work identified: “West End Blues”, matrix W-400967.', mark: '2 RECORDS', status: 'ok', records: 2 },
+      { t: 5, sec: 0, ts: '0:05', source: 'DAHR — Discography of American Historical Recordings (UCSB)', note: 'Session detail confirmed: 28 June 1928, Chicago. Issued as OKeh 8597.', mark: '1 RECORD', status: 'ok', records: 1 },
+      { t: 9, sec: 0, ts: '0:09', source: 'Library of Congress — name authority file', note: 'Authors resolved: Joe “King” Oliver; Clarence Williams (d. 1965).', mark: '2 RECORDS', status: 'ok', records: 2 },
+      { t: 14, sec: 1, ts: '0:14', source: 'Catalog of Copyright Entries, 1928 — Musical Compositions', note: 'Registration found: Clarence Williams Music Pub. Co., New York.', mark: '1 RECORD', status: 'ok', records: 1 },
+      { t: 21, sec: 1, ts: '0:21', source: 'USCO renewal records, 1955–56', note: 'Pre-1931 publication — renewal status moot; term already expired.', mark: '3 RECORDS', status: 'ok', records: 3 },
+      { t: 26, sec: 1, ts: '0:26', source: 'Composition layer determined', note: 'CLEAR in the US — published 1928, copyright expired 1 Jan 2024. Provisional until the record closes.', mark: 'STAMPED', status: 'stamp', records: 0 },
+      { t: 33, sec: 2, ts: '0:33', source: 'USCO — recorded documents (chain of title)', note: 'OKeh → Columbia → CBS Records → Sony transfers located.', mark: '3 RECORDS', status: 'ok', records: 3 },
+      { t: 40, sec: 2, ts: '0:40', source: 'Label copy — “The Complete Hot Five…” (Legacy, 2006)', note: '℗ 2006 Sony BMG Music Entertainment.', mark: '1 RECORD', status: 'ok', records: 1 },
+      { t: 46, sec: 2, ts: '0:46', source: 'SoundExchange — repertoire database', note: 'Unreachable (timeout after 8s). Fell back to the MLC public database — entered below.', mark: 'FAILED', status: 'fail', records: 0 },
+      { t: 53, sec: 2, ts: '0:53', source: 'MLC public database (fallback)', note: 'Master ownership corroborated: Sony Music Entertainment, 100%.', mark: '2 RECORDS', status: 'ok', records: 2 },
+      { t: 60, sec: 2, ts: '1:00', source: 'Recording layer determined', note: 'LICENSE REQUIRED in the US — protected until 1 Jan 2029 under the Music Modernization Act.', mark: 'STAMPED', status: 'stamp', records: 0 },
+      { t: 67, sec: 3, ts: '1:07', source: 'Licensing contacts', note: 'Sony Music synchronization licensing resolved as the administering party.', mark: '1 RECORD', status: 'ok', records: 1 },
+      { t: 73, sec: 3, ts: '1:13', source: 'Clearance difficulty computed', note: '1 party to clear, no unclaimed shares — moderate.', mark: 'DONE', status: 'ok', records: 0 },
+    ];
+  }
+
+  renderVals() {
+    const { t, playing, narrow } = this.state;
+    const evts = this.events();
+    const visible = evts.filter(e => e.t <= t);
+
+    const secDefs = [
+      { title: 'I. IDENTIFY THE WORK', caretText: 'Consulting discographies', doneAt: 10 },
+      { title: 'II. COMPOSITION — THE SONG', caretText: 'Searching the 1928 copyright catalog', doneAt: 27 },
+      { title: 'III. RECORDING — THE MASTER', caretText: 'Tracing chain of title', doneAt: 61 },
+      { title: 'IV. HOLDERS & CLEARANCE', caretText: 'Resolving licensing contacts', doneAt: 74 },
+    ];
+
+    const sections = secDefs.map((sd, i) => {
+      const lines = visible.filter(e => e.sec === i).map(e => ({
+        ts: e.ts,
+        source: e.source,
+        hasNote: !!e.note,
+        note: e.note,
+        nameStyle: e.status === 'fail' ? 'text-decoration: line-through; color: rgba(22,35,58,0.7)' : (e.status === 'stamp' ? 'color: #1E6B47' : ''),
+        noteStyle: e.status === 'fail' ? 'color: #B3261E' : 'color: rgba(22,35,58,0.7)',
+        markColor: e.status === 'fail' ? '#B3261E' : (e.status === 'stamp' ? '#1E6B47' : 'rgba(22,35,58,0.7)'),
+        mark: e.mark,
+      }));
+      const started = lines.length > 0;
+      const done = t >= sd.doneAt;
+      return {
+        title: sd.title,
+        titleColor: started ? '#16233A' : 'rgba(22,35,58,0.7)',
+        status: done ? 'COMPLETE' : (started ? 'IN PROGRESS' : 'QUEUED'),
+        statusColor: done ? '#1E6B47' : (started ? '#2244AA' : 'rgba(22,35,58,0.7)'),
+        lines,
+        showCaret: started && !done,
+        caretText: sd.caretText,
+      };
+    });
+    // second-5 answer: the un-started sections are already ruled into the ledger as QUEUED —
+    // the empty ruling reads as a plan, not a void
+    const firstPending = sections.find(s => s.status !== 'COMPLETE');
+    if (!firstPending && false) {}
+    const nextQueued = sections.find(s => s.status === 'QUEUED');
+    if (nextQueued && !sections.some(s => s.showCaret)) { nextQueued.showCaret = true; }
+
+    const chipBase = 'display: flex; flex-direction: column; gap: 4px; padding: 10px 16px; border-radius: 6px; min-width: 150px;';
+    const layerChips = [
+      { name: 'COMPOSITION', at: 26, word: 'Clear', color: '#FAFAF4' },
+      { name: 'RECORDING', at: 60, word: 'License required', color: '#FAFAF4' },
+      { name: 'REMASTER', at: 73, word: 'Not a layer — no rights of its own', color: 'rgba(250,250,244,0.72)' },
+    ].map(c => t >= c.at
+      ? { name: c.name, word: c.word, color: c.color, style: chipBase + 'border: 1px solid rgba(250,250,244,0.25)' }
+      : { name: c.name, word: 'Researching…', color: 'rgba(250,250,244,0.72)', style: chipBase + 'border: 1px dashed rgba(250,250,244,0.25)' });
+
+    const stageLine = t < 10 ? 'Identifying the work and its editions.'
+      : t < 27 ? 'Researching the composition — registration and renewal.'
+      : t < 61 ? 'The song is resolving as clear. Now tracing who owns this master.'
+      : t < 74 ? 'Both layers determined. Resolving who to contact and how hard clearance is.'
+      : 'Compiling the record.';
+
+    const tallySources = visible.filter(e => e.status === 'ok' || e.status === 'fail').length;
+    const tallyRecords = visible.reduce((a, e) => a + e.records, 0);
+    const tallyFails = visible.filter(e => e.status === 'fail').length;
+
+    const mBtn = (sel) => `cursor: pointer; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; ${sel ? 'background: #2244AA; color: #FAFAF4; border: 1px solid #2244AA;' : 'background: transparent; color: #16233A; border: 1px solid rgba(22,35,58,0.7);'}`;
+    const moments = [
+      { at: 5, label: '0:05' }, { at: 30, label: '0:30' }, { at: 75, label: '1:15' },
+    ].map(m => ({ label: m.label, style: mBtn(t === m.at), onSelect: () => this.setState({ t: m.at }) }));
+
+    return {
+      bandPad: narrow ? '24px 16px 32px 16px' : '28px 24px 40px 24px',
+      docPad: narrow ? '0 16px 64px 16px' : '0 24px 80px 24px',
+      clock: this.fmt(t),
+      caretTs: this.fmt(t),
+      stageLine,
+      layerChips,
+      moments,
+      onOpenResult: (e) => { if (this.props.onOpenResult) { e.preventDefault(); this.props.onOpenResult(); } },
+      togglePlay: () => this.setState(s => ({ playing: !s.playing })),
+      playLabel: playing ? 'Pause' : 'Play',
+      playStyle: mBtn(false),
+      sections,
+      complete: t >= 75,
+      tallySources: String(tallySources),
+      tallyRecords: String(tallyRecords),
+      tallyFails: String(tallyFails),
+    };
+  }
+}
+</script>
+</body>
+</html>

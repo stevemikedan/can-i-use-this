@@ -1,4 +1,11 @@
-"""Boundary tests. Run: python test_rules.py"""
+"""Boundary tests. Run: python -m pytest rules/
+
+Every check from the original print-style script is preserved with the same
+label and the same expected value; each one is its own parametrized case so
+pytest reports them individually.
+"""
+
+import pytest
 
 from rules import (
     us_sound_recording, us_standard_term, life_plus_70, roll_up,
@@ -6,75 +13,124 @@ from rules import (
 )
 
 Y = 2026
-fails = []
 
 
-def check(label, got, want):
-    ok = got == want
-    print(f"{'PASS' if ok else 'FAIL'}  {label}\n        got={got!r}\n        want={want!r}"
-          if not ok else f"PASS  {label}")
-    if not ok:
-        fails.append(label)
+def _ids(cases):
+    return [c[0] for c in cases]
 
 
-print("=== US SOUND RECORDINGS (MMA / CLASSICS) ===")
-check("1922 -> PD (pre-1923)", us_sound_recording(1922, Y).status, "public_domain")
-check("1925 -> PD in 2026",    us_sound_recording(1925, Y).status, "public_domain")
-check("1925 expiry 2026",      us_sound_recording(1925, Y).expiry_year, 2026)
-check("1926 -> protected",     us_sound_recording(1926, Y).status, "protected")
-check("1926 expiry 2027",      us_sound_recording(1926, Y).expiry_year, 2027)
-check("1928 -> protected",     us_sound_recording(1928, Y).status, "protected")
-check("1928 expiry 2029",      us_sound_recording(1928, Y).expiry_year, 2029)
-check("1946 expiry 2047",      us_sound_recording(1946, Y).expiry_year, 2047)
-check("1947 expiry 2058",      us_sound_recording(1947, Y).expiry_year, 2058)
-check("1956 expiry 2067",      us_sound_recording(1956, Y).expiry_year, 2067)
-check("1960 expiry 2067",      us_sound_recording(1960, Y).expiry_year, 2067)
+# === US SOUND RECORDINGS (MMA / CLASSICS) ===================================
 
-print("\n=== ROLLING BOUNDARY (advances 1 Jan) ===")
-check("1926 PD in 2027",       us_sound_recording(1926, 2027).status, "public_domain")
-check("1927 protected in 2027", us_sound_recording(1927, 2027).status, "protected")
+SR_CASES = [
+    ("1922 -> PD (pre-1923)", lambda: us_sound_recording(1922, Y).status, "public_domain"),
+    ("1925 -> PD in 2026",    lambda: us_sound_recording(1925, Y).status, "public_domain"),
+    ("1925 expiry 2026",      lambda: us_sound_recording(1925, Y).expiry_year, 2026),
+    ("1926 -> protected",     lambda: us_sound_recording(1926, Y).status, "protected"),
+    ("1926 expiry 2027",      lambda: us_sound_recording(1926, Y).expiry_year, 2027),
+    ("1928 -> protected",     lambda: us_sound_recording(1928, Y).status, "protected"),
+    ("1928 expiry 2029",      lambda: us_sound_recording(1928, Y).expiry_year, 2029),
+    ("1946 expiry 2047",      lambda: us_sound_recording(1946, Y).expiry_year, 2047),
+    ("1947 expiry 2058",      lambda: us_sound_recording(1947, Y).expiry_year, 2058),
+    ("1956 expiry 2067",      lambda: us_sound_recording(1956, Y).expiry_year, 2067),
+    ("1960 expiry 2067",      lambda: us_sound_recording(1960, Y).expiry_year, 2067),
+]
 
-print("\n=== US PUBLISHED WORKS ===")
-check("1928 -> PD",            us_standard_term(1928, current_year=Y).status, "public_domain")
-check("1928 expiry 2024",      us_standard_term(1928, current_year=Y).expiry_year, 2024)
-check("1930 -> PD",            us_standard_term(1930, current_year=Y).status, "public_domain")
-check("1931 renewal unknown",  us_standard_term(1931, current_year=Y).status, "undetermined")
-check("1931 blocked_by",       us_standard_term(1931, current_year=Y).blocked_by, "renewal_filed")
-check("1955 not renewed -> PD", us_standard_term(1955, renewal_filed=False, current_year=Y).status, "public_domain")
-check("1955 renewed -> prot.",  us_standard_term(1955, renewal_filed=True, current_year=Y).status, "protected")
-check("1955 renewed exp 2051",  us_standard_term(1955, renewal_filed=True, current_year=Y).expiry_year, 2051)
-check("1970 -> protected",      us_standard_term(1970, current_year=Y).status, "protected")
 
-print("\n=== LIFE + 70 ===")
-check("d.1938,1965 -> protected", life_plus_70([1938, 1965], "EU", Y).status, "protected")
-check("d.1938,1965 exp 2036",     life_plus_70([1938, 1965], "EU", Y).expiry_year, 2036)
-check("d.1924 -> PD",             life_plus_70([1924], "EU", Y).status, "public_domain")
-check("unknown death -> undet.",  life_plus_70([1938, None], "EU", Y).status, "undetermined")
+@pytest.mark.parametrize("label,got,want", SR_CASES, ids=_ids(SR_CASES))
+def test_us_sound_recording(label, got, want):
+    assert got() == want, label
 
-print("\n=== WEST END BLUES — the spike's gate case ===")
-comp = us_standard_term(1928, current_year=Y)
-rec = us_sound_recording(1928, Y)
-check("composition PD",        comp.status, "public_domain")
-check("composition exp 2024",  comp.expiry_year, 2024)
-check("recording protected",   rec.status, "protected")
-check("recording exp 2029",    rec.expiry_year, 2029)
 
-verdict, blocking = roll_up([
-    ("composition", status_to_verdict(comp.status), True),
-    ("recording",   status_to_verdict(rec.status), True),
-])
-check("roll-up = license_required", verdict, "license_required")
-check("blocking layer = recording", blocking, "recording")
+# === ROLLING BOUNDARY (advances 1 Jan) =====================================
 
-print("\n=== ROLL-UP EDGE CASES ===")
-check("undetermined beats license",
-      roll_up([("a", "undetermined", True), ("b", "license_required", True)])[0],
-      "undetermined")
-check("non-required excluded",
-      roll_up([("a", "clear", True), ("b", "restricted", False)])[0],
-      "clear")
-check("re-record: comp only",
-      roll_up([("composition", "clear", True), ("recording", "license_required", False)])[0],
-      "clear")
+ROLLING_CASES = [
+    ("1926 PD in 2027",        lambda: us_sound_recording(1926, 2027).status, "public_domain"),
+    ("1927 protected in 2027", lambda: us_sound_recording(1927, 2027).status, "protected"),
+]
 
-print(f"\n{'ALL PASS' if not fails else f'{len(fails)} FAILURES: {fails}'}")
+
+@pytest.mark.parametrize("label,got,want", ROLLING_CASES, ids=_ids(ROLLING_CASES))
+def test_rolling_boundary(label, got, want):
+    assert got() == want, label
+
+
+# === US PUBLISHED WORKS ====================================================
+
+PUB_CASES = [
+    ("1928 -> PD",             lambda: us_standard_term(1928, current_year=Y).status, "public_domain"),
+    ("1928 expiry 2024",       lambda: us_standard_term(1928, current_year=Y).expiry_year, 2024),
+    ("1930 -> PD",             lambda: us_standard_term(1930, current_year=Y).status, "public_domain"),
+    ("1931 renewal unknown",   lambda: us_standard_term(1931, current_year=Y).status, "undetermined"),
+    ("1931 blocked_by",        lambda: us_standard_term(1931, current_year=Y).blocked_by, "renewal_filed"),
+    ("1955 not renewed -> PD", lambda: us_standard_term(1955, renewal_filed=False, current_year=Y).status, "public_domain"),
+    ("1955 renewed -> prot.",  lambda: us_standard_term(1955, renewal_filed=True, current_year=Y).status, "protected"),
+    ("1955 renewed exp 2051",  lambda: us_standard_term(1955, renewal_filed=True, current_year=Y).expiry_year, 2051),
+    ("1970 -> protected",      lambda: us_standard_term(1970, current_year=Y).status, "protected"),
+]
+
+
+@pytest.mark.parametrize("label,got,want", PUB_CASES, ids=_ids(PUB_CASES))
+def test_us_published_works(label, got, want):
+    assert got() == want, label
+
+
+# === LIFE + 70 =============================================================
+
+LIFE_CASES = [
+    ("d.1938,1965 -> protected", lambda: life_plus_70([1938, 1965], "EU", Y).status, "protected"),
+    ("d.1938,1965 exp 2036",     lambda: life_plus_70([1938, 1965], "EU", Y).expiry_year, 2036),
+    ("d.1924 -> PD",             lambda: life_plus_70([1924], "EU", Y).status, "public_domain"),
+    ("unknown death -> undet.",  lambda: life_plus_70([1938, None], "EU", Y).status, "undetermined"),
+]
+
+
+@pytest.mark.parametrize("label,got,want", LIFE_CASES, ids=_ids(LIFE_CASES))
+def test_life_plus_70(label, got, want):
+    assert got() == want, label
+
+
+# === WEST END BLUES — the spike's gate case ================================
+
+def _west_end_blues():
+    comp = us_standard_term(1928, current_year=Y)
+    rec = us_sound_recording(1928, Y)
+    verdict, blocking = roll_up([
+        ("composition", status_to_verdict(comp.status), True),
+        ("recording",   status_to_verdict(rec.status), True),
+    ])
+    return comp, rec, verdict, blocking
+
+
+WEB_CASES = [
+    ("composition PD",             lambda: _west_end_blues()[0].status, "public_domain"),
+    ("composition exp 2024",       lambda: _west_end_blues()[0].expiry_year, 2024),
+    ("recording protected",        lambda: _west_end_blues()[1].status, "protected"),
+    ("recording exp 2029",         lambda: _west_end_blues()[1].expiry_year, 2029),
+    ("roll-up = license_required", lambda: _west_end_blues()[2], "license_required"),
+    ("blocking layer = recording", lambda: _west_end_blues()[3], "recording"),
+]
+
+
+@pytest.mark.parametrize("label,got,want", WEB_CASES, ids=_ids(WEB_CASES))
+def test_west_end_blues(label, got, want):
+    assert got() == want, label
+
+
+# === ROLL-UP EDGE CASES ====================================================
+
+ROLLUP_CASES = [
+    ("undetermined beats license",
+     lambda: roll_up([("a", "undetermined", True), ("b", "license_required", True)])[0],
+     "undetermined"),
+    ("non-required excluded",
+     lambda: roll_up([("a", "clear", True), ("b", "restricted", False)])[0],
+     "clear"),
+    ("re-record: comp only",
+     lambda: roll_up([("composition", "clear", True), ("recording", "license_required", False)])[0],
+     "clear"),
+]
+
+
+@pytest.mark.parametrize("label,got,want", ROLLUP_CASES, ids=_ids(ROLLUP_CASES))
+def test_roll_up_edge_cases(label, got, want):
+    assert got() == want, label
