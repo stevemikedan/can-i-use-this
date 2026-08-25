@@ -1,0 +1,2371 @@
+﻿==============================================================================
+West End Blues  —  Louis Armstrong
+==============================================================================
+
+[1] search_recording
+  100  1996        929d6519-0100-49f5-8d28-05f7aa4754b0  West End Blues  ·  Louis Armstrong
+  100  ----------  a86fe067-ca50-4e9a-ae8d-2ee3db3c9a4d  West End Blues  ·  Louis Armstrong
+  100  2003        594f6368-0c68-44e4-b527-483d5cc7cde9  West End Blues  ·  Louis Armstrong
+  100  2020-02-10  f13a93ec-4b15-4dba-8356-9a36db3adcad  West End Blues  ·  Louis Armstrong
+  100  2001        81efaeb0-b315-4411-8357-2df9ae3d2740  West End Blues  ·  Louis Armstrong
+  100  1995        5114e653-9827-4982-8678-7bad3e169e6b  West End Blues  ·  Louis Armstrong
+  100  1997        45b1d5b1-e70b-4841-bb83-4e63c056c034  West End Blues  ·  Louis Armstrong
+  100  2003        644bb9a8-c1fa-4275-bae3-748649851805  West End Blues  ·  Louis Armstrong
+  100  1999-07-16  9ae61b9a-4142-4fde-8a76-1a17dd2d30d8  West End Blues  ·  Louis Armstrong
+  100  1975        5e89c005-4bf9-4cc3-b9de-8b25e780b4d4  West End Blues  ·  Louis Armstrong
+  ... 15 more
+
+[2] get_work_for_recording — RAW RESPONSE for the top 10 candidates
+
+  -- 929d6519-0100-49f5-8d28-05f7aa4754b0  (1996, Louis Armstrong)
+{
+  "id": "929d6519-0100-49f5-8d28-05f7aa4754b0",
+  "video": false,
+  "length": 252000,
+  "first-release-date": "1996",
+  "disambiguation": "",
+  "relations": [
+    {
+      "target-credit": "",
+      "source-credit": "",
+      "target-type": "work",
+      "direction": "forward",
+      "begin": null,
+      "type": "performance",
+      "work": {
+        "disambiguation": "Armstrong recording",
+        "title": "West End Blues",
+        "languages": [],
+        "type": "Song",
+        "id": "a97c426c-c138-4531-9d4a-e2eb0bca7961",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "iswcs": [],
+        "attributes": [],
+        "language": null
+      },
+      "end": null,
+      "attributes": [],
+      "attribute-values": {},
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "ended": false,
+      "attribute-ids": {}
+    }
+  ],
+  "title": "West End Blues"
+}
+
+  -- a86fe067-ca50-4e9a-ae8d-2ee3db3c9a4d  (None, Louis Armstrong)
+{
+  "video": false,
+  "disambiguation": "",
+  "title": "West End Blues",
+  "length": 254360,
+  "relations": [
+    {
+      "target-type": "work",
+      "attributes": [],
+      "work": {
+        "language": "eng",
+        "type": "Song",
+        "disambiguation": "",
+        "iswcs": [
+          "T-070.280.775-7"
+        ],
+        "languages": [
+          "eng"
+        ],
+        "title": "West End Blues",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "attributes": [],
+        "id": "ec12be9a-bfbb-49e3-a491-f84a49cd6a80"
+      },
+      "source-credit": "",
+      "end": "1956",
+      "ended": true,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": "1955",
+      "attribute-ids": {},
+      "direction": "forward",
+      "target-credit": "",
+      "attribute-values": {},
+      "type": "performance"
+    }
+  ],
+  "id": "a86fe067-ca50-4e9a-ae8d-2ee3db3c9a4d"
+}
+
+  -- 594f6368-0c68-44e4-b527-483d5cc7cde9  (2003, Louis Armstrong)
+{
+  "length": 204000,
+  "id": "594f6368-0c68-44e4-b527-483d5cc7cde9",
+  "video": false,
+  "title": "West End Blues",
+  "disambiguation": "",
+  "relations": [
+    {
+      "target-type": "work",
+      "target-credit": "",
+      "begin": null,
+      "direction": "forward",
+      "attribute-values": {},
+      "work": {
+        "iswcs": [],
+        "languages": [],
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "attributes": [],
+        "type": "Song",
+        "id": "a97c426c-c138-4531-9d4a-e2eb0bca7961",
+        "disambiguation": "Armstrong recording",
+        "language": null,
+        "title": "West End Blues"
+      },
+      "source-credit": "",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "attribute-ids": {},
+      "ended": false,
+      "end": null,
+      "attributes": []
+    }
+  ],
+  "first-release-date": "2003"
+}
+
+  -- f13a93ec-4b15-4dba-8356-9a36db3adcad  (2020-02-10, Louis Armstrong)
+{
+  "title": "West End Blues",
+  "first-release-date": "2020-02-10",
+  "length": 200176,
+  "disambiguation": "",
+  "video": false,
+  "id": "f13a93ec-4b15-4dba-8356-9a36db3adcad",
+  "relations": []
+}
+  no work relation on this candidate
+
+  -- 81efaeb0-b315-4411-8357-2df9ae3d2740  (2001, Louis Armstrong)
+{
+  "first-release-date": "2001",
+  "length": null,
+  "id": "81efaeb0-b315-4411-8357-2df9ae3d2740",
+  "title": "West End Blues",
+  "disambiguation": "",
+  "video": false,
+  "relations": [
+    {
+      "ended": false,
+      "target-type": "work",
+      "attribute-ids": {},
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "attributes": [],
+      "work": {
+        "iswcs": [],
+        "attributes": [],
+        "id": "a97c426c-c138-4531-9d4a-e2eb0bca7961",
+        "languages": [],
+        "title": "West End Blues",
+        "type": "Song",
+        "disambiguation": "Armstrong recording",
+        "language": null,
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      },
+      "target-credit": "",
+      "type": "performance",
+      "end": null,
+      "direction": "forward",
+      "source-credit": "",
+      "attribute-values": {}
+    }
+  ]
+}
+
+  -- 5114e653-9827-4982-8678-7bad3e169e6b  (1995, Louis Armstrong)
+{
+  "title": "West End Blues",
+  "video": false,
+  "disambiguation": "",
+  "relations": [],
+  "first-release-date": "1995",
+  "length": null,
+  "id": "5114e653-9827-4982-8678-7bad3e169e6b"
+}
+  no work relation on this candidate
+
+  -- 45b1d5b1-e70b-4841-bb83-4e63c056c034  (1997, Louis Armstrong)
+    [http 200] https://musicbrainz.org/ws/2/recording/45b1d5b1-e70b-4841-bb83-4e63c056c034?inc=work-rels&fmt=json
+{
+  "title": "West End Blues",
+  "disambiguation": "",
+  "id": "45b1d5b1-e70b-4841-bb83-4e63c056c034",
+  "video": false,
+  "length": 196000,
+  "first-release-date": "1997",
+  "relations": [
+    {
+      "attribute-ids": {},
+      "attributes": [],
+      "ended": false,
+      "end": null,
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "direction": "forward",
+      "begin": null,
+      "source-credit": "",
+      "work": {
+        "languages": [],
+        "iswcs": [],
+        "language": null,
+        "title": "West End Blues",
+        "disambiguation": "Armstrong recording",
+        "attributes": [],
+        "type": "Song",
+        "id": "a97c426c-c138-4531-9d4a-e2eb0bca7961",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      },
+      "attribute-values": {}
+    }
+  ]
+}
+
+  -- 644bb9a8-c1fa-4275-bae3-748649851805  (2003, Louis Armstrong)
+{
+  "first-release-date": "2003",
+  "disambiguation": "",
+  "relations": [
+    {
+      "attribute-ids": {},
+      "ended": true,
+      "target-type": "work",
+      "direction": "forward",
+      "type": "performance",
+      "begin": "1928-06-28",
+      "work": {
+        "disambiguation": "Armstrong recording",
+        "title": "West End Blues",
+        "id": "a97c426c-c138-4531-9d4a-e2eb0bca7961",
+        "type": "Song",
+        "languages": [],
+        "language": null,
+        "attributes": [],
+        "iswcs": [],
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      },
+      "attributes": [],
+      "end": "1928-06-28",
+      "attribute-values": {},
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "source-credit": "",
+      "target-credit": ""
+    }
+  ],
+  "title": "West End Blues",
+  "id": "644bb9a8-c1fa-4275-bae3-748649851805",
+  "video": false,
+  "length": 198626
+}
+
+  -- 9ae61b9a-4142-4fde-8a76-1a17dd2d30d8  (1999-07-16, Louis Armstrong)
+{
+  "disambiguation": "studio, 1946; soundtrack to film \"New Orleans\"",
+  "first-release-date": "1999-07-16",
+  "relations": [
+    {
+      "target-type": "work",
+      "direction": "forward",
+      "type": "performance",
+      "begin": "1946-09-05",
+      "attributes": [],
+      "work": {
+        "id": "a97c426c-c138-4531-9d4a-e2eb0bca7961",
+        "type": "Song",
+        "languages": [],
+        "language": null,
+        "iswcs": [],
+        "attributes": [],
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "disambiguation": "Armstrong recording",
+        "title": "West End Blues"
+      },
+      "end": "1946-10-08",
+      "attribute-values": {},
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "target-credit": "",
+      "source-credit": "",
+      "attribute-ids": {},
+      "ended": true
+    }
+  ],
+  "title": "West End Blues",
+  "id": "9ae61b9a-4142-4fde-8a76-1a17dd2d30d8",
+  "length": 172000,
+  "video": false
+}
+
+  -- 5e89c005-4bf9-4cc3-b9de-8b25e780b4d4  (1975, Louis Armstrong)
+{
+  "first-release-date": "1975",
+  "id": "5e89c005-4bf9-4cc3-b9de-8b25e780b4d4",
+  "length": 207121,
+  "relations": [
+    {
+      "source-credit": "",
+      "work": {
+        "disambiguation": "Armstrong recording",
+        "iswcs": [],
+        "languages": [],
+        "title": "West End Blues",
+        "type": "Song",
+        "language": null,
+        "attributes": [],
+        "id": "a97c426c-c138-4531-9d4a-e2eb0bca7961",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      },
+      "attributes": [],
+      "target-type": "work",
+      "attribute-values": {},
+      "target-credit": "",
+      "type": "performance",
+      "direction": "forward",
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "attribute-ids": {},
+      "end": null,
+      "ended": false
+    }
+  ],
+  "title": "West End Blues",
+  "disambiguation": "",
+  "video": false
+}
+
+  2 distinct work(s) among the top candidates:
+    a97c426c-c138-4531-9d4a-e2eb0bca7961  West End Blues  iswc=[]
+    ec12be9a-bfbb-49e3-a491-f84a49cd6a80  West End Blues  iswc=['T-070.280.775-7']
+
+[3] browse_recordings_for_work — recording selection
+  work a97c426c-c138-4531-9d4a-e2eb0bca7961: 53 recordings linked; 46 credited to "Louis Armstrong"
+  work ec12be9a-bfbb-49e3-a491-f84a49cd6a80: 43 recordings linked; 2 credited to "Louis Armstrong"
+  session 1928-06-28  5 entity(ies)  earliest release on file 1928-07  e.g. 18912187-b35f-4bce-b248-e30205a45875  Louis Armstrong and His Hot Five  [work a97c426c]
+  session 1939-04-05  2 entity(ies)  earliest release on file 1957  e.g. 022e2832-afbf-4406-a68d-f2dd8b6c140d  Louis Armstrong and His Orchestra  [work a97c426c]
+  session 1946-09-05  1 entity(ies)  earliest release on file 1999-07-16  e.g. 9ae61b9a-4142-4fde-8a76-1a17dd2d30d8  Louis Armstrong  [work a97c426c]
+  session 1952-03     1 entity(ies)  earliest release on file 2017-11-17  e.g. 8c0ee40e-0955-4288-8539-6962895b08ae  Louis Armstrong feat. Russ Phillips, Barney Bigard, Marty Napoleon, Dale Jones, Cozy Cole & Velma Middleton  [work a97c426c]
+  session 1954-01-16  1 entity(ies)  earliest release on file 1982  e.g. ede4e95f-1b00-448c-9f2f-1e0013802802  Louis Armstrong & His All‐Stars  [work a97c426c]
+  session 1955        1 entity(ies)  earliest release on file ----  e.g. a86fe067-ca50-4e9a-ae8d-2ee3db3c9a4d  Louis Armstrong  [work ec12be9a]
+  session 1955-12-20  1 entity(ies)  earliest release on file 1967  e.g. ab6adc15-be37-458c-a09e-826b057cfe1d  Louis Armstrong & His All‐Stars  [work a97c426c]
+  session 1956-06-01  2 entity(ies)  earliest release on file 1980  e.g. 89fd444f-3e64-472a-b3ad-4c1052c03e25  Louis Armstrong  [work a97c426c]
+  undated        34 entity(ies)  releases on file: ['----', '1939', '1942', '1974', '1975', '1986', '1990', '1992', '1994', '1996', '1997', '2000', '2001', '2002', '2003', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2015', '2016', '2018', '2020']
+
+  picked 18912187-b35f-4bce-b248-e30205a45875 — earliest dated session 1928-06-28 (Louis Armstrong and His Hot Five); recording year 1928 [HIGH]
+  its work: a97c426c-c138-4531-9d4a-e2eb0bca7961  West End Blues  iswc=[]
+  resolution_confidence=MEDIUM: 8 dated session(s) (1928-06-28, 1939-04-05, 1946-09-05, 1952-03, 1954-01-16, 1955, 1955-12-20, 1956-06-01) and 34 undated entity(ies) for this artist; earliest dated chosen, the rest are alternates.
+
+[4] get_writers + Wikidata cross-check (P86 composer / P676 lyricist)
+  iswc=[]  wikidata=Q4019073
+  MB  composer   King Oliver  744fa1ae-051c-463c-957a-25a4ddc01c2f
+      King Oliver              -> Q313368  "King Oliver" — American jazz cornet player and bandleader  P570=1938
+  writer list UNCORROBORATED (Q4019073 has no P86/P676). Confidence LOW; the list may be incomplete.
+
+[4a] composition year
+  Q4019073 "West End Blues": P577=1928 P1191=None P571=None
+
+[5] determination
+  composition  public_domain  expiry=2024   rule=us_published_expired
+               Published 1928 in the US. The 95-year term expired 1 January 2024.
+  recording    protected      expiry=2029   rule=us_sr_mma_1923_1946  [HIGH]
+               Published 1928. Under the CLASSICS Act (95-year term plus 5 additional years), protected until 1 January 2029.
+  life+70 (EU, info only) public_domain  expiry=2009   rule=eu_life_plus_70  [writers LOW]
+               Last surviving author died 1938. Term expired 1 January 2009.
+
+  ROLL-UP: LICENSE_REQUIRED  (blocking layer: recording)
+
+  UNRESOLVED QUESTIONS
+  • Who are all the credited writers of "West End Blues"?
+    why: Life+70 runs from the death of the LAST surviving author; a missing co-writer silently shortens the term. MusicBrainz's list could not be cross-checked.
+    affects: ['composition']  effort: minutes
+    search: ['"West End Blues" composer lyricist', '"West End Blues" ISWC']
+    where: https://www.ascap.com/repertory
+    where: https://repertoire.bmi.com/
+    where: https://portal.themlc.com/search
+==============================================================================
+Rhapsody in Blue  —  Paul Whiteman
+==============================================================================
+
+[1] search_recording
+  100  2020-02-10  544d8de1-9c55-4f9e-8326-fbacc419af59  Rhapsody in Blue  ·  Paul Whiteman; George Gershwin
+  100  2025-03-25  6da4aab1-7f07-4283-a990-74403504e61d  Rhapsody In Blue  ·  The Paul Whiteman Orchestra
+   95  1995        e7dcc1b5-5f01-4fba-bc4a-d3e527c85f4f  Rhapsody in Blue  ·  Paul Whiteman & His Orchestra
+   95  2005        2883112e-2886-4a61-b064-13bffd362438  Rhapsody In Blue  ·  Paul Whiteman and His Orchestra
+   95  1996        20ba6512-1eee-4d68-b602-d38fdcb22e52  Rhapsody In Blue  ·  Paul Whiteman and His Orchestra
+   95  2013-07-17  76b1fe12-ed4b-4f38-9be0-36c125692792  Rhapsody in Blue  ·  Paul Whiteman and His Orchestra
+   95  ----------  21a1e7da-214f-4be0-b68e-27abe2168c87  Rhapsody In Blue  ·  Paul Whiteman and His Orchestra
+   95  1998        97148d90-0128-43c1-a887-76c4880f6e52  Rhapsody In Blue  ·  Paul Whiteman and His Orchestra
+   94  1999        5e2b2317-6b21-4eca-bf83-936d08729ad7  Rhapsody In Blue, For Piano & Orchestra  ·  Paul Whiteman
+   91  1988        8f1897b7-bd0f-4f50-bccd-12c9eb5377af  Rhapsody in Blue  ·  Paul Whiteman and His Concert Orchestra
+  ... 15 more
+
+[2] get_work_for_recording — RAW RESPONSE for the top 10 candidates
+
+  -- 544d8de1-9c55-4f9e-8326-fbacc419af59  (2020-02-10, Paul Whiteman; George Gershwin)
+{
+  "title": "Rhapsody in Blue",
+  "length": 544052,
+  "video": false,
+  "id": "544d8de1-9c55-4f9e-8326-fbacc419af59",
+  "relations": [],
+  "first-release-date": "2020-02-10",
+  "disambiguation": ""
+}
+  no work relation on this candidate
+
+  -- 6da4aab1-7f07-4283-a990-74403504e61d  (2025-03-25, The Paul Whiteman Orchestra)
+{
+  "first-release-date": "2025-03-25",
+  "title": "Rhapsody In Blue",
+  "relations": [],
+  "id": "6da4aab1-7f07-4283-a990-74403504e61d",
+  "video": false,
+  "length": 541000,
+  "disambiguation": ""
+}
+  no work relation on this candidate
+
+  -- e7dcc1b5-5f01-4fba-bc4a-d3e527c85f4f  (1995, Paul Whiteman & His Orchestra)
+{
+  "relations": [
+    {
+      "target-type": "work",
+      "attributes": [],
+      "work": {
+        "title": "Rhapsody in Blue",
+        "languages": [
+          "zxx"
+        ],
+        "iswcs": [
+          "T-010.244.926-2",
+          "T-070.126.537-3"
+        ],
+        "disambiguation": "standard 1942 orchestration",
+        "type": null,
+        "language": "zxx",
+        "attributes": [],
+        "id": "bf7e3ad3-4d47-3425-aa5f-8cc8c91d53ed",
+        "type-id": null
+      },
+      "source-credit": "",
+      "ended": false,
+      "end": null,
+      "attribute-ids": {},
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": null,
+      "direction": "forward",
+      "type": "performance",
+      "target-credit": "",
+      "attribute-values": {}
+    }
+  ],
+  "length": 949000,
+  "first-release-date": "1995",
+  "id": "e7dcc1b5-5f01-4fba-bc4a-d3e527c85f4f",
+  "video": false,
+  "title": "Rhapsody in Blue",
+  "disambiguation": ""
+}
+
+  -- 2883112e-2886-4a61-b064-13bffd362438  (2005, Paul Whiteman and His Orchestra)
+{
+  "length": 525000,
+  "relations": [
+    {
+      "end": "1938-12-25",
+      "ended": true,
+      "begin": "1938-12-25",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "attribute-ids": {
+        "live": "70007db6-a8bc-46d7-a770-80e6a0bb551a"
+      },
+      "direction": "forward",
+      "attribute-values": {},
+      "target-credit": "",
+      "type": "performance",
+      "attributes": [
+        "live"
+      ],
+      "target-type": "work",
+      "work": {
+        "type-id": null,
+        "id": "e8ede5f8-2fc4-4e2f-9d50-931bb632a905",
+        "attributes": [],
+        "type": null,
+        "language": "zxx",
+        "disambiguation": "catch-all for unknown versions and arrangements",
+        "languages": [
+          "zxx"
+        ],
+        "iswcs": [],
+        "title": "Rhapsody in Blue"
+      },
+      "source-credit": ""
+    }
+  ],
+  "id": "2883112e-2886-4a61-b064-13bffd362438",
+  "first-release-date": "2005",
+  "video": false,
+  "disambiguation": "",
+  "title": "Rhapsody In Blue"
+}
+
+  -- 20ba6512-1eee-4d68-b602-d38fdcb22e52  (1996, Paul Whiteman and His Orchestra)
+{
+  "length": 554400,
+  "relations": [
+    {
+      "work": {
+        "id": "51bce4a5-645a-4b0c-814c-1743dcbe8498",
+        "attributes": [],
+        "type-id": null,
+        "disambiguation": "1926 Grofé revision",
+        "languages": [
+          "zxx"
+        ],
+        "title": "Rhapsody in Blue",
+        "iswcs": [],
+        "type": null,
+        "language": "zxx"
+      },
+      "source-credit": "",
+      "attributes": [],
+      "target-type": "work",
+      "direction": "forward",
+      "attribute-values": {},
+      "target-credit": "",
+      "type": "performance",
+      "end": "1927-04-21",
+      "ended": true,
+      "begin": "1927-04-21",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "attribute-ids": {}
+    }
+  ],
+  "first-release-date": "1996",
+  "id": "20ba6512-1eee-4d68-b602-d38fdcb22e52",
+  "video": false,
+  "title": "Rhapsody In Blue",
+  "disambiguation": ""
+}
+
+  -- 76b1fe12-ed4b-4f38-9be0-36c125692792  (2013-07-17, Paul Whiteman and His Orchestra)
+{
+  "length": 552000,
+  "disambiguation": "",
+  "video": false,
+  "relations": [],
+  "id": "76b1fe12-ed4b-4f38-9be0-36c125692792",
+  "title": "Rhapsody in Blue",
+  "first-release-date": "2013-07-17"
+}
+  no work relation on this candidate
+
+  -- 21a1e7da-214f-4be0-b68e-27abe2168c87  (None, Paul Whiteman and His Orchestra)
+{
+  "relations": [],
+  "title": "Rhapsody In Blue",
+  "disambiguation": "",
+  "length": 546883,
+  "video": false,
+  "id": "21a1e7da-214f-4be0-b68e-27abe2168c87"
+}
+  no work relation on this candidate
+
+  -- 97148d90-0128-43c1-a887-76c4880f6e52  (1998, Paul Whiteman and His Orchestra)
+{
+  "video": false,
+  "title": "Rhapsody In Blue",
+  "disambiguation": "",
+  "relations": [
+    {
+      "ended": true,
+      "end": "1924-06-10",
+      "attribute-ids": {},
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": "1924-06-10",
+      "direction": "forward",
+      "type": "performance",
+      "target-credit": "",
+      "attribute-values": {},
+      "target-type": "work",
+      "attributes": [],
+      "work": {
+        "attributes": [],
+        "id": "60b22df4-c354-4045-82dd-596e36cc7d10",
+        "type-id": null,
+        "languages": [
+          "zxx"
+        ],
+        "iswcs": [],
+        "title": "Rhapsody in Blue",
+        "disambiguation": "original 1924 jazz band version, less often performed",
+        "language": "zxx",
+        "type": null
+      },
+      "source-credit": ""
+    }
+  ],
+  "length": 523000,
+  "first-release-date": "1998",
+  "id": "97148d90-0128-43c1-a887-76c4880f6e52"
+}
+
+  -- 5e2b2317-6b21-4eca-bf83-936d08729ad7  (1999, Paul Whiteman)
+{
+  "video": false,
+  "disambiguation": "",
+  "title": "Rhapsody In Blue, For Piano & Orchestra",
+  "length": 507000,
+  "relations": [],
+  "id": "5e2b2317-6b21-4eca-bf83-936d08729ad7",
+  "first-release-date": "1999"
+}
+  no work relation on this candidate
+
+  -- 8f1897b7-bd0f-4f50-bccd-12c9eb5377af  (1988, Paul Whiteman and His Concert Orchestra)
+{
+  "length": 529800,
+  "title": "Rhapsody in Blue",
+  "disambiguation": "",
+  "first-release-date": "1988",
+  "relations": [
+    {
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "ended": true,
+      "target-type": "work",
+      "attribute-ids": {},
+      "type": "performance",
+      "begin": "1924-06-10",
+      "target-credit": "",
+      "source-credit": "",
+      "end": "1924-06-10",
+      "attribute-values": {},
+      "attributes": [],
+      "work": {
+        "language": "zxx",
+        "type-id": null,
+        "title": "Rhapsody in Blue",
+        "iswcs": [],
+        "attributes": [],
+        "disambiguation": "original 1924 jazz band version, less often performed",
+        "languages": [
+          "zxx"
+        ],
+        "type": null,
+        "id": "60b22df4-c354-4045-82dd-596e36cc7d10"
+      },
+      "direction": "forward"
+    }
+  ],
+  "id": "8f1897b7-bd0f-4f50-bccd-12c9eb5377af",
+  "video": false
+}
+
+  4 distinct work(s) among the top candidates:
+    bf7e3ad3-4d47-3425-aa5f-8cc8c91d53ed  Rhapsody in Blue  iswc=['T-010.244.926-2', 'T-070.126.537-3']
+    e8ede5f8-2fc4-4e2f-9d50-931bb632a905  Rhapsody in Blue  iswc=[]
+    51bce4a5-645a-4b0c-814c-1743dcbe8498  Rhapsody in Blue  iswc=[]
+    60b22df4-c354-4045-82dd-596e36cc7d10  Rhapsody in Blue  iswc=[]
+
+[3] browse_recordings_for_work — recording selection
+  work bf7e3ad3-4d47-3425-aa5f-8cc8c91d53ed: 311 recordings linked; 1 credited to "Paul Whiteman"
+  work e8ede5f8-2fc4-4e2f-9d50-931bb632a905: 97 recordings linked; 3 credited to "Paul Whiteman"
+  work 51bce4a5-645a-4b0c-814c-1743dcbe8498: 11 recordings linked; 9 credited to "Paul Whiteman"
+  work 60b22df4-c354-4045-82dd-596e36cc7d10: 40 recordings linked; 14 credited to "Paul Whiteman"
+  session 1924-06-10  11 entity(ies)  earliest release on file 1924-10  e.g. 3520416c-2872-4c6a-baff-a805cc5b66c6  Paul Whiteman and His Concert Orchestra  [work 60b22df4]
+  session 1927-04-21  9 entity(ies)  earliest release on file 1927-07  e.g. 0259c210-6857-47da-b7d3-c6a727a99635  Paul Whiteman and His Concert Orchestra The Composer at the piano  [work 51bce4a5]
+  session 1938-12-25  1 entity(ies)  earliest release on file 2005  e.g. 2883112e-2886-4a61-b064-13bffd362438  Paul Whiteman and His Orchestra  [work e8ede5f8]
+  undated        6 entity(ies)  releases on file: ['1944', '1956', '1995', '1997', '2010']
+
+  picked 713993f2-2ac6-4546-83e6-2ad7f212c908 — earliest dated session 1924-06-10 (Paul Whiteman and His Concert Orchestra, (The Composer at the piano)); recording year 1924 [HIGH]
+  its work: 60b22df4-c354-4045-82dd-596e36cc7d10  Rhapsody in Blue  iswc=[]
+  resolution_confidence=MEDIUM: 3 dated session(s) (1924-06-10, 1927-04-21, 1938-12-25) and 6 undated entity(ies) for this artist; earliest dated chosen, the rest are alternates.
+
+[4] get_writers + Wikidata cross-check (P86 composer / P676 lyricist)
+  iswc=[]  wikidata=Q722599
+  MB  composer   George Gershwin  65744963-191a-44ef-a3c7-b693a808a158
+      George Gershwin          -> Q123829  "George Gershwin" — American composer and pianist (1898–1937)  P570=1937
+  WD  composer   George Gershwin  Q123829  P570=1937
+  writer list CORROBORATED: MB and Wikidata agree exactly.
+
+[4a] composition year
+  Q722599 "Rhapsody in Blue": P577=1924 P1191=1924 P571=None
+
+[5] determination
+  composition  public_domain  expiry=2020   rule=us_published_expired
+               Published 1924 in the US. The 95-year term expired 1 January 2020.
+  recording    public_domain  expiry=2025   rule=us_sr_mma_1923_1946  [HIGH]
+               Published 1924. Under the CLASSICS Act (95-year term plus 5 additional years), protection ended 1 January 2025.
+  life+70 (EU, info only) public_domain  expiry=2008   rule=eu_life_plus_70  [writers HIGH]
+               Last surviving author died 1937. Term expired 1 January 2008.
+
+  ROLL-UP: CLEAR  (blocking layer: composition)
+==============================================================================
+Take Five  —  (no artist given)
+==============================================================================
+
+[1] search_recording
+  100  1987-01-01  9bd18119-aa5d-46d9-8c39-17d992b4cdb5  Take Five  ·  Deborah Henson-Conant
+  100  1989        23a7ab5d-492f-4c7e-9db8-051fa3ab541b  Take Five  ·  45 Grave
+  100  2000-02-01  837e231a-4cef-4c17-a5b3-e1d84cefb7f3  Take Five  ·  The String Cheese Incident
+  100  2001-02-27  3d87b15d-6680-4957-a6a5-2bbd13acf7bb  Take Five  ·  The Dave Brubeck Quartet
+  100  2001-02-13  24d59dad-c9a1-46a6-b785-14ed050156b1  Take Five  ·  Dave Brubeck
+  100  1992        ebe4c27f-4e01-4069-9094-c0307998df2d  Take Five  ·  Helge Schneider
+  100  1998-02-10  dd1e7399-9b42-4805-a43c-23968588bc95  Take Five  ·  Attrition
+  100  1990        e285867e-5969-4807-9023-86535a806081  Take Five  ·  Dave Brubeck
+  100  2003        0325518e-e3b8-4bb5-ab2e-836b6af0b6b7  Take Five  ·  Johnny Fiasco
+  100  2005-05-04  34cb5fee-17a0-49a4-b150-e3b061d2ba2b  Take Five  ·  Malene Mortensen
+  ... 15 more
+
+  >>> AMBIGUOUS: 18 different artists in the results and no artist given. <<<
+  stop_for_disambiguation=True, resolution_confidence=LOW. No research done. Candidates:
+    1963       Davy Graham                              1 recording(s)  ['Take Five']
+    1965       Richard Anthony                          1 recording(s)  ['Take Five']
+    1987-01-01 Deborah Henson-Conant                    1 recording(s)  ['Take Five']
+    1989       45 Grave                                 1 recording(s)  ['Take Five']
+    1990       Dave Brubeck                             7 recording(s)  ['Take Five']
+    1992       Helge Schneider                          1 recording(s)  ['Take Five']
+    1995-11-07 The Dave Brubeck Trio & Gerry Mulligan   1 recording(s)  ['Take Five']
+    1996       George Benson                            1 recording(s)  ['Take Five']
+    1997       Aziza Mustafa Zadeh                      1 recording(s)  ['Take Five']
+    1998-02-10 Attrition                                1 recording(s)  ['Take Five']
+    2000-02-01 The String Cheese Incident               1 recording(s)  ['Take Five']
+    2001       Raymond Walker Quintet                   1 recording(s)  ['Take Five']
+    2001-02-27 The Dave Brubeck Quartet                 2 recording(s)  ['Take Five']
+    2003       Johnny Fiasco                            1 recording(s)  ['Take Five']
+    2005-05-04 Malene Mortensen                         1 recording(s)  ['Take Five']
+    2006-07-25 Kashmere Stage Band                      1 recording(s)  ['Take Five']
+    2007-10-24 山中千尋                                     1 recording(s)  ['Take Five']
+    ----       The Swingfield Quartet                   1 recording(s)  ['Take Five']
+==============================================================================
+Mack the Knife  —  (no artist given)
+==============================================================================
+
+[1] search_recording
+  100  2003-11-13  43345924-54ad-4c9c-a36a-d5e40db29824  Mack the Knife  ·  Louis Armstrong & His All‐Stars
+  100  ----------  785f2163-77dd-4aa1-952b-797876de0325  Mack the Knife  ·  Nairobi Trio
+  100  1990        70f9434c-2aeb-4572-b3aa-4bbc55943732  Mack the Knife  ·  Louis Armstrong
+  100  2003-05-20  1d08b9c0-73f4-4c50-98c7-d0444cdf84b3  Mack the Knife  ·  Ella Fitzgerald
+  100  2000        79bc3e0a-c779-4dae-a83f-f29906380d3a  Mack the Knife  ·  Ella Fitzgerald
+  100  1960        1b123426-4551-4cf8-9c19-0d6c0b21a6dc  Mack the Knife  ·  Ella Fitzgerald and The Paul Smith Quartet
+  100  2003-02-25  f751c896-7f3f-4c5f-bb5b-9c0ad245ec04  Mack the Knife  ·  Louis Armstrong
+  100  2004        aa6a7348-90bb-4c29-a5fd-f6671072f70f  Mack the Knife  ·  Chantz
+  100  1994        b26b0a57-6ed2-4175-a44b-3f373696cb25  Mack the Knife  ·  Louis Armstrong & His All‐Stars
+  100  1984        4a21a5f1-a561-49a9-8ea8-35de2a042f14  Mack the Knife  ·  King Kurt
+  ... 15 more
+
+  >>> AMBIGUOUS: 16 different artists in the results and no artist given. <<<
+  stop_for_disambiguation=True, resolution_confidence=LOW. No research done. Candidates:
+    1960       Ella Fitzgerald and The Paul Smith Quartet 1 recording(s)  ['Mack the Knife']
+    1982       Eartha Kitt                              1 recording(s)  ['Mack the Knife']
+    1983-11-18 King Kurt                                2 recording(s)  ['Mack the Knife']
+    1990       Louis Armstrong                          4 recording(s)  ['Mack the Knife']
+    1994       Louis Armstrong & His All‐Stars          2 recording(s)  ['Mack the Knife']
+    1994-03-22 Ella Fitzgerald                          4 recording(s)  ['Mack the Knife']
+    1995       Melina Mercouri                          1 recording(s)  ['Mack the Knife']
+    2001-08-14 Joey DeFrancesco                         1 recording(s)  ['Mack the Knife']
+    2002       The Johan Jones Quartet                  1 recording(s)  ['Mack the Knife']
+    2004       Chantz                                   1 recording(s)  ['Mack the Knife']
+    2004       Bobby Darin                              2 recording(s)  ['Mack the Knife']
+    2004-12-01 Arne Domnérus                            1 recording(s)  ['Mack the Knife']
+    ----       Nairobi Trio                             1 recording(s)  ['Mack the Knife']
+    ----       Compaq Big Band                          1 recording(s)  ['Mack the Knife']
+    ----       Duke Ellington & Ella Fitzgerald         1 recording(s)  ['Mack the Knife']
+    ----       Dave Dudley                              1 recording(s)  ['Mack the Knife']
+==============================================================================
+Summertime  —  (no artist given)
+==============================================================================
+
+[1] search_recording
+  100  1997        6ebb23f4-332c-4a93-9365-5e807db979c0  Summertime, Summertime  ·  The Jamies
+  100  1997-11-18  eacb7864-f9a5-4bbe-a580-adb6bf44971c  Summertime, Summertime  ·  Nocera
+  100  2002        ce2d2330-a45f-4a52-bc7c-becbbda9917b  Summertime, Summertime  ·  The Jamies
+  100  2010        95921cf2-2ac2-4c7d-a630-f73164eab829  Summertime Summertime  ·  The Jamies
+  100  2015        6f32695c-62c6-4d69-8ac7-e76c85f09fa9  Summertime Summertime  ·  Nocera
+  100  2015-02-15  47b75cfa-e25d-43fa-96d5-5314601047b2  Summertime Summertime  ·  Nocera
+  100  ----------  a4335377-35d7-40b6-92a6-5cb33c7144ed  Summertime Summertime  ·  The Fortunes
+  100  2007-07-24  15cfce55-20e6-464c-882a-f2574e04b7a6  Summertime, Summertime  ·  The Jamies
+  100  1989        db050fb0-f9cd-45a6-aab1-171f45080a06  Summertime, Summertime  ·  Nocera
+  100  2010-06-28  3659b9d7-1c40-42c5-b4e3-031bd6f894de  Summertime Summertime  ·  The Jamies
+  ... 15 more
+
+  >>> AMBIGUOUS: 9 different artists in the results and no artist given. <<<
+  stop_for_disambiguation=True, resolution_confidence=LOW. No research done. Candidates:
+    1977       The Jamies                               9 recording(s)  ['Summertime Summertime', 'Summertime, Summertime']
+    1987       Nocera                                   9 recording(s)  ['Summertime Summertime', 'Summertime, Summertime']
+    1997-06-10 Corina                                   1 recording(s)  ['Summertime Summertime']
+    1999       Hobby Horse                              1 recording(s)  ['Summertime Summertime']
+    1999       Chris White                              1 recording(s)  ['Summertime Summertime']
+    2006-03-31 Pizzicato Five                           1 recording(s)  ['Summertime, Summertime']
+    2022       Our Gang                                 1 recording(s)  ['Summertime, Summertime']
+    ----       The Fortunes                             1 recording(s)  ['Summertime Summertime']
+    ----       Vanity Fare                              1 recording(s)  ['Summertime, Summertime']
+==============================================================================
+Blue Moon  —  (no artist given)
+==============================================================================
+
+[1] search_recording
+  100  1993        1a6b061e-35ea-45bf-ab92-608fc8732f44  Blue Moon  ·  Showaddywaddy
+  100  1996-02-01  d7b74156-946f-40df-a4df-0ae3267cf638  Blue Moon  ·  De/Vision
+  100  ----------  c9b13887-f426-4b21-af89-01f802097cf0  Blue Moon  ·  Dogma
+  100  ----------  0d34dc9d-f42c-44ca-a5a6-587d9e2d14a1  Blue Moon  ·  Whoolilicious
+  100  1961        97dc33ee-b89f-4959-8d75-53cc95ef3078  Blue Moon  ·  Ella Fitzgerald
+  100  1991        08eb86b7-afab-4e02-a203-d1af5c0131ea  Blue Moon  ·  University of Rochester Yellowjackets
+  100  1996-05-21  9f3922ef-ffc7-495b-802b-014578daf31e  Blue Moon  ·  Oscar Peterson
+  100  1999        5cd08503-c5ee-40b1-a43e-99225eca4791  Blue Moon  ·  Paul Petersen
+  100  1961        9b040ded-13c1-4413-8b40-8649a572bf2f  Blue Moon  ·  Werner Müller und sein Orchester
+  100  1999        4b8ca176-e15b-4ac1-9037-356a8fed9cb3  Blue Moon  ·  Tony Bennett
+  ... 15 more
+
+  >>> AMBIGUOUS: 24 different artists in the results and no artist given. <<<
+  stop_for_disambiguation=True, resolution_confidence=LOW. No research done. Candidates:
+    1961       Ella Fitzgerald                          1 recording(s)  ['Blue Moon']
+    1961       Werner Müller und sein Orchester         1 recording(s)  ['Blue Moon']
+    1979       Freddie Falcon                           1 recording(s)  ['Blue Moon']
+    1987       Sha Na Na                                1 recording(s)  ['Blue Moon']
+    1989       Lionel Hampton                           1 recording(s)  ['Blue Moon']
+    1991       University of Rochester Yellowjackets    1 recording(s)  ['Blue Moon']
+    1992       Sleeping Dogs Wake                       1 recording(s)  ['Blue Moon']
+    1993       Showaddywaddy                            1 recording(s)  ['Blue Moon']
+    1993-08-31 Johnny Hodges                            1 recording(s)  ['Blue Moon']
+    1994       Bobby “Blue” Bland                       1 recording(s)  ['Blue Moon']
+    1996       Elvis Presley                            1 recording(s)  ['Blue Moon']
+    1996-02-01 De/Vision                                1 recording(s)  ['Blue Moon']
+    1996-05-21 Oscar Peterson                           1 recording(s)  ['Blue Moon']
+    1997       Les Brown                                1 recording(s)  ['Blue Moon']
+    1999       Paul Petersen                            1 recording(s)  ['Blue Moon']
+    1999       Tony Bennett                             1 recording(s)  ['Blue Moon']
+    2001       Jo Stafford                              1 recording(s)  ['Blue Moon']
+    2004       Nat King Cole                            1 recording(s)  ['Blue Moon']
+    2004-03-24 Mel Tormé                                2 recording(s)  ['Blue Moon']
+    2006       Lyambiko                                 1 recording(s)  ['Blue Moon']
+    2006-07-23 Captain Polaroid                         1 recording(s)  ['Blue Moon']
+    ----       Dogma                                    1 recording(s)  ['Blue Moon']
+    ----       Whoolilicious                            1 recording(s)  ['Blue Moon']
+    ----       Conway Twitty                            1 recording(s)  ['Blue Moon']
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                     resolve  rec     work  iswc  writers  wconf   deaths         comp    2-layer  verdict
+------------------------------------------------------------------------------------------------------------------------
+West End Blues / Louis Armstrong   MEDIUM   1928r   yes   no    1        LOW     1938           1928    YES      license_required (recording)  [1 unresolved]
+Rhapsody in Blue / Paul Whiteman   MEDIUM   1924r   yes   no    1        HIGH    1937           1924    YES      clear (composition)
+Take Five                          STOP     -       -     -     -        -       -              -       no       undetermined
+Mack the Knife                     STOP     -       -     -     -        -       -              -       no       undetermined
+Summertime                         STOP     -       -     -     -        -       -              -       no       undetermined
+Blue Moon                          STOP     -       -     -     -        -       -              -       no       undetermined
+
+  resolve = recording resolution confidence: HIGH one dated session · MEDIUM several dated sessions, earliest used ·
+            LOW release date only · STOP ambiguous, no research · no_work no work relation in top candidates
+  rec     = recording year; 'r' dated performance relation (used) · 'f' first-release-date (LOW, never used for a term)
+  wconf   = writer-list confidence: HIGH MB=Wikidata · MEDIUM union · LOW uncorroborated
+  comp*   = year from P1191 first-performance or P571 inception, not P577 publication
+  2-layer = both layers determined (neither undetermined)
+
+
+######## ARTIST-HINTED RUNS (artist choices added for the run) ########
+
+==============================================================================
+Take Five  —  The Dave Brubeck Quartet
+==============================================================================
+
+[1] search_recording
+  100  1992        316aa757-7eff-4be4-904a-353f682c6233  Take Five  ·  The Dave Brubeck Quartet
+  100  2020-12-04  41105e99-a8a3-4b13-96e5-766dfced4be5  Take Five  ·  The Dave Brubeck Quartet
+  100  2008        c72ec953-c8a9-4400-81d1-82d3b31f1860  Take Five  ·  The Dave Brubeck Quartet
+  100  2011-11-01  3a5f5452-575a-48cd-8830-7df884fca40a  Take Five  ·  The Dave Brubeck Quartet
+  100  1992        3ee719e2-202f-48cd-981e-88372995cf86  Take Five  ·  The Dave Brubeck Quartet
+  100  2007-09-10  bfa182e2-5679-4d0d-b2a3-ae08e4c48c36  Take Five  ·  The Dave Brubeck Quartet
+  100  2014-10-14  f90ea832-3610-4c0b-a5ff-bb202610487c  Take Five  ·  The Dave Brubeck Quartet
+  100  2013        b3a35c79-557a-4654-a7e6-060bf6fe9add  Take Five  ·  The Dave Brubeck Quartet
+  100  2017        b2f146af-daf8-410c-be0c-6b35aed819b5  Take Five  ·  The Dave Brubeck Quartet
+  100  2020-03-06  06c122ff-29de-4df1-8bb5-fac17fe24a79  Take Five  ·  The Dave Brubeck Quartet
+  ... 15 more
+
+[2] get_work_for_recording — RAW RESPONSE for the top 10 candidates
+
+  -- 316aa757-7eff-4be4-904a-353f682c6233  (1992, The Dave Brubeck Quartet)
+{
+  "video": false,
+  "disambiguation": "",
+  "relations": [
+    {
+      "target-type": "work",
+      "ended": false,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": null,
+      "attribute-ids": {},
+      "attributes": [],
+      "target-credit": "",
+      "work": {
+        "type-id": null,
+        "language": "zxx",
+        "disambiguation": "original instrumental version",
+        "type": null,
+        "languages": [
+          "zxx"
+        ],
+        "title": "Take Five",
+        "id": "df0b884d-84f5-45f0-9083-3fb539fa4700",
+        "attributes": [],
+        "iswcs": [
+          "T-070.940.469-2"
+        ]
+      },
+      "end": null,
+      "type": "performance",
+      "direction": "forward",
+      "attribute-values": {},
+      "source-credit": ""
+    }
+  ],
+  "title": "Take Five",
+  "id": "316aa757-7eff-4be4-904a-353f682c6233",
+  "length": 410866,
+  "first-release-date": "1992"
+}
+
+  -- 41105e99-a8a3-4b13-96e5-766dfced4be5  (2020-12-04, The Dave Brubeck Quartet)
+{
+  "title": "Take Five",
+  "length": 348574,
+  "relations": [
+    {
+      "type": "performance",
+      "attribute-ids": {},
+      "begin": null,
+      "ended": false,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "target-type": "work",
+      "work": {
+        "type": null,
+        "id": "df0b884d-84f5-45f0-9083-3fb539fa4700",
+        "iswcs": [
+          "T-070.940.469-2"
+        ],
+        "attributes": [],
+        "disambiguation": "original instrumental version",
+        "languages": [
+          "zxx"
+        ],
+        "type-id": null,
+        "title": "Take Five",
+        "language": "zxx"
+      },
+      "attributes": [],
+      "direction": "forward",
+      "target-credit": "",
+      "source-credit": "",
+      "attribute-values": {},
+      "end": null
+    }
+  ],
+  "video": false,
+  "id": "41105e99-a8a3-4b13-96e5-766dfced4be5",
+  "disambiguation": "",
+  "first-release-date": "2020-12-04"
+}
+
+  -- c72ec953-c8a9-4400-81d1-82d3b31f1860  (2008, The Dave Brubeck Quartet)
+{
+  "title": "Take Five",
+  "disambiguation": "",
+  "video": false,
+  "first-release-date": "2008",
+  "id": "c72ec953-c8a9-4400-81d1-82d3b31f1860",
+  "length": 324120,
+  "relations": []
+}
+  no work relation on this candidate
+
+  -- 3a5f5452-575a-48cd-8830-7df884fca40a  (2011-11-01, The Dave Brubeck Quartet)
+{
+  "length": 498080,
+  "title": "Take Five",
+  "first-release-date": "2011-11-01",
+  "disambiguation": "",
+  "video": false,
+  "id": "3a5f5452-575a-48cd-8830-7df884fca40a",
+  "relations": [
+    {
+      "type": "performance",
+      "attribute-ids": {
+        "live": "70007db6-a8bc-46d7-a770-80e6a0bb551a"
+      },
+      "begin": "1967-12-26",
+      "target-type": "work",
+      "ended": true,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "direction": "forward",
+      "work": {
+        "id": "df0b884d-84f5-45f0-9083-3fb539fa4700",
+        "type": null,
+        "languages": [
+          "zxx"
+        ],
+        "disambiguation": "original instrumental version",
+        "attributes": [],
+        "iswcs": [
+          "T-070.940.469-2"
+        ],
+        "title": "Take Five",
+        "type-id": null,
+        "language": "zxx"
+      },
+      "attributes": [
+        "live"
+      ],
+      "target-credit": "",
+      "attribute-values": {},
+      "end": "1967-12-26",
+      "source-credit": ""
+    }
+  ]
+}
+
+  -- 3ee719e2-202f-48cd-981e-88372995cf86  (1992, The Dave Brubeck Quartet)
+{
+  "title": "Take Five",
+  "disambiguation": "",
+  "video": false,
+  "first-release-date": "1992",
+  "id": "3ee719e2-202f-48cd-981e-88372995cf86",
+  "relations": [
+    {
+      "direction": "forward",
+      "target-credit": "",
+      "attribute-values": {},
+      "type": "performance",
+      "end": null,
+      "ended": false,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": null,
+      "attribute-ids": {},
+      "work": {
+        "attributes": [],
+        "id": "df0b884d-84f5-45f0-9083-3fb539fa4700",
+        "type-id": null,
+        "languages": [
+          "zxx"
+        ],
+        "title": "Take Five",
+        "iswcs": [
+          "T-070.940.469-2"
+        ],
+        "disambiguation": "original instrumental version",
+        "type": null,
+        "language": "zxx"
+      },
+      "source-credit": "",
+      "target-type": "work",
+      "attributes": []
+    }
+  ],
+  "length": 179640
+}
+
+  -- bfa182e2-5679-4d0d-b2a3-ae08e4c48c36  (2007-09-10, The Dave Brubeck Quartet)
+{
+  "relations": [
+    {
+      "attribute-values": {},
+      "target-credit": "",
+      "type": "performance",
+      "direction": "forward",
+      "begin": "2004-11-13",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "attribute-ids": {
+        "live": "70007db6-a8bc-46d7-a770-80e6a0bb551a"
+      },
+      "end": "2004-11-13",
+      "ended": true,
+      "source-credit": "",
+      "work": {
+        "language": "zxx",
+        "type": null,
+        "iswcs": [
+          "T-070.940.469-2"
+        ],
+        "languages": [
+          "zxx"
+        ],
+        "title": "Take Five",
+        "disambiguation": "original instrumental version",
+        "type-id": null,
+        "attributes": [],
+        "id": "df0b884d-84f5-45f0-9083-3fb539fa4700"
+      },
+      "attributes": [
+        "live"
+      ],
+      "target-type": "work"
+    }
+  ],
+  "length": 586640,
+  "id": "bfa182e2-5679-4d0d-b2a3-ae08e4c48c36",
+  "first-release-date": "2007-09-10",
+  "video": false,
+  "disambiguation": "",
+  "title": "Take Five"
+}
+
+  -- f90ea832-3610-4c0b-a5ff-bb202610487c  (2014-10-14, The Dave Brubeck Quartet)
+{
+  "video": false,
+  "disambiguation": "",
+  "title": "Take Five",
+  "relations": [],
+  "length": 324280,
+  "id": "f90ea832-3610-4c0b-a5ff-bb202610487c",
+  "first-release-date": "2014-10-14"
+}
+  no work relation on this candidate
+
+  -- b3a35c79-557a-4654-a7e6-060bf6fe9add  (2013, The Dave Brubeck Quartet)
+{
+  "length": 324920,
+  "id": "b3a35c79-557a-4654-a7e6-060bf6fe9add",
+  "first-release-date": "2013",
+  "relations": [],
+  "disambiguation": "",
+  "video": false,
+  "title": "Take Five"
+}
+  no work relation on this candidate
+
+  -- b2f146af-daf8-410c-be0c-6b35aed819b5  (2017, The Dave Brubeck Quartet)
+{
+  "disambiguation": "",
+  "title": "Take Five",
+  "id": "b2f146af-daf8-410c-be0c-6b35aed819b5",
+  "video": false,
+  "length": 319477,
+  "first-release-date": "2017",
+  "relations": []
+}
+  no work relation on this candidate
+
+  -- 06c122ff-29de-4df1-8bb5-fac17fe24a79  (2020-03-06, The Dave Brubeck Quartet)
+{
+  "title": "Take Five",
+  "first-release-date": "2020-03-06",
+  "disambiguation": "",
+  "length": 326000,
+  "id": "06c122ff-29de-4df1-8bb5-fac17fe24a79",
+  "relations": [
+    {
+      "type": "performance",
+      "target-credit": "",
+      "work": {
+        "id": "df0b884d-84f5-45f0-9083-3fb539fa4700",
+        "iswcs": [
+          "T-070.940.469-2"
+        ],
+        "disambiguation": "original instrumental version",
+        "languages": [
+          "zxx"
+        ],
+        "attributes": [],
+        "language": "zxx",
+        "type": null,
+        "type-id": null,
+        "title": "Take Five"
+      },
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "source-credit": "",
+      "end": null,
+      "ended": false,
+      "target-type": "work",
+      "attributes": [],
+      "attribute-ids": {},
+      "begin": null,
+      "direction": "forward",
+      "attribute-values": {}
+    }
+  ],
+  "video": false
+}
+
+  1 distinct work(s) among the top candidates:
+    df0b884d-84f5-45f0-9083-3fb539fa4700  Take Five  iswc=['T-070.940.469-2']
+
+[3] browse_recordings_for_work — recording selection
+  work df0b884d-84f5-45f0-9083-3fb539fa4700: 252 recordings linked; 49 credited to "The Dave Brubeck Quartet"
+  session 1959-07-01  3 entity(ies)  earliest release on file 1959  e.g. 8c753e6f-b0af-4a94-ad06-b82fae763b45  The Dave Brubeck Quartet  [work df0b884d]
+  session 1959-08-18  1 entity(ies)  earliest release on file 2001  e.g. 4bbdaa9f-11eb-4772-80be-033a11999e30  The Dave Brubeck Quartet  [work df0b884d]
+  session 1962-08-28  1 entity(ies)  earliest release on file 2013-05-28  e.g. f1e992a6-4fff-4877-8d31-af3478d71b7f  The Dave Brubeck Quartet  [work df0b884d]
+  session 1963-02-21  2 entity(ies)  earliest release on file 1963  e.g. 8e4b888b-2d2b-43ae-bd33-f38d97c0738c  The Dave Brubeck Quartet  [work df0b884d]
+  session 1963-02-22  2 entity(ies)  earliest release on file 1990  e.g. 318ae04d-360b-4299-84be-6d9d10f688b2  The Dave Brubeck Quartet with Paul Desmond  [work df0b884d]
+  session 1965-08-22  1 entity(ies)  earliest release on file 2008  e.g. 660f8bd3-0419-4f8f-9aba-b6d4d447e037  The Dave Brubeck Quartet  [work df0b884d]
+  session 1967-05-12  1 entity(ies)  earliest release on file 1998  e.g. d961773f-ad0d-4714-b4dc-d15d02246d1a  The Dave Brubeck Quartet feat. Paul Desmond  [work df0b884d]
+  session 1967-10-24  1 entity(ies)  earliest release on file 2017  e.g. ea7b8084-1c5d-4a61-b9fb-51fc149119f6  The Dave Brubeck Quartet  [work df0b884d]
+  session 1967-12-26  1 entity(ies)  earliest release on file 2011-11-01  e.g. 3a5f5452-575a-48cd-8830-7df884fca40a  The Dave Brubeck Quartet  [work df0b884d]
+  session 1976-03-10  1 entity(ies)  earliest release on file 1976  e.g. 0ba930c5-24f2-40d5-831a-54a8bcd825c0  The Dave Brubeck Quartet  [work df0b884d]
+  session 1982-07-22  1 entity(ies)  earliest release on file 2020-10-15  e.g. 1d64d78b-e647-48c5-b8d2-776ee550b69a  The Dave Brubeck Quartet  [work df0b884d]
+  session 1982-08-08  1 entity(ies)  earliest release on file 1982-10-31  e.g. fcc54b3a-8fbb-4a65-93be-683deee56e18  The Dave Brubeck Quartet  [work df0b884d]
+  session 1995-06-11  1 entity(ies)  earliest release on file 2001-02-27  e.g. 3d87b15d-6680-4957-a6a5-2bbd13acf7bb  The Dave Brubeck Quartet  [work df0b884d]
+  session 1998-11-10  1 entity(ies)  earliest release on file 2001-02-27  e.g. 38d01f3e-9419-4daf-a607-67a2c6b24160  The Dave Brubeck Quartet  [work df0b884d]
+  session 2002-07-10  1 entity(ies)  earliest release on file 2003  e.g. eb170e4e-90d7-4ac5-97c0-98c37317677d  The Dave Brubeck Quartet  [work df0b884d]
+  session 2004-11-13  1 entity(ies)  earliest release on file 2007-09-10  e.g. bfa182e2-5679-4d0d-b2a3-ae08e4c48c36  The Dave Brubeck Quartet  [work df0b884d]
+  undated        29 entity(ies)  releases on file: ['----', '1965', '1972', '1976', '1990', '1992', '1994', '1995', '1997', '1998', '1999', '2002', '2006', '2009', '2012', '2016', '2017', '2020']
+
+  picked 2b81cc4d-8692-4504-89f3-49bbdf169473 — earliest dated session 1959-07-01 (The Dave Brubeck Quartet); recording year 1959 [HIGH]
+  its work: df0b884d-84f5-45f0-9083-3fb539fa4700  Take Five  iswc=['T-070.940.469-2']
+  resolution_confidence=MEDIUM: 16 dated session(s) (1959-07-01, 1959-08-18, 1962-08-28, 1963-02-21, 1963-02-22, 1965-08-22, 1967-05-12, 1967-10-24, 1967-12-26, 1976-03-10, 1982-07-22, 1982-08-08, 1995-06-11, 1998-11-10, 2002-07-10, 2004-11-13) and 29 undated entity(ies) for this artist; earliest dated chosen, the rest are alternates.
+
+[4] get_writers + Wikidata cross-check (P86 composer / P676 lyricist)
+  iswc=['T-070.940.469-2']  wikidata=Q844299
+  MB  composer   Paul Desmond  d5bf3447-c526-4f7c-9931-4b7c80fe34de
+      Paul Desmond             -> Q332471  "Paul Desmond" — American jazz musician (1924-1977)  P570=1977
+  WD  composer   Paul Desmond  Q332471  P570=1977
+  writer list CORROBORATED: MB and Wikidata agree exactly.
+
+[4a] composition year
+  Q844299 "Take Five": P577=1959 P1191=None P571=None
+
+[5] determination
+  composition  undetermined   expiry=None   rule=us_renewal_unknown
+               Published 1959 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.
+               blocked_by=renewal_filed
+  recording    protected      expiry=2067   rule=us_sr_mma_1957_1972  [HIGH]
+               Published 1959. Under the CLASSICS Act (fixed statutory expiry of 15 February 2067), protected until 1 January 2067.
+  life+70 (EU, info only) protected      expiry=2048   rule=eu_life_plus_70  [writers HIGH]
+               Last surviving author died 1977. Protected until 1 January 2048.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+  UNRESOLVED QUESTIONS
+  • Was the 1959 copyright in "Take Five" renewed in year 28 (1986–1987)?
+    why: If not renewed, the composition entered the public domain 1 January 1988; if renewed, protected until 1 January 2055.
+    affects: ['composition']  effort: hours (scanned card catalog for pre-1978 renewals)
+    search: ['"Take Five" renewal 1986', '"Take Five" renewal 1987']
+    where: https://archive.org/details/copyrightrecords — Catalog of Copyright Entries, Music, 1986–1987 renewals
+    where: https://cocatalog.loc.gov/ (post-1978 renewals only)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                     resolve  rec     work  iswc  writers  wconf   deaths         comp    2-layer  verdict
+------------------------------------------------------------------------------------------------------------------------
+Take Five / The Dave Brubeck Quartet MEDIUM   1959r   yes   yes   1        HIGH    1977           1959    no       undetermined (composition)  [1 unresolved]
+
+  resolve = recording resolution confidence: HIGH one dated session · MEDIUM several dated sessions, earliest used ·
+            LOW release date only · STOP ambiguous, no research · no_work no work relation in top candidates
+  rec     = recording year; 'r' dated performance relation (used) · 'f' first-release-date (LOW, never used for a term)
+  wconf   = writer-list confidence: HIGH MB=Wikidata · MEDIUM union · LOW uncorroborated
+  comp*   = year from P1191 first-performance or P571 inception, not P577 publication
+  2-layer = both layers determined (neither undetermined)
+==============================================================================
+Mack the Knife  —  Bobby Darin
+==============================================================================
+
+[1] search_recording
+  100  1997        b7a5a882-a973-40e5-b1c9-b29aba521748  Mack the Knife  ·  Bobby Darin
+  100  1988        c9021bf4-f2a0-4cc8-9393-e2d529ad5501  Mack The Knife  ·  Bobby Darin
+  100  ----------  45b0c05f-18f5-4f20-a6e3-f676c9605594  Mack the Knife  ·  Bobby Darin
+  100  2010-11-01  b4d9fcdd-faf1-4d9a-9a46-783925ccd5e7  Mack the Knife  ·  Bobby Darin
+  100  2008        bee021c5-d556-4ce0-8063-c70546390fcf  Mack the Knife  ·  Bobby Darin
+  100  1992        c6d76417-a605-440d-bdf4-0dc4939ea8f1  Mack the Knife  ·  Bobby Darin
+  100  2017        e64fb8e6-ae2c-41bf-bbcc-9b862a199954  Mack the Knife  ·  Bobby Darin
+  100  2018        2690b1de-8261-4fcd-aa42-21a62b079712  Mack the Knife  ·  Bobby Darin
+  100  2005        d5320838-749b-4573-88df-74551bfab073  Mack the Knife  ·  Bobby Darin
+  100  2002        c7c8a54e-d053-4775-be67-0bd17e915577  Mack the Knife  ·  Bobby Darin
+  ... 15 more
+
+[2] get_work_for_recording — RAW RESPONSE for the top 10 candidates
+
+  -- b7a5a882-a973-40e5-b1c9-b29aba521748  (1997, Bobby Darin)
+{
+  "length": 208333,
+  "relations": [],
+  "id": "b7a5a882-a973-40e5-b1c9-b29aba521748",
+  "first-release-date": "1997",
+  "video": false,
+  "disambiguation": "",
+  "title": "Mack the Knife"
+}
+  no work relation on this candidate
+
+  -- c9021bf4-f2a0-4cc8-9393-e2d529ad5501  (1988, Bobby Darin)
+{
+  "video": false,
+  "length": 189800,
+  "id": "c9021bf4-f2a0-4cc8-9393-e2d529ad5501",
+  "title": "Mack The Knife",
+  "relations": [],
+  "first-release-date": "1988",
+  "disambiguation": ""
+}
+  no work relation on this candidate
+
+  -- 45b0c05f-18f5-4f20-a6e3-f676c9605594  (None, Bobby Darin)
+{
+  "relations": [],
+  "id": "45b0c05f-18f5-4f20-a6e3-f676c9605594",
+  "title": "Mack the Knife",
+  "video": false,
+  "disambiguation": "",
+  "length": 191000
+}
+  no work relation on this candidate
+
+  -- b4d9fcdd-faf1-4d9a-9a46-783925ccd5e7  (2010-11-01, Bobby Darin)
+{
+  "title": "Mack the Knife",
+  "relations": [
+    {
+      "attribute-ids": {},
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "ended": false,
+      "target-type": "work",
+      "attributes": [],
+      "type": "performance",
+      "end": null,
+      "work": {
+        "languages": [
+          "eng"
+        ],
+        "title": "Mack the Knife",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "type": "Song",
+        "disambiguation": "1954 Blitzstein translation",
+        "language": "eng",
+        "iswcs": [
+          "T-071.314.125-3",
+          "T-071.402.746-9",
+          "T-802.192.136-9",
+          "T-802.203.417-0",
+          "T-802.337.911-6"
+        ],
+        "id": "b85bbbc9-54f2-3aab-8b27-fb1d510c6e15",
+        "attributes": []
+      },
+      "target-credit": "",
+      "source-credit": "",
+      "attribute-values": {},
+      "direction": "forward"
+    }
+  ],
+  "disambiguation": "",
+  "video": false,
+  "first-release-date": "2010-11-01",
+  "id": "b4d9fcdd-faf1-4d9a-9a46-783925ccd5e7",
+  "length": 184173
+}
+
+  -- bee021c5-d556-4ce0-8063-c70546390fcf  (2008, Bobby Darin)
+{
+  "id": "bee021c5-d556-4ce0-8063-c70546390fcf",
+  "first-release-date": "2008",
+  "length": 186946,
+  "relations": [],
+  "disambiguation": "",
+  "title": "Mack the Knife",
+  "video": false
+}
+  no work relation on this candidate
+
+  -- c6d76417-a605-440d-bdf4-0dc4939ea8f1  (1992, Bobby Darin)
+{
+  "video": false,
+  "disambiguation": "",
+  "title": "Mack the Knife",
+  "length": 234000,
+  "relations": [],
+  "id": "c6d76417-a605-440d-bdf4-0dc4939ea8f1",
+  "first-release-date": "1992"
+}
+  no work relation on this candidate
+
+  -- e64fb8e6-ae2c-41bf-bbcc-9b862a199954  (2017, Bobby Darin)
+{
+  "title": "Mack the Knife",
+  "first-release-date": "2017",
+  "disambiguation": "",
+  "length": 185080,
+  "video": false,
+  "relations": [
+    {
+      "attributes": [],
+      "attribute-values": {},
+      "attribute-ids": {},
+      "direction": "forward",
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "languages": [
+          "eng"
+        ],
+        "disambiguation": "1954 Blitzstein translation",
+        "iswcs": [
+          "T-071.314.125-3",
+          "T-071.402.746-9",
+          "T-802.192.136-9",
+          "T-802.203.417-0",
+          "T-802.337.911-6"
+        ],
+        "id": "b85bbbc9-54f2-3aab-8b27-fb1d510c6e15",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "title": "Mack the Knife",
+        "language": "eng",
+        "attributes": [],
+        "type": "Song"
+      },
+      "target-credit": "",
+      "type": "performance",
+      "target-type": "work",
+      "source-credit": "",
+      "ended": false,
+      "end": null
+    }
+  ],
+  "id": "e64fb8e6-ae2c-41bf-bbcc-9b862a199954"
+}
+
+  -- 2690b1de-8261-4fcd-aa42-21a62b079712  (2018, Bobby Darin)
+{
+  "video": false,
+  "title": "Mack the Knife",
+  "disambiguation": "",
+  "length": 190266,
+  "relations": [
+    {
+      "type": "performance",
+      "target-credit": "",
+      "attribute-values": {},
+      "direction": "forward",
+      "attribute-ids": {},
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": "1958",
+      "ended": true,
+      "end": "1958",
+      "source-credit": "",
+      "work": {
+        "id": "b85bbbc9-54f2-3aab-8b27-fb1d510c6e15",
+        "attributes": [],
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "languages": [
+          "eng"
+        ],
+        "iswcs": [
+          "T-071.314.125-3",
+          "T-071.402.746-9",
+          "T-802.192.136-9",
+          "T-802.203.417-0",
+          "T-802.337.911-6"
+        ],
+        "title": "Mack the Knife",
+        "disambiguation": "1954 Blitzstein translation",
+        "language": "eng",
+        "type": "Song"
+      },
+      "target-type": "work",
+      "attributes": []
+    }
+  ],
+  "first-release-date": "2018",
+  "id": "2690b1de-8261-4fcd-aa42-21a62b079712"
+}
+
+  -- d5320838-749b-4573-88df-74551bfab073  (2005, Bobby Darin)
+{
+  "id": "d5320838-749b-4573-88df-74551bfab073",
+  "first-release-date": "2005",
+  "relations": [
+    {
+      "attribute-ids": {
+        "live": "70007db6-a8bc-46d7-a770-80e6a0bb551a"
+      },
+      "ordering-key": 2,
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "ended": false,
+      "end": null,
+      "type": "performance",
+      "attribute-values": {},
+      "target-credit": "",
+      "direction": "forward",
+      "attributes": [
+        "live"
+      ],
+      "target-type": "work",
+      "source-credit": "",
+      "work": {
+        "iswcs": [],
+        "languages": [
+          "eng"
+        ],
+        "title": "Mack the Knife: Mack the Knife",
+        "disambiguation": "1989 movie soundtrack version",
+        "type": "Song",
+        "language": "eng",
+        "attributes": [],
+        "id": "1895f4f9-4af3-4da5-adc8-fb871dbe9896",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    },
+    {
+      "target-type": "work",
+      "attributes": [
+        "live",
+        "partial"
+      ],
+      "work": {
+        "languages": [
+          "heb"
+        ],
+        "title": "הבה נגילה",
+        "iswcs": [
+          "T-002.076.866-4",
+          "T-002.076.868-6",
+          "T-002.076.871-1",
+          "T-002.076.873-3",
+          "T-002.076.874-4",
+          "T-002.076.875-5",
+          "T-002.076.879-9",
+          "T-002.076.884-6",
+          "T-002.076.886-8",
+          "T-002.076.889-1",
+          "T-002.076.893-7",
+          "T-002.076.901-0",
+          "T-002.076.905-4",
+          "T-002.076.907-6",
+          "T-002.076.934-9",
+          "T-002.076.935-0",
+          "T-002.524.864-9",
+          "T-002.530.189-6",
+          "T-002.560.879-0",
+          "T-002.563.971-7",
+          "T-002.566.198-6",
+          "T-002.566.312-0",
+          "T-002.571.128-7",
+          "T-002.588.381-1",
+          "T-002.588.382-2",
+          "T-002.611.082-6",
+          "T-002.611.083-7",
+          "T-002.615.241-9",
+          "T-002.615.242-0",
+          "T-002.638.217-1",
+          "T-002.642.605-0",
+          "T-002.649.524-8",
+          "T-002.649.525-9",
+          "T-002.656.464-6",
+          "T-002.664.352-6",
+          "T-002.693.322-1",
+          "T-002.695.647-7",
+          "T-301.292.166-9",
+          "T-309.502.659-4",
+          "T-318.264.985-6",
+          "T-321.968.613-8",
+          "T-322.466.695-5",
+          "T-329.014.140-7",
+          "T-332.292.658-5",
+          "T-332.912.889-0",
+          "T-334.904.160-3"
+        ],
+        "disambiguation": "traditional Jewish folk song",
+        "language": "heb",
+        "type": "Song",
+        "attributes": [],
+        "id": "87e0dbaa-e5ac-4849-a3fc-44a3d6671f0a",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      },
+      "source-credit": "",
+      "end": null,
+      "ended": false,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "ordering-key": 1,
+      "begin": null,
+      "attribute-ids": {
+        "live": "70007db6-a8bc-46d7-a770-80e6a0bb551a",
+        "partial": "d2b63be6-91ec-426a-987a-30b47f8aae2d"
+      },
+      "direction": "forward",
+      "target-credit": "",
+      "attribute-values": {},
+      "type": "performance"
+    }
+  ],
+  "length": 220760,
+  "disambiguation": "",
+  "title": "Mack the Knife",
+  "video": false
+}
+
+  -- c7c8a54e-d053-4775-be67-0bd17e915577  (2002, Bobby Darin)
+{
+  "id": "c7c8a54e-d053-4775-be67-0bd17e915577",
+  "video": false,
+  "length": 202560,
+  "disambiguation": "",
+  "title": "Mack the Knife",
+  "relations": [],
+  "first-release-date": "2002"
+}
+  no work relation on this candidate
+
+  3 distinct work(s) among the top candidates:
+    b85bbbc9-54f2-3aab-8b27-fb1d510c6e15  Mack the Knife  iswc=['T-071.314.125-3', 'T-071.402.746-9', 'T-802.192.136-9', 'T-802.203.417-0', 'T-802.337.911-6']
+    1895f4f9-4af3-4da5-adc8-fb871dbe9896  Mack the Knife: Mack the Knife  iswc=[]
+    87e0dbaa-e5ac-4849-a3fc-44a3d6671f0a  הבה נגילה  iswc=['T-002.076.866-4', 'T-002.076.868-6', 'T-002.076.871-1', 'T-002.076.873-3', 'T-002.076.874-4', 'T-002.076.875-5', 'T-002.076.879-9', 'T-002.076.884-6', 'T-002.076.886-8', 'T-002.076.889-1', 'T-002.076.893-7', 'T-002.076.901-0', 'T-002.076.905-4', 'T-002.076.907-6', 'T-002.076.934-9', 'T-002.076.935-0', 'T-002.524.864-9', 'T-002.530.189-6', 'T-002.560.879-0', 'T-002.563.971-7', 'T-002.566.198-6', 'T-002.566.312-0', 'T-002.571.128-7', 'T-002.588.381-1', 'T-002.588.382-2', 'T-002.611.082-6', 'T-002.611.083-7', 'T-002.615.241-9', 'T-002.615.242-0', 'T-002.638.217-1', 'T-002.642.605-0', 'T-002.649.524-8', 'T-002.649.525-9', 'T-002.656.464-6', 'T-002.664.352-6', 'T-002.693.322-1', 'T-002.695.647-7', 'T-301.292.166-9', 'T-309.502.659-4', 'T-318.264.985-6', 'T-321.968.613-8', 'T-322.466.695-5', 'T-329.014.140-7', 'T-332.292.658-5', 'T-332.912.889-0', 'T-334.904.160-3']
+
+[3] browse_recordings_for_work — recording selection
+  work b85bbbc9-54f2-3aab-8b27-fb1d510c6e15: 649 recordings linked; 22 credited to "Bobby Darin"
+  work 1895f4f9-4af3-4da5-adc8-fb871dbe9896: 14 recordings linked; 1 credited to "Bobby Darin"
+  work 87e0dbaa-e5ac-4849-a3fc-44a3d6671f0a: 106 recordings linked; 1 credited to "Bobby Darin"
+  session 1958        1 entity(ies)  earliest release on file 2018  e.g. 2690b1de-8261-4fcd-aa42-21a62b079712  Bobby Darin  [work b85bbbc9]
+  session 1960-06     1 entity(ies)  earliest release on file 1994  e.g. 8708e927-fd00-48fd-b8a7-b4cfc1eb87fa  Bobby Darin  [work b85bbbc9]
+  undated        22 entity(ies)  releases on file: ['----', '1959', '1961', '1995', '2004', '2005', '2008', '2009', '2010', '2011', '2013', '2016', '2017']
+
+  picked 2690b1de-8261-4fcd-aa42-21a62b079712 — earliest dated session 1958 (Bobby Darin); recording year 1958 [HIGH]
+  its work: b85bbbc9-54f2-3aab-8b27-fb1d510c6e15  Mack the Knife  iswc=['T-071.314.125-3', 'T-071.402.746-9', 'T-802.192.136-9', 'T-802.203.417-0', 'T-802.337.911-6']
+  resolution_confidence=MEDIUM: 2 dated session(s) (1958, 1960-06) and 22 undated entity(ies) for this artist; earliest dated chosen, the rest are alternates.
+
+[4] get_writers + Wikidata cross-check (P86 composer / P676 lyricist)
+  iswc=['T-071.314.125-3', 'T-071.402.746-9', 'T-802.192.136-9', 'T-802.203.417-0', 'T-802.337.911-6']  wikidata=Q51801270
+  MB  composer   Kurt Weill  0e738f68-783c-4a6a-80ae-4f7500861060
+  MB  lyricist   Bertolt Brecht  95fb3a0c-fc74-4f51-acba-bbe5b3a78e32
+      Kurt Weill               -> Q55004  "Kurt Weill" — German composer (1900–1950)  P570=1950
+      Bertolt Brecht           -> Q38757  "Bertolt Brecht" — German poet, playwright, and theatre director (1898–1956)  P570=1956
+  WD  composer   Kurt Weill  Q55004  P570=1950
+  WD  lyricist   Bertolt Brecht  Q38757  P570=1956
+  writer list CORROBORATED: MB and Wikidata agree exactly.
+
+[4a] composition year
+  Q51801270 "Mack the Knife": P577=1954 P1191=None P571=None
+
+[5] determination
+  composition  undetermined   expiry=None   rule=us_renewal_unknown
+               Published 1954 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.
+               blocked_by=renewal_filed
+  recording    protected      expiry=2067   rule=us_sr_mma_1957_1972  [HIGH]
+               Published 1958. Under the CLASSICS Act (fixed statutory expiry of 15 February 2067), protected until 1 January 2067.
+  life+70 (EU, info only) protected      expiry=2027   rule=eu_life_plus_70  [writers HIGH]
+               Last surviving author died 1956. Protected until 1 January 2027.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+  UNRESOLVED QUESTIONS
+  • Was the 1954 copyright in "Mack the Knife" renewed in year 28 (1981–1982)?
+    why: If not renewed, the composition entered the public domain 1 January 1983; if renewed, protected until 1 January 2050.
+    affects: ['composition']  effort: hours (scanned card catalog for pre-1978 renewals)
+    search: ['"Mack the Knife" renewal 1981', '"Mack the Knife" renewal 1982']
+    where: https://archive.org/details/copyrightrecords — Catalog of Copyright Entries, Music, 1981–1982 renewals
+    where: https://cocatalog.loc.gov/ (post-1978 renewals only)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                     resolve  rec     work  iswc  writers  wconf   deaths         comp    2-layer  verdict
+------------------------------------------------------------------------------------------------------------------------
+Mack the Knife / Bobby Darin       MEDIUM   1958r   yes   yes   2        HIGH    1950,1956      1954    no       undetermined (composition)  [1 unresolved]
+
+  resolve = recording resolution confidence: HIGH one dated session · MEDIUM several dated sessions, earliest used ·
+            LOW release date only · STOP ambiguous, no research · no_work no work relation in top candidates
+  rec     = recording year; 'r' dated performance relation (used) · 'f' first-release-date (LOW, never used for a term)
+  wconf   = writer-list confidence: HIGH MB=Wikidata · MEDIUM union · LOW uncorroborated
+  comp*   = year from P1191 first-performance or P571 inception, not P577 publication
+  2-layer = both layers determined (neither undetermined)
+==============================================================================
+Summertime  —  Billie Holiday
+==============================================================================
+
+[1] search_recording
+  100  1994        f293db99-1004-4c8c-850e-6b61ee62c0ac  Summertime  ·  Billie Holiday
+  100  ----------  458a1016-7053-48d8-9196-1ab0e01865a5  Summertime  ·  Billie Holiday
+  100  2020-01-17  eb06cbe1-3c54-4844-acff-3ff4ad5f3924  Summertime  ·  Billie Holiday
+  100  1996        051588a2-4735-4011-868d-4aeee6fb4264  Summertime  ·  Billie Holiday
+  100  2009-06-30  654674e9-2133-4c63-91b2-1ea4df94803c  Summertime  ·  Billie Holiday
+  100  2000-07-11  652931e2-9a20-47f8-94a1-b1729a8566ea  Summertime  ·  Billie Holiday
+  100  2001        02fd6f4c-3aee-4da0-a578-72da4133baec  Summertime  ·  Billie Holiday
+  100  1996        a1c1051d-3464-402b-a596-0325880344cc  Summertime  ·  Billie Holiday
+  100  1995        3327555c-6db7-40e9-9401-5436e1471447  Summertime  ·  Billie Holiday
+  100  2003        0cd0e999-7890-4a99-b1f0-15871be8a9f4  Summertime  ·  Billie Holiday
+  ... 15 more
+
+[2] get_work_for_recording — RAW RESPONSE for the top 10 candidates
+
+  -- f293db99-1004-4c8c-850e-6b61ee62c0ac  (1994, Billie Holiday)
+{
+  "relations": [
+    {
+      "ended": false,
+      "end": null,
+      "attributes": [],
+      "attribute-ids": {},
+      "work": {
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "languages": [
+          "eng"
+        ],
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "attributes": [],
+        "type": "Song",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "title": "Summertime",
+        "language": "eng"
+      },
+      "attribute-values": {},
+      "source-credit": "",
+      "direction": "forward",
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "type": "performance",
+      "target-type": "work",
+      "target-credit": ""
+    }
+  ],
+  "first-release-date": "1994",
+  "id": "f293db99-1004-4c8c-850e-6b61ee62c0ac",
+  "video": false,
+  "length": 176533,
+  "title": "Summertime",
+  "disambiguation": ""
+}
+
+  -- 458a1016-7053-48d8-9196-1ab0e01865a5  (None, Billie Holiday)
+{
+  "id": "458a1016-7053-48d8-9196-1ab0e01865a5",
+  "length": 181600,
+  "relations": [
+    {
+      "ended": false,
+      "end": null,
+      "attribute-ids": {},
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "direction": "forward",
+      "type": "performance",
+      "attribute-values": {},
+      "target-credit": "",
+      "attributes": [],
+      "target-type": "work",
+      "work": {
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "languages": [
+          "eng"
+        ],
+        "title": "Summertime",
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "type": "Song",
+        "language": "eng",
+        "attributes": [],
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      },
+      "source-credit": ""
+    }
+  ],
+  "title": "Summertime",
+  "disambiguation": "",
+  "video": false
+}
+
+  -- eb06cbe1-3c54-4844-acff-3ff4ad5f3924  (2020-01-17, Billie Holiday)
+{
+  "disambiguation": "",
+  "first-release-date": "2020-01-17",
+  "relations": [
+    {
+      "target-credit": "",
+      "source-credit": "",
+      "attribute-values": {},
+      "end": null,
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "title": "Summertime",
+        "language": "eng",
+        "type": "Song",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "attributes": [],
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "languages": [
+          "eng"
+        ]
+      },
+      "attributes": [],
+      "direction": "forward",
+      "ended": false,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "target-type": "work",
+      "type": "performance",
+      "attribute-ids": {},
+      "begin": null
+    }
+  ],
+  "video": false,
+  "id": "eb06cbe1-3c54-4844-acff-3ff4ad5f3924",
+  "length": 174000,
+  "title": "Summertime"
+}
+
+  -- 051588a2-4735-4011-868d-4aeee6fb4264  (1996, Billie Holiday)
+{
+  "id": "051588a2-4735-4011-868d-4aeee6fb4264",
+  "length": 178466,
+  "first-release-date": "1996",
+  "disambiguation": "",
+  "video": false,
+  "relations": [],
+  "title": "Summertime"
+}
+  no work relation on this candidate
+
+  -- 654674e9-2133-4c63-91b2-1ea4df94803c  (2009-06-30, Billie Holiday)
+{
+  "relations": [
+    {
+      "target-credit": "",
+      "attribute-values": {},
+      "type": "performance",
+      "direction": "forward",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": null,
+      "attribute-ids": {},
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "attributes": [],
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "type": "Song",
+        "language": "eng",
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "languages": [
+          "eng"
+        ],
+        "title": "Summertime"
+      },
+      "target-type": "work",
+      "attributes": []
+    }
+  ],
+  "length": 181000,
+  "first-release-date": "2009-06-30",
+  "id": "654674e9-2133-4c63-91b2-1ea4df94803c",
+  "video": false,
+  "title": "Summertime",
+  "disambiguation": ""
+}
+
+  -- 652931e2-9a20-47f8-94a1-b1729a8566ea  (2000-07-11, Billie Holiday)
+{
+  "length": 180866,
+  "title": "Summertime",
+  "disambiguation": "",
+  "first-release-date": "2000-07-11",
+  "relations": [
+    {
+      "target-credit": "",
+      "end": null,
+      "attribute-values": {},
+      "source-credit": "",
+      "direction": "forward",
+      "attributes": [],
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "title": "Summertime",
+        "language": "eng",
+        "type": "Song",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "attributes": [],
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "languages": [
+          "eng"
+        ]
+      },
+      "target-type": "work",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "ended": false,
+      "attribute-ids": {},
+      "type": "performance",
+      "begin": null
+    }
+  ],
+  "video": false,
+  "id": "652931e2-9a20-47f8-94a1-b1729a8566ea"
+}
+
+  -- 02fd6f4c-3aee-4da0-a578-72da4133baec  (2001, Billie Holiday)
+{
+  "relations": [
+    {
+      "attribute-values": {},
+      "end": null,
+      "source-credit": "",
+      "target-credit": "",
+      "direction": "forward",
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "title": "Summertime",
+        "language": "eng",
+        "type": "Song",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "attributes": [],
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "languages": [
+          "eng"
+        ]
+      },
+      "attributes": [],
+      "target-type": "work",
+      "ended": false,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": null,
+      "type": "performance",
+      "attribute-ids": {}
+    }
+  ],
+  "id": "02fd6f4c-3aee-4da0-a578-72da4133baec",
+  "video": false,
+  "disambiguation": "",
+  "first-release-date": "2001",
+  "title": "Summertime",
+  "length": 173000
+}
+
+  -- a1c1051d-3464-402b-a596-0325880344cc  (1996, Billie Holiday)
+{
+  "relations": [
+    {
+      "attributes": [],
+      "target-type": "work",
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "attributes": [],
+        "language": "eng",
+        "type": "Song",
+        "title": "Summertime",
+        "languages": [
+          "eng"
+        ],
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess"
+      },
+      "source-credit": "",
+      "ended": false,
+      "end": null,
+      "attribute-ids": {},
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "direction": "forward",
+      "type": "performance",
+      "attribute-values": {},
+      "target-credit": ""
+    }
+  ],
+  "length": 175133,
+  "first-release-date": "1996",
+  "id": "a1c1051d-3464-402b-a596-0325880344cc",
+  "video": false,
+  "title": "Summertime",
+  "disambiguation": ""
+}
+
+  -- 3327555c-6db7-40e9-9401-5436e1471447  (1995, Billie Holiday)
+{
+  "title": "Summertime",
+  "length": null,
+  "video": false,
+  "id": "3327555c-6db7-40e9-9401-5436e1471447",
+  "relations": [],
+  "first-release-date": "1995",
+  "disambiguation": ""
+}
+  no work relation on this candidate
+
+  -- 0cd0e999-7890-4a99-b1f0-15871be8a9f4  (2003, Billie Holiday)
+{
+  "disambiguation": "",
+  "first-release-date": "2003",
+  "relations": [
+    {
+      "source-credit": "",
+      "target-credit": "",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "attribute-values": {},
+      "work": {
+        "title": "Summertime",
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "language": "eng",
+        "attributes": [],
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "type": "Song",
+        "languages": [
+          "eng"
+        ]
+      },
+      "attributes": [],
+      "end": null,
+      "begin": null,
+      "type": "performance",
+      "direction": "forward",
+      "target-type": "work",
+      "ended": false,
+      "attribute-ids": {}
+    }
+  ],
+  "title": "Summertime",
+  "id": "0cd0e999-7890-4a99-b1f0-15871be8a9f4",
+  "video": false,
+  "length": 174720
+}
+
+  1 distinct work(s) among the top candidates:
+    986359d8-34ff-3fe2-84fe-155b5f167975  Summertime  iswc=['T-800.364.991-1']
+
+[3] browse_recordings_for_work — recording selection
+    [http 200] https://musicbrainz.org/ws/2/recording?work=986359d8-34ff-3fe2-84fe-155b5f167975&inc=work-rels%2Bartist-credits&limit=100&offset=1000&fmt=json
+    [http 200] https://musicbrainz.org/ws/2/recording?work=986359d8-34ff-3fe2-84fe-155b5f167975&inc=work-rels%2Bartist-credits&limit=100&offset=1100&fmt=json
+    [http 200] https://musicbrainz.org/ws/2/recording?work=986359d8-34ff-3fe2-84fe-155b5f167975&inc=work-rels%2Bartist-credits&limit=100&offset=1200&fmt=json
+    [http 200] https://musicbrainz.org/ws/2/recording?work=986359d8-34ff-3fe2-84fe-155b5f167975&inc=work-rels%2Bartist-credits&limit=100&offset=1300&fmt=json
+    [http 200] https://musicbrainz.org/ws/2/recording?work=986359d8-34ff-3fe2-84fe-155b5f167975&inc=work-rels%2Bartist-credits&limit=100&offset=1400&fmt=json
+    [http 503] https://musicbrainz.org/ws/2/recording?work=986359d8-34ff-3fe2-84fe-155b5f167975&inc=work-rels%2Bartist-credits&limit=100&offset=1500&fmt=json
+    [503 — sleeping 5s and retrying once]
+    [http 503] retry
+    [body] {"error": "The MusicBrainz web server is currently busy. Please try again later."}
+
+  BROWSE REQUEST FAILED for work 986359d8-34ff-3fe2-84fe-155b5f167975; its recordings are unknown.
+
+  Browse failed, so the work's recordings are unknown. Cannot select. (Not a data finding.)
+
+[4] get_writers + Wikidata cross-check (P86 composer / P676 lyricist)
+  iswc=['T-800.364.991-1']  wikidata=Q844046
+  MB  composer   George Gershwin  65744963-191a-44ef-a3c7-b693a808a158
+  MB  lyricist   Ira Gershwin  509086c2-9cc8-4e77-89e9-322e34240ffc
+  MB  lyricist   Dorothy Heyward  bf23ae35-d26d-4180-b7da-7fc9841b2cd9
+  MB  lyricist   DuBose Heyward  82953e0d-464a-4fb8-80fc-78dbf8b49b1b
+      George Gershwin          -> Q123829  "George Gershwin" — American composer and pianist (1898–1937)  P570=1937
+      Ira Gershwin             -> Q61059  "Ira Gershwin" — American lyricist (1896–1983)  P570=1983
+      Dorothy Heyward          -> Q1250307  "Dorothy Heyward" — American playwright, lyricist (1890–1961)  P570=1961
+      DuBose Heyward           -> Q2382900  "DuBose Heyward" — American novelist, playwright, poet (1885-1940)  P570=1940
+  WD  composer   George Gershwin  Q123829  P570=1937
+  WD  lyricist   DuBose Heyward  Q2382900  P570=1940
+  WD  lyricist   Dorothy Heyward  Q1250307  P570=1961
+  WD  lyricist   Ira Gershwin  Q61059  P570=1983
+  writer list CORROBORATED: MB and Wikidata agree exactly.
+
+[4a] composition year
+  Q844046 "Summertime": P577=1935 P1191=None P571=None
+
+[5] determination
+  composition  undetermined   expiry=None   rule=us_renewal_unknown
+               Published 1935 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.
+               blocked_by=renewal_filed
+  recording    undetermined   expiry=None   rule=spike_recording_year_unconfirmed
+               No dated recording session in MusicBrainz; the only date is an earliest-release-on-file that may be a reissue.
+               blocked_by=recording_pub_year
+  life+70 (EU, info only) protected      expiry=2054   rule=eu_life_plus_70  [writers HIGH]
+               Last surviving author died 1983. Protected until 1 January 2054.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+  UNRESOLVED QUESTIONS
+  • Was the 1935 copyright in "Summertime" renewed in year 28 (1962–1963)?
+    why: If not renewed, the composition entered the public domain 1 January 1964; if renewed, protected until 1 January 2031.
+    affects: ['composition']  effort: hours (scanned card catalog for pre-1978 renewals)
+    search: ['"Summertime" renewal 1962', '"Summertime" renewal 1963']
+    where: https://archive.org/details/copyrightrecords — Catalog of Copyright Entries, Music, 1962–1963 renewals
+    where: https://cocatalog.loc.gov/ (post-1978 renewals only)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                     resolve  rec     work  iswc  writers  wconf   deaths         comp    2-layer  verdict
+------------------------------------------------------------------------------------------------------------------------
+Summertime / Billie Holiday        ERR      -       yes   yes   4        HIGH    1937,1983,1961,1940 1935    no       undetermined (composition)  [1 unresolved]
+
+  resolve = recording resolution confidence: HIGH one dated session · MEDIUM several dated sessions, earliest used ·
+            LOW release date only · STOP ambiguous, no research · no_work no work relation in top candidates
+  rec     = recording year; 'r' dated performance relation (used) · 'f' first-release-date (LOW, never used for a term)
+  wconf   = writer-list confidence: HIGH MB=Wikidata · MEDIUM union · LOW uncorroborated
+  comp*   = year from P1191 first-performance or P571 inception, not P577 publication
+  2-layer = both layers determined (neither undetermined)
+==============================================================================
+Blue Moon  —  The Marcels
+==============================================================================
+
+[1] search_recording
+  100  ----------  243fd411-f690-40dc-a061-1621e413a6bc  Blue Moon  ·  The Marcels
+  100  2001        96869630-5488-47e9-8975-b9d70030ea15  Blue Moon  ·  The Marcels
+  100  1997-06-03  cb6c0559-26bc-4bf3-b8d6-6d09388f8167  Blue Moon  ·  The Marcels
+  100  1996        67298ffe-dc51-4fbf-9ed5-9c3e3f099a75  Blue Moon  ·  The Marcels
+  100  ----------  b4a10f6d-75d5-463a-8b2d-c58627759cbe  Blue Moon  ·  The Marcels
+  100  1992        fe8a81b4-fab9-4e3c-b059-842d49e1d5c3  Blue Moon  ·  The Marcels
+  100  2010        ad4e41c1-8328-4b51-b0c4-fee64c067571  Blue Moon  ·  The Marcels
+  100  ----------  02cd46a9-a02f-434d-ac9e-814de961bb72  Blue Moon  ·  The Marcels
+  100  2001        1b27d67e-d786-4452-a720-0edf18d76ef6  Blue Moon  ·  The Marcels
+  100  1999        e475d284-973e-47ba-871a-b4386758d418  Blue Moon  ·  The Marcels
+  ... 15 more
+
+[2] get_work_for_recording — RAW RESPONSE for the top 10 candidates
+
+  -- 243fd411-f690-40dc-a061-1621e413a6bc  (None, The Marcels)
+{
+  "title": "Blue Moon",
+  "length": 130000,
+  "disambiguation": "",
+  "video": false,
+  "relations": [],
+  "id": "243fd411-f690-40dc-a061-1621e413a6bc"
+}
+  no work relation on this candidate
+
+  -- 96869630-5488-47e9-8975-b9d70030ea15  (2001, The Marcels)
+{
+  "video": false,
+  "title": "Blue Moon",
+  "disambiguation": "",
+  "length": 138733,
+  "relations": [],
+  "first-release-date": "2001",
+  "id": "96869630-5488-47e9-8975-b9d70030ea15"
+}
+  no work relation on this candidate
+
+  -- cb6c0559-26bc-4bf3-b8d6-6d09388f8167  (1997-06-03, The Marcels)
+{
+  "relations": [
+    {
+      "attribute-ids": {},
+      "end": null,
+      "ended": false,
+      "attributes": [],
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": null,
+      "direction": "forward",
+      "attribute-values": {},
+      "work": {
+        "languages": [
+          "eng"
+        ],
+        "iswcs": [
+          "T-070.011.746-9",
+          "T-915.741.665-4"
+        ],
+        "language": "eng",
+        "disambiguation": "",
+        "title": "Blue Moon",
+        "id": "3c339d3d-c76d-3eb5-b3bc-98c8c2d18620",
+        "type": "Song",
+        "attributes": [],
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      },
+      "source-credit": ""
+    }
+  ],
+  "first-release-date": "1997-06-03",
+  "video": false,
+  "id": "cb6c0559-26bc-4bf3-b8d6-6d09388f8167",
+  "length": 129000,
+  "disambiguation": "",
+  "title": "Blue Moon"
+}
+
+  -- 67298ffe-dc51-4fbf-9ed5-9c3e3f099a75  (1996, The Marcels)
+{
+  "disambiguation": "",
+  "first-release-date": "1996",
+  "relations": [],
+  "title": "Blue Moon",
+  "id": "67298ffe-dc51-4fbf-9ed5-9c3e3f099a75",
+  "length": 129866,
+  "video": false
+}
+  no work relation on this candidate
+
+  -- b4a10f6d-75d5-463a-8b2d-c58627759cbe  (None, The Marcels)
+{
+  "id": "b4a10f6d-75d5-463a-8b2d-c58627759cbe",
+  "length": 130000,
+  "video": false,
+  "disambiguation": "",
+  "relations": [],
+  "title": "Blue Moon"
+}
+  no work relation on this candidate
+
+  -- fe8a81b4-fab9-4e3c-b059-842d49e1d5c3  (1992, The Marcels)
+{
+  "video": false,
+  "length": 132626,
+  "id": "fe8a81b4-fab9-4e3c-b059-842d49e1d5c3",
+  "relations": [],
+  "title": "Blue Moon",
+  "disambiguation": "",
+  "first-release-date": "1992"
+}
+  no work relation on this candidate
+
+  -- ad4e41c1-8328-4b51-b0c4-fee64c067571  (2010, The Marcels)
+{
+  "title": "Blue Moon",
+  "first-release-date": "2010",
+  "disambiguation": "",
+  "length": 134000,
+  "id": "ad4e41c1-8328-4b51-b0c4-fee64c067571",
+  "relations": [
+    {
+      "begin": null,
+      "direction": "forward",
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "target-credit": "",
+      "work": {
+        "type": "Song",
+        "attributes": [],
+        "language": "eng",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "title": "Blue Moon",
+        "id": "3c339d3d-c76d-3eb5-b3bc-98c8c2d18620",
+        "disambiguation": "",
+        "iswcs": [
+          "T-070.011.746-9",
+          "T-915.741.665-4"
+        ],
+        "languages": [
+          "eng"
+        ]
+      },
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0"
+    }
+  ],
+  "video": false
+}
+
+  -- 02cd46a9-a02f-434d-ac9e-814de961bb72  (None, The Marcels)
+{
+  "id": "02cd46a9-a02f-434d-ac9e-814de961bb72",
+  "length": null,
+  "relations": [],
+  "title": "Blue Moon",
+  "disambiguation": "",
+  "video": false
+}
+  no work relation on this candidate
+
+  -- 1b27d67e-d786-4452-a720-0edf18d76ef6  (2001, The Marcels)
+{
+  "title": "Blue Moon",
+  "relations": [],
+  "disambiguation": "",
+  "video": false,
+  "first-release-date": "2001",
+  "length": 138000,
+  "id": "1b27d67e-d786-4452-a720-0edf18d76ef6"
+}
+  no work relation on this candidate
+
+  -- e475d284-973e-47ba-871a-b4386758d418  (1999, The Marcels)
+{
+  "video": false,
+  "title": "Blue Moon",
+  "disambiguation": "",
+  "relations": [],
+  "length": null,
+  "first-release-date": "1999",
+  "id": "e475d284-973e-47ba-871a-b4386758d418"
+}
+  no work relation on this candidate
+
+  1 distinct work(s) among the top candidates:
+    3c339d3d-c76d-3eb5-b3bc-98c8c2d18620  Blue Moon  iswc=['T-070.011.746-9', 'T-915.741.665-4']
+
+[3] browse_recordings_for_work — recording selection
+  work 3c339d3d-c76d-3eb5-b3bc-98c8c2d18620: 764 recordings linked; 38 credited to "The Marcels"
+  session 1961        2 entity(ies)  earliest release on file 1998  e.g. b09efc9e-6bf4-4d06-b799-61904360d693  The Marcels  [work 3c339d3d]
+  undated        36 entity(ies)  releases on file: ['----', '1961', '1989', '1990', '1991', '1992', '1993', '1994', '1995', '1997', '2001', '2003', '2008', '2010', '2012', '2015', '2017', '2018', '2021']
+
+  picked b09efc9e-6bf4-4d06-b799-61904360d693 — earliest dated session 1961 (The Marcels); recording year 1961 [HIGH]
+  its work: 3c339d3d-c76d-3eb5-b3bc-98c8c2d18620  Blue Moon  iswc=['T-070.011.746-9', 'T-915.741.665-4']
+  resolution_confidence=MEDIUM: 1 dated session(s) (1961) and 36 undated entity(ies) for this artist; earliest dated chosen, the rest are alternates.
+
+[4] get_writers + Wikidata cross-check (P86 composer / P676 lyricist)
+  iswc=['T-070.011.746-9', 'T-915.741.665-4']  wikidata=Q804574
+  MB  composer   Richard Rodgers  346448f5-25a0-4f78-bbd6-acc0205f7513
+  MB  lyricist   Lorenz Hart  3fb75d97-5dfd-4e72-9aee-1904aa4268f4
+      Richard Rodgers          -> Q269094  "Richard Rodgers" — American composer of songs and Broadway musicals (1902–1979)  P570=1979
+      Lorenz Hart              -> Q725828  "Lorenz Hart" — American lyricist (1895–1943)  P570=1943
+  WD  composer   Richard Rodgers  Q269094  P570=1979
+  WD  lyricist   Lorenz Hart  Q725828  P570=1943
+  writer list CORROBORATED: MB and Wikidata agree exactly.
+
+[4a] composition year
+  Q804574 "Blue Moon": P577=1934 P1191=None P571=None
+
+[5] determination
+  composition  undetermined   expiry=None   rule=us_renewal_unknown
+               Published 1934 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.
+               blocked_by=renewal_filed
+  recording    protected      expiry=2067   rule=us_sr_mma_1957_1972  [HIGH]
+               Published 1961. Under the CLASSICS Act (fixed statutory expiry of 15 February 2067), protected until 1 January 2067.
+  life+70 (EU, info only) protected      expiry=2050   rule=eu_life_plus_70  [writers HIGH]
+               Last surviving author died 1979. Protected until 1 January 2050.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+  UNRESOLVED QUESTIONS
+  • Was the 1934 copyright in "Blue Moon" renewed in year 28 (1961–1962)?
+    why: If not renewed, the composition entered the public domain 1 January 1963; if renewed, protected until 1 January 2030.
+    affects: ['composition']  effort: hours (scanned card catalog for pre-1978 renewals)
+    search: ['"Blue Moon" renewal 1961', '"Blue Moon" renewal 1962']
+    where: https://archive.org/details/copyrightrecords — Catalog of Copyright Entries, Music, 1961–1962 renewals
+    where: https://cocatalog.loc.gov/ (post-1978 renewals only)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                     resolve  rec     work  iswc  writers  wconf   deaths         comp    2-layer  verdict
+------------------------------------------------------------------------------------------------------------------------
+Blue Moon / The Marcels            MEDIUM   1961r   yes   yes   2        HIGH    1979,1943      1934    no       undetermined (composition)  [1 unresolved]
+
+  resolve = recording resolution confidence: HIGH one dated session · MEDIUM several dated sessions, earliest used ·
+            LOW release date only · STOP ambiguous, no research · no_work no work relation in top candidates
+  rec     = recording year; 'r' dated performance relation (used) · 'f' first-release-date (LOW, never used for a term)
+  wconf   = writer-list confidence: HIGH MB=Wikidata · MEDIUM union · LOW uncorroborated
+  comp*   = year from P1191 first-performance or P571 inception, not P577 publication
+  2-layer = both layers determined (neither undetermined)

@@ -1,0 +1,438 @@
+﻿==============================================================================
+Summertime  —  Billie Holiday
+==============================================================================
+
+[1] search_recording
+  100  1994        f293db99-1004-4c8c-850e-6b61ee62c0ac  Summertime  ·  Billie Holiday
+  100  ----------  458a1016-7053-48d8-9196-1ab0e01865a5  Summertime  ·  Billie Holiday
+  100  2020-01-17  eb06cbe1-3c54-4844-acff-3ff4ad5f3924  Summertime  ·  Billie Holiday
+  100  1996        051588a2-4735-4011-868d-4aeee6fb4264  Summertime  ·  Billie Holiday
+  100  2009-06-30  654674e9-2133-4c63-91b2-1ea4df94803c  Summertime  ·  Billie Holiday
+  100  2000-07-11  652931e2-9a20-47f8-94a1-b1729a8566ea  Summertime  ·  Billie Holiday
+  100  2001        02fd6f4c-3aee-4da0-a578-72da4133baec  Summertime  ·  Billie Holiday
+  100  1996        a1c1051d-3464-402b-a596-0325880344cc  Summertime  ·  Billie Holiday
+  100  1995        3327555c-6db7-40e9-9401-5436e1471447  Summertime  ·  Billie Holiday
+  100  2003        0cd0e999-7890-4a99-b1f0-15871be8a9f4  Summertime  ·  Billie Holiday
+  ... 15 more
+
+[2] get_work_for_recording — RAW RESPONSE for the top 10 candidates
+
+  -- f293db99-1004-4c8c-850e-6b61ee62c0ac  (1994, Billie Holiday)
+{
+  "relations": [
+    {
+      "ended": false,
+      "end": null,
+      "attributes": [],
+      "attribute-ids": {},
+      "work": {
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "languages": [
+          "eng"
+        ],
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "attributes": [],
+        "type": "Song",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "title": "Summertime",
+        "language": "eng"
+      },
+      "attribute-values": {},
+      "source-credit": "",
+      "direction": "forward",
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "type": "performance",
+      "target-type": "work",
+      "target-credit": ""
+    }
+  ],
+  "first-release-date": "1994",
+  "id": "f293db99-1004-4c8c-850e-6b61ee62c0ac",
+  "video": false,
+  "length": 176533,
+  "title": "Summertime",
+  "disambiguation": ""
+}
+
+  -- 458a1016-7053-48d8-9196-1ab0e01865a5  (None, Billie Holiday)
+{
+  "id": "458a1016-7053-48d8-9196-1ab0e01865a5",
+  "length": 181600,
+  "relations": [
+    {
+      "ended": false,
+      "end": null,
+      "attribute-ids": {},
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "direction": "forward",
+      "type": "performance",
+      "attribute-values": {},
+      "target-credit": "",
+      "attributes": [],
+      "target-type": "work",
+      "work": {
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "languages": [
+          "eng"
+        ],
+        "title": "Summertime",
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "type": "Song",
+        "language": "eng",
+        "attributes": [],
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      },
+      "source-credit": ""
+    }
+  ],
+  "title": "Summertime",
+  "disambiguation": "",
+  "video": false
+}
+
+  -- eb06cbe1-3c54-4844-acff-3ff4ad5f3924  (2020-01-17, Billie Holiday)
+{
+  "disambiguation": "",
+  "first-release-date": "2020-01-17",
+  "relations": [
+    {
+      "target-credit": "",
+      "source-credit": "",
+      "attribute-values": {},
+      "end": null,
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "title": "Summertime",
+        "language": "eng",
+        "type": "Song",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "attributes": [],
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "languages": [
+          "eng"
+        ]
+      },
+      "attributes": [],
+      "direction": "forward",
+      "ended": false,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "target-type": "work",
+      "type": "performance",
+      "attribute-ids": {},
+      "begin": null
+    }
+  ],
+  "video": false,
+  "id": "eb06cbe1-3c54-4844-acff-3ff4ad5f3924",
+  "length": 174000,
+  "title": "Summertime"
+}
+
+  -- 051588a2-4735-4011-868d-4aeee6fb4264  (1996, Billie Holiday)
+{
+  "id": "051588a2-4735-4011-868d-4aeee6fb4264",
+  "length": 178466,
+  "first-release-date": "1996",
+  "disambiguation": "",
+  "video": false,
+  "relations": [],
+  "title": "Summertime"
+}
+  no work relation on this candidate
+
+  -- 654674e9-2133-4c63-91b2-1ea4df94803c  (2009-06-30, Billie Holiday)
+{
+  "relations": [
+    {
+      "target-credit": "",
+      "attribute-values": {},
+      "type": "performance",
+      "direction": "forward",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": null,
+      "attribute-ids": {},
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "attributes": [],
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "type": "Song",
+        "language": "eng",
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "languages": [
+          "eng"
+        ],
+        "title": "Summertime"
+      },
+      "target-type": "work",
+      "attributes": []
+    }
+  ],
+  "length": 181000,
+  "first-release-date": "2009-06-30",
+  "id": "654674e9-2133-4c63-91b2-1ea4df94803c",
+  "video": false,
+  "title": "Summertime",
+  "disambiguation": ""
+}
+
+  -- 652931e2-9a20-47f8-94a1-b1729a8566ea  (2000-07-11, Billie Holiday)
+{
+  "length": 180866,
+  "title": "Summertime",
+  "disambiguation": "",
+  "first-release-date": "2000-07-11",
+  "relations": [
+    {
+      "target-credit": "",
+      "end": null,
+      "attribute-values": {},
+      "source-credit": "",
+      "direction": "forward",
+      "attributes": [],
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "title": "Summertime",
+        "language": "eng",
+        "type": "Song",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "attributes": [],
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "languages": [
+          "eng"
+        ]
+      },
+      "target-type": "work",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "ended": false,
+      "attribute-ids": {},
+      "type": "performance",
+      "begin": null
+    }
+  ],
+  "video": false,
+  "id": "652931e2-9a20-47f8-94a1-b1729a8566ea"
+}
+
+  -- 02fd6f4c-3aee-4da0-a578-72da4133baec  (2001, Billie Holiday)
+{
+  "relations": [
+    {
+      "attribute-values": {},
+      "end": null,
+      "source-credit": "",
+      "target-credit": "",
+      "direction": "forward",
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "title": "Summertime",
+        "language": "eng",
+        "type": "Song",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "attributes": [],
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "languages": [
+          "eng"
+        ]
+      },
+      "attributes": [],
+      "target-type": "work",
+      "ended": false,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": null,
+      "type": "performance",
+      "attribute-ids": {}
+    }
+  ],
+  "id": "02fd6f4c-3aee-4da0-a578-72da4133baec",
+  "video": false,
+  "disambiguation": "",
+  "first-release-date": "2001",
+  "title": "Summertime",
+  "length": 173000
+}
+
+  -- a1c1051d-3464-402b-a596-0325880344cc  (1996, Billie Holiday)
+{
+  "relations": [
+    {
+      "attributes": [],
+      "target-type": "work",
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "attributes": [],
+        "language": "eng",
+        "type": "Song",
+        "title": "Summertime",
+        "languages": [
+          "eng"
+        ],
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess"
+      },
+      "source-credit": "",
+      "ended": false,
+      "end": null,
+      "attribute-ids": {},
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "direction": "forward",
+      "type": "performance",
+      "attribute-values": {},
+      "target-credit": ""
+    }
+  ],
+  "length": 175133,
+  "first-release-date": "1996",
+  "id": "a1c1051d-3464-402b-a596-0325880344cc",
+  "video": false,
+  "title": "Summertime",
+  "disambiguation": ""
+}
+
+  -- 3327555c-6db7-40e9-9401-5436e1471447  (1995, Billie Holiday)
+{
+  "title": "Summertime",
+  "length": null,
+  "video": false,
+  "id": "3327555c-6db7-40e9-9401-5436e1471447",
+  "relations": [],
+  "first-release-date": "1995",
+  "disambiguation": ""
+}
+  no work relation on this candidate
+
+  -- 0cd0e999-7890-4a99-b1f0-15871be8a9f4  (2003, Billie Holiday)
+{
+  "disambiguation": "",
+  "first-release-date": "2003",
+  "relations": [
+    {
+      "source-credit": "",
+      "target-credit": "",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "attribute-values": {},
+      "work": {
+        "title": "Summertime",
+        "disambiguation": "American songbook standard from 1935 opera Porgy and Bess",
+        "language": "eng",
+        "attributes": [],
+        "iswcs": [
+          "T-800.364.991-1"
+        ],
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "id": "986359d8-34ff-3fe2-84fe-155b5f167975",
+        "type": "Song",
+        "languages": [
+          "eng"
+        ]
+      },
+      "attributes": [],
+      "end": null,
+      "begin": null,
+      "type": "performance",
+      "direction": "forward",
+      "target-type": "work",
+      "ended": false,
+      "attribute-ids": {}
+    }
+  ],
+  "title": "Summertime",
+  "id": "0cd0e999-7890-4a99-b1f0-15871be8a9f4",
+  "video": false,
+  "length": 174720
+}
+
+  1 distinct work(s) among the top candidates:
+    986359d8-34ff-3fe2-84fe-155b5f167975  Summertime  iswc=['T-800.364.991-1']
+
+[3] browse_recordings_for_work — recording selection
+    [http 200] https://musicbrainz.org/ws/2/recording?work=986359d8-34ff-3fe2-84fe-155b5f167975&inc=work-rels%2Bartist-credits&limit=100&offset=1500&fmt=json
+    [http 200] https://musicbrainz.org/ws/2/recording?work=986359d8-34ff-3fe2-84fe-155b5f167975&inc=work-rels%2Bartist-credits&limit=100&offset=1600&fmt=json
+    [http 200] https://musicbrainz.org/ws/2/recording?work=986359d8-34ff-3fe2-84fe-155b5f167975&inc=work-rels%2Bartist-credits&limit=100&offset=1700&fmt=json
+    [http 200] https://musicbrainz.org/ws/2/recording?work=986359d8-34ff-3fe2-84fe-155b5f167975&inc=work-rels%2Bartist-credits&limit=100&offset=1800&fmt=json
+  work 986359d8-34ff-3fe2-84fe-155b5f167975: 1806 recordings linked; 111 credited to "Billie Holiday"
+  session 1936        3 entity(ies)  earliest release on file 2003  e.g. d2a58a5d-b022-4d47-9d98-0483bf2f5af0  Billie Holiday and Her Orchestra  [work 986359d8]
+  session 1936-07-10  11 entity(ies)  earliest release on file 1936  e.g. 5cc9ecc6-0fff-43c4-a579-678b25f2051e  Billie Holiday and Her Orchestra  [work 986359d8]
+  undated        97 entity(ies)  releases on file: ['----', '1991', '1993', '1994', '1995', '1996', '1997', '1998', '1999', '2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2016']
+
+  picked d2a58a5d-b022-4d47-9d98-0483bf2f5af0 — earliest dated session 1936 (Billie Holiday and Her Orchestra); recording year 1936 [HIGH]
+  its work: 986359d8-34ff-3fe2-84fe-155b5f167975  Summertime  iswc=['T-800.364.991-1']
+  resolution_confidence=MEDIUM: 2 dated session(s) (1936, 1936-07-10) and 97 undated entity(ies) for this artist; earliest dated chosen, the rest are alternates.
+
+[4] get_writers + Wikidata cross-check (P86 composer / P676 lyricist)
+  iswc=['T-800.364.991-1']  wikidata=Q844046
+  MB  composer   George Gershwin  65744963-191a-44ef-a3c7-b693a808a158
+  MB  lyricist   Ira Gershwin  509086c2-9cc8-4e77-89e9-322e34240ffc
+  MB  lyricist   Dorothy Heyward  bf23ae35-d26d-4180-b7da-7fc9841b2cd9
+  MB  lyricist   DuBose Heyward  82953e0d-464a-4fb8-80fc-78dbf8b49b1b
+      George Gershwin          -> Q123829  "George Gershwin" — American composer and pianist (1898–1937)  P570=1937
+      Ira Gershwin             -> Q61059  "Ira Gershwin" — American lyricist (1896–1983)  P570=1983
+      Dorothy Heyward          -> Q1250307  "Dorothy Heyward" — American playwright, lyricist (1890–1961)  P570=1961
+      DuBose Heyward           -> Q2382900  "DuBose Heyward" — American novelist, playwright, poet (1885-1940)  P570=1940
+  WD  composer   George Gershwin  Q123829  P570=1937
+  WD  lyricist   DuBose Heyward  Q2382900  P570=1940
+  WD  lyricist   Dorothy Heyward  Q1250307  P570=1961
+  WD  lyricist   Ira Gershwin  Q61059  P570=1983
+  writer list CORROBORATED: MB and Wikidata agree exactly.
+
+[4a] composition year
+  Q844046 "Summertime": P577=1935 P1191=None P571=None
+
+[5] determination
+  composition  undetermined   expiry=None   rule=us_renewal_unknown
+               Published 1935 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.
+               blocked_by=renewal_filed
+  recording    protected      expiry=2037   rule=us_sr_mma_1923_1946  [HIGH]
+               Published 1936. Under the CLASSICS Act (95-year term plus 5 additional years), protected until 1 January 2037.
+  life+70 (EU, info only) protected      expiry=2054   rule=eu_life_plus_70  [writers HIGH]
+               Last surviving author died 1983. Protected until 1 January 2054.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+  UNRESOLVED QUESTIONS
+  • Was the 1935 copyright in "Summertime" renewed in year 28 (1962–1963)?
+    why: If not renewed, the composition entered the public domain 1 January 1964; if renewed, protected until 1 January 2031.
+    affects: ['composition']  effort: hours (scanned card catalog for pre-1978 renewals)
+    search: ['"Summertime" renewal 1962', '"Summertime" renewal 1963']
+    where: https://archive.org/details/copyrightrecords — Catalog of Copyright Entries, Music, 1962–1963 renewals
+    where: https://cocatalog.loc.gov/ (post-1978 renewals only)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                     resolve  rec     work  iswc  writers  wconf   deaths         comp    2-layer  verdict
+------------------------------------------------------------------------------------------------------------------------
+Summertime / Billie Holiday        MEDIUM   1936r   yes   yes   4        HIGH    1937,1983,1961,1940 1935    no       undetermined (composition)  [1 unresolved]
+
+  resolve = recording resolution confidence: HIGH one dated session · MEDIUM several dated sessions, earliest used ·
+            LOW release date only · STOP ambiguous, no research · no_work no work relation in top candidates
+  rec     = recording year; 'r' dated performance relation (used) · 'f' first-release-date (LOW, never used for a term)
+  wconf   = writer-list confidence: HIGH MB=Wikidata · MEDIUM union · LOW uncorroborated
+  comp*   = year from P1191 first-performance or P571 inception, not P577 publication
+  2-layer = both layers determined (neither undetermined)

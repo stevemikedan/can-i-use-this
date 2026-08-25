@@ -132,6 +132,48 @@ def linked_works(recording_json):
     return works
 
 
+def browse_recordings_for_work(work_mbid, max_pages=20):
+    """
+    /recording?work={mbid}&inc=work-rels+artist-credits — every recording MB
+    has linked to this work, each with its own dated performance relation
+    (when MB has one) and first-release-date. This is how you find the 1928
+    session when the search top-N only shows reissues. Paginated 100 at a
+    time (popular standards have 1000+). Returns None on error.
+    """
+    recs, offset, total = [], 0, None
+    for _ in range(max_pages):
+        data = _mb("recording", {"work": work_mbid, "inc": "work-rels+artist-credits",
+                                 "limit": 100, "offset": offset})
+        if "_error" in data:
+            return None
+        total = data.get("recording-count", 0)
+        recs.extend(data.get("recordings", []))
+        offset += 100
+        if offset >= total:
+            break
+    if total and len(recs) < total:
+        print(f"    NOTE: work has {total} linked recordings; only the first {len(recs)} were fetched")
+    out = []
+    for r in recs:
+        rels = [x for x in r.get("relations", [])
+                if x.get("target-type") == "work" and x.get("work", {}).get("id") == work_mbid]
+        dated = [x for x in rels if x.get("begin")]
+        credit = "".join(
+            (ac.get("name") or ac["artist"]["name"]) + (ac.get("joinphrase") or "")
+            for ac in r.get("artist-credit", [])
+        )
+        out.append({
+            "mbid": r["id"],
+            "title": r.get("title"),
+            "artist": credit,
+            "date": r.get("first-release-date"),
+            "perf_begin": dated[0]["begin"] if dated else None,
+            "perf_end": dated[0].get("end") if dated else None,
+            "attributes": rels[0].get("attributes", []) if rels else [],
+        })
+    return out
+
+
 WRITER_REL_TYPES = {"composer", "lyricist", "writer", "librettist"}
 
 
@@ -203,6 +245,37 @@ def get_death_year(artist_name):
         "death_year": _claim_year(entity, "P570"),
         "candidates": [(h["id"], h.get("label"), h.get("description")) for h in hits],
     }
+
+
+def get_entities(qids):
+    """Batch wbgetentities. {qid: entity}."""
+    if not qids:
+        return {}
+    data = _wd({"action": "wbgetentities", "ids": "|".join(sorted(qids)),
+                "props": "claims|labels|descriptions", "languages": "en"})
+    return data.get("entities", {})
+
+
+def get_work_writers_wikidata(qid):
+    """
+    Writers as Wikidata records them on the WORK item: P86 composer, P676
+    lyricist. Used to corroborate (or extend) MusicBrainz's writer list.
+    Each entry carries the writer's own P570 so no name search is needed.
+    """
+    e = get_entity(qid)
+    roles = {}
+    for prop, role in (("P86", "composer"), ("P676", "lyricist")):
+        for c in e.get("claims", {}).get(prop, []):
+            v = c.get("mainsnak", {}).get("datavalue", {}).get("value", {})
+            if isinstance(v, dict) and v.get("id"):
+                roles[v["id"]] = role
+    ents = get_entities(list(roles))
+    return [{
+        "qid": q,
+        "role": role,
+        "label": ents.get(q, {}).get("labels", {}).get("en", {}).get("value"),
+        "death_year": _claim_year(ents.get(q, {}), "P570"),
+    } for q, role in roles.items()]
 
 
 def get_work_dates(qid):
