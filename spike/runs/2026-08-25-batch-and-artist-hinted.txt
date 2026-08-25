@@ -1,0 +1,833 @@
+﻿==============================================================================
+West End Blues  —  Louis Armstrong
+==============================================================================
+
+[1] search_recording
+  100  1996        929d6519-0100-49f5-8d28-05f7aa4754b0  West End Blues  ·  Louis Armstrong
+  100  ----------  a86fe067-ca50-4e9a-ae8d-2ee3db3c9a4d  West End Blues  ·  Louis Armstrong
+  100  2003        594f6368-0c68-44e4-b527-483d5cc7cde9  West End Blues  ·  Louis Armstrong
+  100  2020-02-10  f13a93ec-4b15-4dba-8356-9a36db3adcad  West End Blues  ·  Louis Armstrong
+  100  2001        81efaeb0-b315-4411-8357-2df9ae3d2740  West End Blues  ·  Louis Armstrong
+  100  1995        5114e653-9827-4982-8678-7bad3e169e6b  West End Blues  ·  Louis Armstrong
+  100  1997        45b1d5b1-e70b-4841-bb83-4e63c056c034  West End Blues  ·  Louis Armstrong
+  100  2003        644bb9a8-c1fa-4275-bae3-748649851805  West End Blues  ·  Louis Armstrong
+  100  1999-07-16  9ae61b9a-4142-4fde-8a76-1a17dd2d30d8  West End Blues  ·  Louis Armstrong
+  100  1975        5e89c005-4bf9-4cc3-b9de-8b25e780b4d4  West End Blues  ·  Louis Armstrong
+
+  picked 5e89c005-4bf9-4cc3-b9de-8b25e780b4d4 (1975, Louis Armstrong) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+{
+  "first-release-date": "1975",
+  "id": "5e89c005-4bf9-4cc3-b9de-8b25e780b4d4",
+  "length": 207121,
+  "relations": [
+    {
+      "source-credit": "",
+      "work": {
+        "disambiguation": "Armstrong recording",
+        "iswcs": [],
+        "languages": [],
+        "title": "West End Blues",
+        "type": "Song",
+        "language": null,
+        "attributes": [],
+        "id": "a97c426c-c138-4531-9d4a-e2eb0bca7961",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      },
+      "attributes": [],
+      "target-type": "work",
+      "attribute-values": {},
+      "target-credit": "",
+      "type": "performance",
+      "direction": "forward",
+      "begin": null,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "attribute-ids": {},
+      "end": null,
+      "ended": false
+    }
+  ],
+  "title": "West End Blues",
+  "disambiguation": "",
+  "video": false
+}
+  work a97c426c-c138-4531-9d4a-e2eb0bca7961  West End Blues  iswc=[]  rel=performance []
+
+[3] get_writers
+  iswc=[]  wikidata=Q4019073
+  composer   King Oliver  744fa1ae-051c-463c-957a-25a4ddc01c2f  (1928..1928)
+
+[4a] composition year
+  Q4019073 "West End Blues": P577=1928 P1191=None P571=None
+
+[4b] get_death_year
+  King Oliver              -> Q313368  "King Oliver" — American jazz cornet player and bandleader  P570=1938
+                              other hits: Q114492308 King Oliver I (episode of Green Acres (S6 E20)); Q91296829 King Oliver's Creole Jazz Band (American jazz band led by cornetist (Joe) King Oliver); Q11871593 King Oliver discography (None); Q19301979 King Oliverlaan (street in Eindhoven, the Netherlands)
+
+[5] determination
+  composition  public_domain  expiry=2024   rule=us_published_expired
+               Published 1928 in the US. The 95-year term expired 1 January 2024.
+  recording    protected      expiry=2071   rule=us_published_1964_1977
+               Published 1975 in the US. Renewal was automatic; protected until 1 January 2071.
+  life+70 (EU, info only) public_domain  expiry=2009   rule=eu_life_plus_70
+               Last surviving author died 1938. Term expired 1 January 2009.
+
+  ROLL-UP: LICENSE_REQUIRED  (blocking layer: recording)
+==============================================================================
+Rhapsody in Blue  —  (no artist given)
+==============================================================================
+
+[1] search_recording
+    [http 200] https://musicbrainz.org/ws/2/recording?query=recording%3A%22Rhapsody+in+Blue%22&limit=10&fmt=json
+  100  2007-11-26  095de81f-b0d2-4b68-8c58-da0befdd3177  Rhapsody in Blue (Rhapsody in Blue)  ·  [unknown]
+   93  2013-11-29  2b12b75b-78a3-4cf0-b927-1d92d8df6896  Rhapsody In Blue : Rhapsody In Blue  ·  James Levine
+   92  1993-11-16  af55f99f-499c-4aca-b036-73484f587da9  Rhapsody in Blue  ·  The Glenn Miller Orchestra
+   92  1989        0e6aa062-0f9f-43c8-912c-eaf4cb268b45  Rhapsody in Blue  ·  Jenő Jandó, Budapest Philharmonic Orchestra, János Sándor
+   92  ----------  dde9ff15-fcb4-4b85-9955-2fecc21e140c  Rhapsody in Blue  ·  The Glenn Miller Orchestra
+   92  2005        4e40dd18-96d6-4ede-b597-3243dce96b8b  Rhapsody in Blue  ·  Orquestra Simfònica de Barcelona i Nacional de Catalunya, Ernest Martínez Izquierdo, Michel Camilo
+   92  2006-04-04  c6f85b15-60ac-48f9-996a-c8a163d6c44c  Rhapsody in Blue  ·  The 5 Browns
+   92  1999        986adb8d-e48f-4913-826f-de018da0b165  Rhapsody in Blue  ·  Hadda Brooks
+   92  1989        09b91fd9-5cde-43f0-a8b0-e99208f4c35f  Rhapsody in Blue  ·  Orchestre symphonique de Montréal, Charles Dutoit
+   92  1996        6ec5fd10-8e3a-4618-add3-75fe71709965  Rhapsody in Blue  ·  Jack Teagarden
+
+  picked 0e6aa062-0f9f-43c8-912c-eaf4cb268b45 (1989, Jenő Jandó, Budapest Philharmonic Orchestra, János Sándor) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+    [http 200] https://musicbrainz.org/ws/2/recording/0e6aa062-0f9f-43c8-912c-eaf4cb268b45?inc=work-rels&fmt=json
+{
+  "disambiguation": "",
+  "first-release-date": "1989",
+  "relations": [
+    {
+      "source-credit": "",
+      "target-credit": "",
+      "attribute-values": {},
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "iswcs": [
+          "T-010.244.926-2",
+          "T-070.126.537-3"
+        ],
+        "attributes": [],
+        "language": "zxx",
+        "type-id": null,
+        "id": "bf7e3ad3-4d47-3425-aa5f-8cc8c91d53ed",
+        "languages": [
+          "zxx"
+        ],
+        "type": null,
+        "title": "Rhapsody in Blue",
+        "disambiguation": "standard 1942 orchestration"
+      },
+      "end": null,
+      "attributes": [],
+      "begin": null,
+      "type": "performance",
+      "target-type": "work",
+      "direction": "forward",
+      "ended": false,
+      "attribute-ids": {}
+    }
+  ],
+  "title": "Rhapsody in Blue",
+  "id": "0e6aa062-0f9f-43c8-912c-eaf4cb268b45",
+  "length": 1007000,
+  "video": false
+}
+  work bf7e3ad3-4d47-3425-aa5f-8cc8c91d53ed  Rhapsody in Blue  iswc=['T-010.244.926-2', 'T-070.126.537-3']  rel=performance []
+
+[3] get_writers
+    [http 200] https://musicbrainz.org/ws/2/work/bf7e3ad3-4d47-3425-aa5f-8cc8c91d53ed?inc=artist-rels%2Burl-rels&fmt=json
+  iswc=['T-010.244.926-2', 'T-070.126.537-3']  wikidata=Q722599
+  composer   George Gershwin  65744963-191a-44ef-a3c7-b693a808a158  (1924..1924)
+
+[4a] composition year
+    [http 200] https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q722599&props=claims%7Clabels%7Cdescriptions&languages=en&format=json
+  Q722599 "Rhapsody in Blue": P577=1924 P1191=1924 P571=None
+
+[4b] get_death_year
+    [http 200] https://www.wikidata.org/w/api.php?action=wbsearchentities&search=George+Gershwin&language=en&type=item&limit=5&format=json
+    [http 200] https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q123829&props=claims%7Clabels%7Cdescriptions&languages=en&format=json
+  George Gershwin          -> Q123829  "George Gershwin" — American composer and pianist (1898–1937)  P570=1937
+                              other hits: Q47509140 George Gershwin (painting by Arthur Kaufmann); Q47510621 George Gershwin Self-Portrait (painting by George Gershwin); Q20634453 George Gershwin-I'll Build a Stairway to Paradise (painting by Arthur Garfield Dove); Q23675256 George Gershwin: His Life and Work (2007 biography)
+
+[5] determination
+  composition  public_domain  expiry=2020   rule=us_published_expired
+               Published 1924 in the US. The 95-year term expired 1 January 2020.
+  recording    protected      expiry=2085   rule=us_published_post_1978
+               Published 1989 in the US. Protected until at least 1 January 2085.
+  life+70 (EU, info only) public_domain  expiry=2008   rule=eu_life_plus_70
+               Last surviving author died 1937. Term expired 1 January 2008.
+
+  ROLL-UP: LICENSE_REQUIRED  (blocking layer: recording)
+==============================================================================
+Take Five  —  (no artist given)
+==============================================================================
+
+[1] search_recording
+    [http 200] https://musicbrainz.org/ws/2/recording?query=recording%3A%22Take+Five%22&limit=10&fmt=json
+  100  1999-11-15  65b1fe91-d2f4-4337-a7b9-c60415c258f7  Take Five  ·  The Dave Brubeck Quartet
+  100  1996        25cbbb78-4d7e-4a99-8486-cb0643445b8f  Take Five  ·  Hound Dog Taylor & the HouseRockers
+  100  1999        6a379f42-7e38-453c-a202-fd884348c70e  Take Five  ·  The Dave Brubeck Quartet
+  100  1994        6dfd0af8-6ba7-4211-bc1a-cfa5dba6417a  Take Five  ·  Rico and His Band
+  100  2006-09-05  8d3eae8f-126f-48c5-b865-0cf0de8c67c5  Take Five  ·  Dancing Mood
+  100  1987        aa29bfdb-db93-4ad0-8ac9-9d50fcc0c72d  Take Five  ·  Özdemir Erdoğan
+  100  2006        237fa635-242c-4956-a695-5db7d83b8272  Take Five  ·  Eyran Katsenelenbogen
+  100  1998        a6e1e612-4023-46e0-9d9d-9f2344b07275  Take Five  ·  The Gasolines
+  100  2002        1065dd21-b776-4c78-ba35-72e16ce478c5  Take Five  ·  Dave Brubeck
+  100  2005        97f13d31-f227-4dfe-8f51-f911cb1adeb2  Take Five  ·  Willie Mitchell
+
+  picked aa29bfdb-db93-4ad0-8ac9-9d50fcc0c72d (1987, Özdemir Erdoğan) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+    [http 200] https://musicbrainz.org/ws/2/recording/aa29bfdb-db93-4ad0-8ac9-9d50fcc0c72d?inc=work-rels&fmt=json
+{
+  "id": "aa29bfdb-db93-4ad0-8ac9-9d50fcc0c72d",
+  "length": 481640,
+  "first-release-date": "1987",
+  "video": false,
+  "disambiguation": "",
+  "relations": [],
+  "title": "Take Five"
+}
+
+  >>> NO LINKED WORK on this recording. Composition layer cannot be resolved from MusicBrainz. <<<
+
+[5] determination (recording layer only)
+  recording    protected      expiry=2083   rule=us_published_post_1978
+               Published 1987 in the US. Protected until at least 1 January 2083.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+==============================================================================
+Mack the Knife  —  (no artist given)
+==============================================================================
+
+[1] search_recording
+  100  ----------  9ed63166-9300-4025-9058-2a287a11e85b  Mack the Knife  ·  Les Brown
+  100  1996-02-26  5a96a9ad-1ece-4acb-9c37-3450ce483854  Mack the Knife  ·  Lionel Hampton
+  100  1996-10-15  6a3bd4b7-7e4d-44e1-9030-85a95e35ba49  Mack the Knife  ·  Liz Story
+  100  1997-09-30  a9ed6294-fa6d-41dd-8ab9-3f2dcd2e7f12  Mack the Knife  ·  Dee Dee Bridgewater
+  100  1994        f80e6991-c583-4b12-a684-f61b5a6b5fc1  Mack the Knife  ·  Itzhak Perlman & Oscar Peterson
+  100  2001-09-03  fbbfb450-933c-4da5-8d6b-bc7b0291e11a  Mack the Knife  ·  Joe Longthorne
+  100  2005        6e55388e-38b3-44d0-ad54-71cdd184e346  Mack the Knife  ·  Louis Armstrong
+  100  ----------  96c7fb76-9cf1-4d2f-9a6c-10fff23cf3f4  Mack the Knife  ·  Etypejazz
+  100  2007-04-11  d005371e-457d-4064-a966-18bdc75690a0  Mack the Knife  ·  Lauren White
+  100  ----------  df7881bd-fae6-4b05-bfbc-2a6a4b691c4f  Mack the Knife  ·  Louis Armstrong
+
+  picked f80e6991-c583-4b12-a684-f61b5a6b5fc1 (1994, Itzhak Perlman & Oscar Peterson) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+    [http 200] https://musicbrainz.org/ws/2/recording/f80e6991-c583-4b12-a684-f61b5a6b5fc1?inc=work-rels&fmt=json
+{
+  "video": false,
+  "length": 212560,
+  "id": "f80e6991-c583-4b12-a684-f61b5a6b5fc1",
+  "title": "Mack the Knife",
+  "relations": [
+    {
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "attribute-values": {},
+      "attributes": [
+        "cover",
+        "instrumental"
+      ],
+      "work": {
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6",
+        "attributes": [],
+        "iswcs": [
+          "T-071.314.125-3",
+          "T-071.402.746-9",
+          "T-802.192.136-9",
+          "T-802.203.417-0",
+          "T-802.337.911-6"
+        ],
+        "language": "eng",
+        "languages": [
+          "eng"
+        ],
+        "type": "Song",
+        "id": "b85bbbc9-54f2-3aab-8b27-fb1d510c6e15",
+        "title": "Mack the Knife",
+        "disambiguation": "1954 Blitzstein translation"
+      },
+      "end": null,
+      "type": "performance",
+      "begin": null,
+      "direction": "forward",
+      "target-type": "work",
+      "source-credit": "",
+      "target-credit": "",
+      "attribute-ids": {
+        "instrumental": "c031ed4f-c9bb-4394-8cf5-e8ce4db512ae",
+        "cover": "1e8536bd-6eda-3822-8e78-1c0f4d3d2113"
+      },
+      "ended": false
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "1994"
+}
+  work b85bbbc9-54f2-3aab-8b27-fb1d510c6e15  Mack the Knife  iswc=['T-071.314.125-3', 'T-071.402.746-9', 'T-802.192.136-9', 'T-802.203.417-0', 'T-802.337.911-6']  rel=performance ['cover', 'instrumental']
+
+[3] get_writers
+    [http 200] https://musicbrainz.org/ws/2/work/b85bbbc9-54f2-3aab-8b27-fb1d510c6e15?inc=artist-rels%2Burl-rels&fmt=json
+  iswc=['T-071.314.125-3', 'T-071.402.746-9', 'T-802.192.136-9', 'T-802.203.417-0', 'T-802.337.911-6']  wikidata=Q51801270
+  composer   Kurt Weill  0e738f68-783c-4a6a-80ae-4f7500861060
+  lyricist   Bertolt Brecht  95fb3a0c-fc74-4f51-acba-bbe5b3a78e32
+
+[4a] composition year
+    [http 200] https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q51801270&props=claims%7Clabels%7Cdescriptions&languages=en&format=json
+  Q51801270 "Mack the Knife": P577=1954 P1191=None P571=None
+
+[4b] get_death_year
+    [http 200] https://www.wikidata.org/w/api.php?action=wbsearchentities&search=Kurt+Weill&language=en&type=item&limit=5&format=json
+    [http 200] https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q55004&props=claims%7Clabels%7Cdescriptions&languages=en&format=json
+  Kurt Weill               -> Q55004  "Kurt Weill" — German composer (1900–1950)  P570=1950
+                              other hits: Q17177203 Kurt Weill (2005 studio album by Diane Dufresne with Orchestre Métropolitain du Grand Montréal, conducted by Yannick Nézet-Séguin); Q98820759 Kurt Weill (photograph by Lotte Jacobi (MET, 1987.1100.319)); Q130560629 Kurt-Weill-Straße (street in Grevenbroich, North Rhine-Westphalia, Germany); Q1794246 Kurt Weill – American Songs (2000 live album by Caterina Valente)
+    [http 200] https://www.wikidata.org/w/api.php?action=wbsearchentities&search=Bertolt+Brecht&language=en&type=item&limit=5&format=json
+    [http 200] https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q38757&props=claims%7Clabels%7Cdescriptions&languages=en&format=json
+  Bertolt Brecht           -> Q38757  "Bertolt Brecht" — German poet, playwright, and theatre director (1898–1956)  P570=1956
+                              other hits: Q75415180 Bertolt Brecht (painting by Rudolf Schlichter in the Lenbachhaus, Munich); Q110739737 Bertolt-Brecht-Straße (tram stop in Rostock, Germany); Q83638126 Bertolt Brecht (ship built in 1960); Q76962948 Bertolt Brecht (edition; published in 2002)
+
+[5] determination
+  composition  undetermined   expiry=None   rule=us_renewal_unknown
+               Published 1954 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.
+               blocked_by=renewal_filed
+  recording    protected      expiry=2090   rule=us_published_post_1978
+               Published 1994 in the US. Protected until at least 1 January 2090.
+  life+70 (EU, info only) protected      expiry=2027   rule=eu_life_plus_70
+               Last surviving author died 1956. Protected until 1 January 2027.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+==============================================================================
+Summertime  —  (no artist given)
+==============================================================================
+
+[1] search_recording
+  100  1989-06-19  ee35e984-92ad-4d62-9b49-ec66fc0dbd9f  Summertime, Summertime  ·  The Jamies
+  100  1997-06-10  0c790692-ef94-45f8-8355-daeba1c42eed  Summertime Summertime  ·  Corina
+  100  1987        8f72921b-185c-4f61-af34-0c24980803f9  Summertime, Summertime  ·  Nocera
+  100  ----------  c1957aaa-990d-4572-bd61-e0ff2567e8f7  Summertime, Summertime  ·  Nocera
+  100  1996-08-27  2eb10f92-7752-4836-be57-9e577b84ecb7  Summertime Summertime  ·  Nocera
+  100  1994-04-05  ba8ad10d-073c-4a37-a8e9-6ca3ba34fe7a  Summertime Summertime  ·  Nocera
+  100  1968        a6493fc2-bcd1-42d4-a75b-f34df4175d7d  Summertime, Summertime  ·  The Doodletown Pipers
+  100  2020-07-17  b1883bd7-a25a-4e4c-857c-75b125c40a6a  Summertime Summertime  ·  Martin Trotman
+  100  1994        a2c31c71-28ab-4bf4-8845-24db3002ecd3  Summertime, Summertime  ·  Corina
+  100  2002        05df4a65-894c-402c-a054-921d258b2342  Summertime, Summertime  ·  The Jamies
+
+  picked a6493fc2-bcd1-42d4-a75b-f34df4175d7d (1968, The Doodletown Pipers) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+{
+  "disambiguation": "",
+  "first-release-date": "1968",
+  "relations": [],
+  "title": "Summertime, Summertime",
+  "id": "a6493fc2-bcd1-42d4-a75b-f34df4175d7d",
+  "length": 116000,
+  "video": false
+}
+
+  >>> NO LINKED WORK on this recording. Composition layer cannot be resolved from MusicBrainz. <<<
+
+[5] determination (recording layer only)
+  recording    protected      expiry=2067   rule=us_sr_mma_1957_1972
+               Published 1968. Under the CLASSICS Act (fixed statutory expiry of 15 February 2067), protected until 1 January 2067.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+==============================================================================
+Blue Moon  —  (no artist given)
+==============================================================================
+
+[1] search_recording
+  100  1993        1a6b061e-35ea-45bf-ab92-608fc8732f44  Blue Moon  ·  Showaddywaddy
+  100  1996-02-01  d7b74156-946f-40df-a4df-0ae3267cf638  Blue Moon  ·  De/Vision
+  100  ----------  c9b13887-f426-4b21-af89-01f802097cf0  Blue Moon  ·  Dogma
+  100  ----------  0d34dc9d-f42c-44ca-a5a6-587d9e2d14a1  Blue Moon  ·  Whoolilicious
+  100  1961        97dc33ee-b89f-4959-8d75-53cc95ef3078  Blue Moon  ·  Ella Fitzgerald
+  100  1991        08eb86b7-afab-4e02-a203-d1af5c0131ea  Blue Moon  ·  University of Rochester Yellowjackets
+  100  1996-05-21  9f3922ef-ffc7-495b-802b-014578daf31e  Blue Moon  ·  Oscar Peterson
+  100  1999        5cd08503-c5ee-40b1-a43e-99225eca4791  Blue Moon  ·  Paul Petersen
+  100  1961        9b040ded-13c1-4413-8b40-8649a572bf2f  Blue Moon  ·  Werner Müller und sein Orchester
+  100  1999        4b8ca176-e15b-4ac1-9037-356a8fed9cb3  Blue Moon  ·  Tony Bennett
+
+  picked 97dc33ee-b89f-4959-8d75-53cc95ef3078 (1961, Ella Fitzgerald) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+{
+  "relations": [
+    {
+      "direction": "forward",
+      "target-credit": "",
+      "attribute-values": {},
+      "type": "performance",
+      "end": "1961",
+      "ended": true,
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": "1961",
+      "attribute-ids": {
+        "cover": "1e8536bd-6eda-3822-8e78-1c0f4d3d2113"
+      },
+      "work": {
+        "disambiguation": "",
+        "languages": [
+          "eng"
+        ],
+        "iswcs": [
+          "T-070.011.746-9",
+          "T-915.741.665-4"
+        ],
+        "title": "Blue Moon",
+        "type": "Song",
+        "language": "eng",
+        "id": "3c339d3d-c76d-3eb5-b3bc-98c8c2d18620",
+        "attributes": [],
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      },
+      "source-credit": "",
+      "target-type": "work",
+      "attributes": [
+        "cover"
+      ]
+    }
+  ],
+  "length": 197693,
+  "first-release-date": "1961",
+  "id": "97dc33ee-b89f-4959-8d75-53cc95ef3078",
+  "video": false,
+  "title": "Blue Moon",
+  "disambiguation": ""
+}
+
+  recording year: 1961 from the dated performance relation (begin=1961), overriding first-release-date 1961
+  work 3c339d3d-c76d-3eb5-b3bc-98c8c2d18620  Blue Moon  iswc=['T-070.011.746-9', 'T-915.741.665-4']  rel=performance ['cover']
+
+[3] get_writers
+  iswc=['T-070.011.746-9', 'T-915.741.665-4']  wikidata=Q804574
+  composer   Richard Rodgers  346448f5-25a0-4f78-bbd6-acc0205f7513  (1934..1934)
+  lyricist   Lorenz Hart  3fb75d97-5dfd-4e72-9aee-1904aa4268f4  (1934..1934)
+
+[4a] composition year
+  Q804574 "Blue Moon": P577=1934 P1191=None P571=None
+
+[4b] get_death_year
+  Richard Rodgers          -> Q269094  "Richard Rodgers" — American composer of songs and Broadway musicals (1902–1979)  P570=1979
+                              other hits: Q116502285 Richard Rodgers (rugby league footballer); Q47510518 Richard Rodgers (painting by Charles Baskerville); Q3162850 Richard Reid Rogers (American governor of the Panama Canal Zone (1867-1949)); Q47508815 Richard Rodgers (painting by William F. Draper)
+  Lorenz Hart              -> Q725828  "Lorenz Hart" — American lyricist (1895–1943)  P570=1943
+                              other hits: Q106516934 Lorenz Hartung (None); Q138029619 Lorenz Hartranfft ((1544-1622)); Q6680562 Lorenz Harthan (German soldier and Knight's Cross recipient (1913-1976)); Q38667143 Lorenz Harth (German politician)
+
+[5] determination
+  composition  undetermined   expiry=None   rule=us_renewal_unknown
+               Published 1934 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.
+               blocked_by=renewal_filed
+  recording    protected      expiry=2067   rule=us_sr_mma_1957_1972
+               Published 1961. Under the CLASSICS Act (fixed statutory expiry of 15 February 2067), protected until 1 January 2067.
+  life+70 (EU, info only) protected      expiry=2050   rule=eu_life_plus_70
+               Last surviving author died 1979. Protected until 1 January 2050.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                       rec     work  iswc  writers  deaths         comp       2-layer  verdict
+------------------------------------------------------------------------------------------------------------
+West End Blues / Louis Armstrong     1975f   yes   no    1        1938           1928       YES      license_required (recording)
+Rhapsody in Blue                     1989f   yes   yes   1        1937           1924       YES      license_required (recording)
+Take Five                            1987f   NO    no    -        -              -          no       undetermined (composition)
+Mack the Knife                       1994f   yes   yes   2        1950,1956      1954       no       undetermined (composition)
+Summertime                           1968f   NO    no    -        -              -          no       undetermined (composition)
+Blue Moon                            1961r   yes   yes   2        1979,1943      1934       no       undetermined (composition)
+
+  rec     = recording year; 'r' = dated performance relation, 'f' = MB first-release-date (earliest release on file)
+  comp*   = year came from P1191 first-performance or P571 inception, not P577 publication
+  ERR     = the HTTP request failed; says nothing about the data
+  2-layer = both composition and recording layers determined (neither undetermined)
+
+
+######## ARTIST-HINTED RUNS (artist choices are not from the spec) ########
+
+==============================================================================
+Rhapsody in Blue  —  Paul Whiteman
+==============================================================================
+
+[1] search_recording
+    [http 200] https://musicbrainz.org/ws/2/recording?query=recording%3A%22Rhapsody+in+Blue%22+AND+artist%3A%22Paul+Whiteman%22&limit=10&fmt=json
+  100  2020-02-10  544d8de1-9c55-4f9e-8326-fbacc419af59  Rhapsody in Blue  ·  Paul Whiteman; George Gershwin
+  100  2025-03-25  6da4aab1-7f07-4283-a990-74403504e61d  Rhapsody In Blue  ·  The Paul Whiteman Orchestra
+   95  1995        e7dcc1b5-5f01-4fba-bc4a-d3e527c85f4f  Rhapsody in Blue  ·  Paul Whiteman & His Orchestra
+   95  2005        2883112e-2886-4a61-b064-13bffd362438  Rhapsody In Blue  ·  Paul Whiteman and His Orchestra
+   95  1998        97148d90-0128-43c1-a887-76c4880f6e52  Rhapsody In Blue  ·  Paul Whiteman and His Orchestra
+   95  1996        20ba6512-1eee-4d68-b602-d38fdcb22e52  Rhapsody In Blue  ·  Paul Whiteman and His Orchestra
+   95  2013-07-17  76b1fe12-ed4b-4f38-9be0-36c125692792  Rhapsody in Blue  ·  Paul Whiteman and His Orchestra
+   95  ----------  21a1e7da-214f-4be0-b68e-27abe2168c87  Rhapsody In Blue  ·  Paul Whiteman and His Orchestra
+   94  1999        5e2b2317-6b21-4eca-bf83-936d08729ad7  Rhapsody In Blue, For Piano & Orchestra  ·  Paul Whiteman
+   91  1981        5ee6c775-f8f8-4acf-a1aa-993f93b97391  Rhapsody In Blue  ·  Paul Whiteman and His Concert Orchestra
+
+  picked 5ee6c775-f8f8-4acf-a1aa-993f93b97391 (1981, Paul Whiteman and His Concert Orchestra) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+    [http 200] https://musicbrainz.org/ws/2/recording/5ee6c775-f8f8-4acf-a1aa-993f93b97391?inc=work-rels&fmt=json
+{
+  "title": "Rhapsody In Blue",
+  "disambiguation": "",
+  "video": false,
+  "first-release-date": "1981",
+  "id": "5ee6c775-f8f8-4acf-a1aa-993f93b97391",
+  "length": null,
+  "relations": [
+    {
+      "target-type": "work",
+      "attributes": [],
+      "work": {
+        "type": null,
+        "language": "zxx",
+        "disambiguation": "original 1924 jazz band version, less often performed",
+        "iswcs": [],
+        "languages": [
+          "zxx"
+        ],
+        "title": "Rhapsody in Blue",
+        "type-id": null,
+        "attributes": [],
+        "id": "60b22df4-c354-4045-82dd-596e36cc7d10"
+      },
+      "source-credit": "",
+      "ended": true,
+      "end": "1924-06-10",
+      "attribute-ids": {},
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "begin": "1924-06-10",
+      "direction": "forward",
+      "type": "performance",
+      "target-credit": "",
+      "attribute-values": {}
+    }
+  ]
+}
+
+  recording year: 1924 from the dated performance relation (begin=1924-06-10), overriding first-release-date 1981
+  work 60b22df4-c354-4045-82dd-596e36cc7d10  Rhapsody in Blue  iswc=[]  rel=performance []
+
+[3] get_writers
+    [http 200] https://musicbrainz.org/ws/2/work/60b22df4-c354-4045-82dd-596e36cc7d10?inc=artist-rels%2Burl-rels&fmt=json
+  iswc=[]  wikidata=Q722599
+  composer   George Gershwin  65744963-191a-44ef-a3c7-b693a808a158  (1924..1924)
+
+[4a] composition year
+  Q722599 "Rhapsody in Blue": P577=1924 P1191=1924 P571=None
+
+[4b] get_death_year
+  George Gershwin          -> Q123829  "George Gershwin" — American composer and pianist (1898–1937)  P570=1937
+                              other hits: Q47509140 George Gershwin (painting by Arthur Kaufmann); Q47510621 George Gershwin Self-Portrait (painting by George Gershwin); Q20634453 George Gershwin-I'll Build a Stairway to Paradise (painting by Arthur Garfield Dove); Q23675256 George Gershwin: His Life and Work (2007 biography)
+
+[5] determination
+  composition  public_domain  expiry=2020   rule=us_published_expired
+               Published 1924 in the US. The 95-year term expired 1 January 2020.
+  recording    public_domain  expiry=2025   rule=us_sr_mma_1923_1946
+               Published 1924. Under the CLASSICS Act (95-year term plus 5 additional years), protection ended 1 January 2025.
+  life+70 (EU, info only) public_domain  expiry=2008   rule=eu_life_plus_70
+               Last surviving author died 1937. Term expired 1 January 2008.
+
+  ROLL-UP: CLEAR  (blocking layer: composition)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                       rec     work  iswc  writers  deaths         comp       2-layer  verdict
+------------------------------------------------------------------------------------------------------------
+Rhapsody in Blue / Paul Whiteman     1924r   yes   no    1        1937           1924       YES      clear (composition)
+
+  rec     = recording year; 'r' = dated performance relation, 'f' = MB first-release-date (earliest release on file)
+  comp*   = year came from P1191 first-performance or P571 inception, not P577 publication
+  ERR     = the HTTP request failed; says nothing about the data
+  2-layer = both composition and recording layers determined (neither undetermined)
+==============================================================================
+Take Five  —  The Dave Brubeck Quartet
+==============================================================================
+
+[1] search_recording
+    [http 200] https://musicbrainz.org/ws/2/recording?query=recording%3A%22Take+Five%22+AND+artist%3A%22The+Dave+Brubeck+Quartet%22&limit=10&fmt=json
+  100  2001-02-27  3d87b15d-6680-4957-a6a5-2bbd13acf7bb  Take Five  ·  The Dave Brubeck Quartet
+  100  2001-02-27  38d01f3e-9419-4daf-a607-67a2c6b24160  Take Five  ·  The Dave Brubeck Quartet
+  100  1998-04     33703d34-b7d9-4cc8-8c40-93f22461703b  Take Five  ·  The Dave Brubeck Quartet
+  100  2020-05-01  720d26bf-cb59-4e60-ab82-367e3ebf1687  Take Five  ·  The Dave Brubeck Quartet
+  100  ----------  58fd9469-f61c-4b6e-be5f-9cbd3479152f  Take Five  ·  The Dave Brubeck Quartet
+  100  1959-09-21  76ad3528-705a-4371-af2d-f159900bcee9  Take Five  ·  The Dave Brubeck Quartet
+  100  2008        a92bfc88-7c0d-446f-abc5-6c73f9e0422f  Take Five  ·  The Dave Brubeck Quartet
+  100  2013        696ee160-2a0e-48fa-9796-d0ed64232394  Take Five  ·  The Dave Brubeck Quartet
+  100  1991        7dbaa1f4-0a86-422a-ac8f-04c95ccdfacd  Take Five  ·  The Dave Brubeck Quartet
+  100  2024-06-07  9746d994-65ec-4e32-9192-dd6b1df5a0fd  Take Five  ·  The Dave Brubeck Quartet
+
+  picked 76ad3528-705a-4371-af2d-f159900bcee9 (1959-09-21, The Dave Brubeck Quartet) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+python : Traceback (most recent call last):
+At line:1 char:915
++ ... reach ($p in $pairs) { python spike/spike.py $p[0] $p[1] 2>&1 | Out-F ...
++                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_transports\default.py", line 101, in 
+map_httpcore_exceptions
+    yield
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_transports\default.py", line 250, in 
+handle_request
+    resp = self._pool.handle_request(req)
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpcore\_sync\connection_pool.py", line 256, in 
+handle_request
+    raise exc from None
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpcore\_sync\connection_pool.py", line 236, in 
+handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpcore\_sync\connection.py", line 101, in 
+handle_request
+    raise exc
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpcore\_sync\connection.py", line 78, in 
+handle_request
+    stream = self._connect(request)
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpcore\_sync\connection.py", line 156, in 
+_connect
+    stream = stream.start_tls(**kwargs)
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpcore\_backends\sync.py", line 154, in 
+start_tls
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpcore\_exceptions.py", line 14, in 
+map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<repo>\spike\spike.py", line 229, in <module>
+    results = [run(t, a) for t, a in queries]
+               ~~~^^^^^^
+  File "<repo>\spike\spike.py", line 91, in run
+    raw = get_work_for_recording(pick["mbid"])
+  File "<repo>\spike\sources.py", line 106, in get_work_for_recording
+    return _mb(f"recording/{mbid}", {"inc": "work-rels"})
+  File "<repo>\spike\sources.py", line 66, in _mb
+    return _get(f"{MB}/{path}", {**params, "fmt": "json"}, min_interval=1.1)
+  File "<repo>\spike\sources.py", line 42, in _get
+    r = httpx.get(url, params=params,
+                  headers={"User-Agent": UA, "Accept": "application/json"},
+                  timeout=30)
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_api.py", line 195, in get
+    return request(
+        "GET",
+    ...<9 lines>...
+        trust_env=trust_env,
+    )
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_api.py", line 109, in request
+    return client.request(
+           ~~~~~~~~~~~~~~^
+        method=method,
+        ^^^^^^^^^^^^^^
+    ...<8 lines>...
+        follow_redirects=follow_redirects,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_client.py", line 942, in 
+_send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_client.py", line 979, in 
+_send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_client.py", line 1014, in 
+_send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_transports\default.py", line 249, in 
+handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\steve\AppData\Roaming\Python\Python313\site-packages\httpx\_transports\default.py", line 118, in 
+map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [WinError 10054] An existing connection was forcibly closed by the remote host
+==============================================================================
+Mack the Knife  —  Bobby Darin
+==============================================================================
+
+[1] search_recording
+    [http 200] https://musicbrainz.org/ws/2/recording?query=recording%3A%22Mack+the+Knife%22+AND+artist%3A%22Bobby+Darin%22&limit=10&fmt=json
+  100  2000        0916afbf-af9d-4b06-9600-b6e91dd5e459  Mack the Knife  ·  Bobby Darin
+  100  2005        81d8fb7b-3885-4768-913d-478837fd022e  Mack The Knife  ·  Bobby Darin
+  100  1988        a58cf960-3e3d-4edb-9b76-b33a30be2a32  Mack the Knife  ·  Bobby Darin
+  100  ----------  f133a3bb-496f-40a3-a07c-976dcdd3b38e  Mack the Knife  ·  Bobby Darin
+  100  ----------  e0268b6a-547b-40c7-acc4-8ae5b37a0da2  Mack the Knife  ·  Bobby Darin
+  100  2004        4e2848b4-1241-465c-937f-468401679f86  Mack the Knife  ·  Bobby Darin
+  100  1998-06-16  742a11cd-99aa-4c1d-90d4-bb92f8d9e1b2  Mack the Knife  ·  Bobby Darin
+  100  1994        8708e927-fd00-48fd-b8a7-b4cfc1eb87fa  Mack the Knife  ·  Bobby Darin
+  100  1996        4f854669-07ea-4ff7-a023-88cc8bdc02ce  Mack the Knife  ·  Bobby Darin
+  100  2019-07-07  5ee9f9b4-8455-4551-9f76-051c56cc2fb4  Mack the Knife  ·  Bobby Darin
+
+  picked a58cf960-3e3d-4edb-9b76-b33a30be2a32 (1988, Bobby Darin) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+    [http 200] https://musicbrainz.org/ws/2/recording/a58cf960-3e3d-4edb-9b76-b33a30be2a32?inc=work-rels&fmt=json
+{
+  "video": false,
+  "length": 185826,
+  "id": "a58cf960-3e3d-4edb-9b76-b33a30be2a32",
+  "title": "Mack the Knife",
+  "relations": [],
+  "first-release-date": "1988",
+  "disambiguation": ""
+}
+
+  >>> NO LINKED WORK on this recording. Composition layer cannot be resolved from MusicBrainz. <<<
+
+[5] determination (recording layer only)
+  recording    protected      expiry=2084   rule=us_published_post_1978
+               Published 1988 in the US. Protected until at least 1 January 2084.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                       rec     work  iswc  writers  deaths         comp       2-layer  verdict
+------------------------------------------------------------------------------------------------------------
+Mack the Knife / Bobby Darin         1988f   NO    no    -        -              -          no       undetermined (composition)
+
+  rec     = recording year; 'r' = dated performance relation, 'f' = MB first-release-date (earliest release on file)
+  comp*   = year came from P1191 first-performance or P571 inception, not P577 publication
+  ERR     = the HTTP request failed; says nothing about the data
+  2-layer = both composition and recording layers determined (neither undetermined)
+==============================================================================
+Summertime  —  Billie Holiday
+==============================================================================
+
+[1] search_recording
+    [http 200] https://musicbrainz.org/ws/2/recording?query=recording%3A%22Summertime%22+AND+artist%3A%22Billie+Holiday%22&limit=10&fmt=json
+  100  2009        09fc63ea-5508-4432-a38c-e82e7009643b  Summertime  ·  Billie Holiday
+  100  1999        c137d0c5-3c8d-4f9b-a535-d15a556aab57  Summertime  ·  Billie Holiday
+  100  2005        a49ea534-dfa1-412c-a5fd-98a5ec71629a  Summertime  ·  Billie Holiday
+  100  1999        803243d8-0e8f-4e7d-aaed-a6f5f80b248b  Summertime  ·  Billie Holiday
+  100  1999        d1295b14-7228-4d88-b331-b865a05b947d  Summertime  ·  Billie Holiday
+  100  2001        52a83b94-481c-46b2-8ffd-df6ad0dfe67c  Summertime  ·  Billie Holiday
+  100  2010-05-04  dc0fccd7-71f6-4ce2-9bc3-926e334e4e61  Summertime  ·  Billie Holiday
+  100  2017        9b1ecb7f-51c1-48b6-a2fe-5bdae99c1652  Summertime  ·  Billie Holiday
+  100  2006-11-13  d572eed0-76e0-47fa-80e9-150bc3588df9  Summertime  ·  Billie Holiday
+  100  1995        6f787f44-3ced-434d-b487-1d69ac931639  Summertime  ·  Billie Holiday
+
+  picked 6f787f44-3ced-434d-b487-1d69ac931639 (1995, Billie Holiday) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+    [http 200] https://musicbrainz.org/ws/2/recording/6f787f44-3ced-434d-b487-1d69ac931639?inc=work-rels&fmt=json
+{
+  "id": "6f787f44-3ced-434d-b487-1d69ac931639",
+  "video": false,
+  "length": 174466,
+  "first-release-date": "1995",
+  "disambiguation": "",
+  "title": "Summertime",
+  "relations": []
+}
+
+  >>> NO LINKED WORK on this recording. Composition layer cannot be resolved from MusicBrainz. <<<
+
+[5] determination (recording layer only)
+  recording    protected      expiry=2091   rule=us_published_post_1978
+               Published 1995 in the US. Protected until at least 1 January 2091.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                       rec     work  iswc  writers  deaths         comp       2-layer  verdict
+------------------------------------------------------------------------------------------------------------
+Summertime / Billie Holiday          1995f   NO    no    -        -              -          no       undetermined (composition)
+
+  rec     = recording year; 'r' = dated performance relation, 'f' = MB first-release-date (earliest release on file)
+  comp*   = year came from P1191 first-performance or P571 inception, not P577 publication
+  ERR     = the HTTP request failed; says nothing about the data
+  2-layer = both composition and recording layers determined (neither undetermined)
+==============================================================================
+Blue Moon  —  The Marcels
+==============================================================================
+
+[1] search_recording
+    [http 200] https://musicbrainz.org/ws/2/recording?query=recording%3A%22Blue+Moon%22+AND+artist%3A%22The+Marcels%22&limit=10&fmt=json
+  100  ----------  2bbcb7d4-32d3-4853-a4fe-67fdd6a5a761  Blue Moon  ·  The Marcels
+  100  1998-12     b672d549-d9c0-4c93-8388-2619d0e8dfe5  Blue Moon  ·  The Marcels
+  100  1995        683550b3-8b1e-4abb-929a-02512ed871c4  Blue Moon  ·  The Marcels
+  100  ----------  5013a30c-fe5d-4f7e-bd87-75eb991b83be  Blue Moon  ·  The Marcels
+  100  1995        e23abba0-3440-44a9-a042-4ad0319bff64  Blue Moon  ·  The Marcels
+  100  1995        afa10d5d-c006-4ef8-bfed-4d354a4462f1  Blue Moon  ·  The Marcels
+  100  1998        b09efc9e-6bf4-4d06-b799-61904360d693  Blue Moon  ·  The Marcels
+  100  ----------  43064561-276c-472d-b75e-2144883be626  Blue Moon  ·  The Marcels
+  100  ----------  07d3defa-98b3-4ab1-81bf-60f51d1a1a5a  Blue Moon  ·  The Marcels
+  100  2001        cddbd9d4-4a9d-4eed-88a2-e666762dfd07  Blue Moon  ·  The Marcels
+
+  picked 683550b3-8b1e-4abb-929a-02512ed871c4 (1995, The Marcels) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+    [http 200] https://musicbrainz.org/ws/2/recording/683550b3-8b1e-4abb-929a-02512ed871c4?inc=work-rels&fmt=json
+{
+  "length": 132000,
+  "relations": [],
+  "id": "683550b3-8b1e-4abb-929a-02512ed871c4",
+  "first-release-date": "1995",
+  "video": false,
+  "disambiguation": "",
+  "title": "Blue Moon"
+}
+
+  >>> NO LINKED WORK on this recording. Composition layer cannot be resolved from MusicBrainz. <<<
+
+[5] determination (recording layer only)
+  recording    protected      expiry=2091   rule=us_published_post_1978
+               Published 1995 in the US. Protected until at least 1 January 2091.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                       rec     work  iswc  writers  deaths         comp       2-layer  verdict
+------------------------------------------------------------------------------------------------------------
+Blue Moon / The Marcels              1995f   NO    no    -        -              -          no       undetermined (composition)
+
+  rec     = recording year; 'r' = dated performance relation, 'f' = MB first-release-date (earliest release on file)
+  comp*   = year came from P1191 first-performance or P571 inception, not P577 publication
+  ERR     = the HTTP request failed; says nothing about the data
+  2-layer = both composition and recording layers determined (neither undetermined)

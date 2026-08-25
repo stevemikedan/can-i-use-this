@@ -1,0 +1,149 @@
+﻿
+==============================================================================
+Take Five  —  The Dave Brubeck Quartet
+==============================================================================
+
+[1] search_recording
+  100  2001-02-27  3d87b15d-6680-4957-a6a5-2bbd13acf7bb  Take Five  ·  The Dave Brubeck Quartet
+  100  2001-02-27  38d01f3e-9419-4daf-a607-67a2c6b24160  Take Five  ·  The Dave Brubeck Quartet
+  100  1998-04     33703d34-b7d9-4cc8-8c40-93f22461703b  Take Five  ·  The Dave Brubeck Quartet
+  100  2020-05-01  720d26bf-cb59-4e60-ab82-367e3ebf1687  Take Five  ·  The Dave Brubeck Quartet
+  100  ----------  58fd9469-f61c-4b6e-be5f-9cbd3479152f  Take Five  ·  The Dave Brubeck Quartet
+  100  1959-09-21  76ad3528-705a-4371-af2d-f159900bcee9  Take Five  ·  The Dave Brubeck Quartet
+  100  2008        a92bfc88-7c0d-446f-abc5-6c73f9e0422f  Take Five  ·  The Dave Brubeck Quartet
+  100  2013        696ee160-2a0e-48fa-9796-d0ed64232394  Take Five  ·  The Dave Brubeck Quartet
+  100  1991        7dbaa1f4-0a86-422a-ac8f-04c95ccdfacd  Take Five  ·  The Dave Brubeck Quartet
+  100  2024-06-07  9746d994-65ec-4e32-9192-dd6b1df5a0fd  Take Five  ·  The Dave Brubeck Quartet
+
+  picked 76ad3528-705a-4371-af2d-f159900bcee9 (1959-09-21, The Dave Brubeck Quartet) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+    [http 200] https://musicbrainz.org/ws/2/recording/76ad3528-705a-4371-af2d-f159900bcee9?inc=work-rels&fmt=json
+{
+  "first-release-date": "1959-09-21",
+  "disambiguation": "",
+  "title": "Take Five",
+  "relations": [],
+  "id": "76ad3528-705a-4371-af2d-f159900bcee9",
+  "video": false,
+  "length": 170000
+}
+
+  >>> NO LINKED WORK on this recording. Composition layer cannot be resolved from MusicBrainz. <<<
+
+[5] determination (recording layer only)
+  recording    protected      expiry=2067   rule=us_sr_mma_1957_1972
+               Published 1959. Under the CLASSICS Act (fixed statutory expiry of 15 February 2067), protected until 1 January 2067.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                       rec     work  iswc  writers  deaths         comp       2-layer  verdict
+------------------------------------------------------------------------------------------------------------
+Take Five / The Dave Brubeck Quartet 1959f   NO    no    -        -              -          no       undetermined (composition)
+
+  rec     = recording year; 'r' = dated performance relation, 'f' = MB first-release-date (earliest release on file)
+  comp*   = year came from P1191 first-performance or P571 inception, not P577 publication
+  ERR     = the HTTP request failed; says nothing about the data
+  2-layer = both composition and recording layers determined (neither undetermined)
+==============================================================================
+Summertime  —  Billie Holiday
+==============================================================================
+
+[1] search_recording
+  100  2009        09fc63ea-5508-4432-a38c-e82e7009643b  Summertime  ·  Billie Holiday
+  100  1999        c137d0c5-3c8d-4f9b-a535-d15a556aab57  Summertime  ·  Billie Holiday
+  100  2005        a49ea534-dfa1-412c-a5fd-98a5ec71629a  Summertime  ·  Billie Holiday
+  100  1999        803243d8-0e8f-4e7d-aaed-a6f5f80b248b  Summertime  ·  Billie Holiday
+  100  1999        d1295b14-7228-4d88-b331-b865a05b947d  Summertime  ·  Billie Holiday
+  100  2001        52a83b94-481c-46b2-8ffd-df6ad0dfe67c  Summertime  ·  Billie Holiday
+  100  2010-05-04  dc0fccd7-71f6-4ce2-9bc3-926e334e4e61  Summertime  ·  Billie Holiday
+  100  2017        9b1ecb7f-51c1-48b6-a2fe-5bdae99c1652  Summertime  ·  Billie Holiday
+  100  2006-11-13  d572eed0-76e0-47fa-80e9-150bc3588df9  Summertime  ·  Billie Holiday
+  100  1995        6f787f44-3ced-434d-b487-1d69ac931639  Summertime  ·  Billie Holiday
+
+  picked 6f787f44-3ced-434d-b487-1d69ac931639 (1995, Billie Holiday) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+{
+  "id": "6f787f44-3ced-434d-b487-1d69ac931639",
+  "video": false,
+  "length": 174466,
+  "first-release-date": "1995",
+  "disambiguation": "",
+  "title": "Summertime",
+  "relations": []
+}
+
+  >>> NO LINKED WORK on this recording. Composition layer cannot be resolved from MusicBrainz. <<<
+
+[5] determination (recording layer only)
+  recording    protected      expiry=2091   rule=us_published_post_1978
+               Published 1995 in the US. Protected until at least 1 January 2091.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                       rec     work  iswc  writers  deaths         comp       2-layer  verdict
+------------------------------------------------------------------------------------------------------------
+Summertime / Billie Holiday          1995f   NO    no    -        -              -          no       undetermined (composition)
+
+  rec     = recording year; 'r' = dated performance relation, 'f' = MB first-release-date (earliest release on file)
+  comp*   = year came from P1191 first-performance or P571 inception, not P577 publication
+  ERR     = the HTTP request failed; says nothing about the data
+  2-layer = both composition and recording layers determined (neither undetermined)
+==============================================================================
+Blue Moon  —  The Marcels
+==============================================================================
+
+[1] search_recording
+  100  ----------  2bbcb7d4-32d3-4853-a4fe-67fdd6a5a761  Blue Moon  ·  The Marcels
+  100  1998-12     b672d549-d9c0-4c93-8388-2619d0e8dfe5  Blue Moon  ·  The Marcels
+  100  1995        683550b3-8b1e-4abb-929a-02512ed871c4  Blue Moon  ·  The Marcels
+  100  ----------  5013a30c-fe5d-4f7e-bd87-75eb991b83be  Blue Moon  ·  The Marcels
+  100  1995        e23abba0-3440-44a9-a042-4ad0319bff64  Blue Moon  ·  The Marcels
+  100  1995        afa10d5d-c006-4ef8-bfed-4d354a4462f1  Blue Moon  ·  The Marcels
+  100  1998        b09efc9e-6bf4-4d06-b799-61904360d693  Blue Moon  ·  The Marcels
+  100  ----------  43064561-276c-472d-b75e-2144883be626  Blue Moon  ·  The Marcels
+  100  ----------  07d3defa-98b3-4ab1-81bf-60f51d1a1a5a  Blue Moon  ·  The Marcels
+  100  2001        cddbd9d4-4a9d-4eed-88a2-e666762dfd07  Blue Moon  ·  The Marcels
+
+  picked 683550b3-8b1e-4abb-929a-02512ed871c4 (1995, The Marcels) — earliest first-release-date among the top 10
+  NOTE: first-release-date is MusicBrainz's earliest *release* on file, not the session date.
+
+[2] get_work_for_recording — RAW RESPONSE
+{
+  "length": 132000,
+  "relations": [],
+  "id": "683550b3-8b1e-4abb-929a-02512ed871c4",
+  "first-release-date": "1995",
+  "video": false,
+  "disambiguation": "",
+  "title": "Blue Moon"
+}
+
+  >>> NO LINKED WORK on this recording. Composition layer cannot be resolved from MusicBrainz. <<<
+
+[5] determination (recording layer only)
+  recording    protected      expiry=2091   rule=us_published_post_1978
+               Published 1995 in the US. Protected until at least 1 January 2091.
+
+  ROLL-UP: UNDETERMINED  (blocking layer: composition)
+
+==============================================================================
+SUMMARY
+==============================================================================
+title / artist                       rec     work  iswc  writers  deaths         comp       2-layer  verdict
+------------------------------------------------------------------------------------------------------------
+Blue Moon / The Marcels              1995f   NO    no    -        -              -          no       undetermined (composition)
+
+  rec     = recording year; 'r' = dated performance relation, 'f' = MB first-release-date (earliest release on file)
+  comp*   = year came from P1191 first-performance or P571 inception, not P577 publication
+  ERR     = the HTTP request failed; says nothing about the data
+  2-layer = both composition and recording layers determined (neither undetermined)
