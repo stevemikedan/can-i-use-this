@@ -9,7 +9,7 @@ import pytest
 
 from rules import (
     us_sound_recording, us_standard_term, life_plus_70, roll_up,
-    status_to_verdict,
+    status_to_verdict, eu_sound_recording,
 )
 
 Y = 2026
@@ -113,6 +113,25 @@ WEB_CASES = [
 
 @pytest.mark.parametrize("label,got,want", WEB_CASES, ids=_ids(WEB_CASES))
 def test_west_end_blues(label, got, want):
+    assert got() == want, label
+
+
+# === EU / UK SOUND RECORDINGS (added Aug 26 for the jurisdiction matrix) ===
+
+EU_SR_CASES = [
+    ("1928 -> PD (50y, not revived)", lambda: eu_sound_recording(1928, "EU", Y).status, "public_domain"),
+    ("1928 expiry 1979",              lambda: eu_sound_recording(1928, "EU", Y).expiry_year, 1979),
+    ("1962 -> PD",                    lambda: eu_sound_recording(1962, "EU", Y).status, "public_domain"),
+    ("1963 -> protected (extended)",  lambda: eu_sound_recording(1963, "EU", Y).status, "protected"),
+    ("1963 expiry 2034",              lambda: eu_sound_recording(1963, "EU", Y).expiry_year, 2034),
+    ("1955 UK rule id",               lambda: eu_sound_recording(1955, "UK", Y).rule_id, "uk_sr_pre_1963"),
+    ("1970 UK rule id",               lambda: eu_sound_recording(1970, "UK", Y).rule_id, "uk_sr_70_from_publication"),
+    ("1963 PD in 2034",               lambda: eu_sound_recording(1963, "EU", 2034).status, "public_domain"),
+]
+
+
+@pytest.mark.parametrize("label,got,want", EU_SR_CASES, ids=_ids(EU_SR_CASES))
+def test_eu_sound_recording(label, got, want):
     assert got() == want, label
 
 

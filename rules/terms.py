@@ -92,6 +92,53 @@ def us_standard_term(
 
 
 # ---------------------------------------------------------------------------
+# EU / UK sound recordings — term runs from publication, not from a life
+# ---------------------------------------------------------------------------
+
+def eu_sound_recording(
+    pub_year: int,
+    jurisdiction: str = "EU",
+    current_year: int = CURRENT_YEAR,
+) -> Determination:
+    """
+    PUBLISHED sound recordings: the term runs from first publication —
+    50 years, extended to 70 by Directive 2011/77/EU (UK: Copyright and
+    Duration of Rights in Performances Regulations 2013) for recordings
+    still protected on 1 November 2013, i.e. first published 1963 or
+    later. A recording published 1962 or earlier had already expired under
+    the 50-year term and was not revived.
+
+    pub_year must be the year of first publication, not the session date.
+    An unpublished recording runs from the year it was made instead; the
+    pipeline never calls this for unpublished recordings.
+
+    The UK retained the 70-year term after leaving the EU, so the two
+    jurisdictions are aligned today; they could diverge, which is why the
+    rule_id carries the jurisdiction.
+    """
+    j = jurisdiction.lower()
+    if pub_year <= 1962:
+        return Determination(
+            "public_domain", pub_year + 50 + 1, f"{j}_sr_pre_1963",
+            f"Published {pub_year}. The 50-year term expired 1 January "
+            f"{pub_year + 51}, before the 2013 extension to 70 years, which "
+            "did not revive expired recordings.",
+        )
+    expiry = pub_year + 70 + 1
+    if current_year >= expiry:
+        return Determination(
+            "public_domain", expiry, f"{j}_sr_70_from_publication",
+            f"Published {pub_year}. The 70-year term from publication expired "
+            f"1 January {expiry}.",
+        )
+    return Determination(
+        "protected", expiry, f"{j}_sr_70_from_publication",
+        f"Published {pub_year}. Protected for 70 years from publication, "
+        f"until 1 January {expiry}.",
+    )
+
+
+# ---------------------------------------------------------------------------
 # Life + 70 — EU, UK, and US works created after 1978
 # ---------------------------------------------------------------------------
 

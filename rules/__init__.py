@@ -9,6 +9,7 @@ from .terms import (  # noqa: F401
     CURRENT_YEAR,
     Determination,
     Status,
+    eu_sound_recording,
     life_plus_70,
     us_standard_term,
 )
