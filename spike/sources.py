@@ -16,8 +16,7 @@ import time
 
 import httpx
 
-# MusicBrainz wants an app name + contact. Change the address if you'd rather
-# not have this one in the header.
+# MusicBrainz wants an app name + contact (URL or email).
 UA = "CanIUseThis/0.1 ( https://github.com/stevemikedan/can-i-use-this )"
 
 MB = "https://musicbrainz.org/ws/2"
