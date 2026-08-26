@@ -1,0 +1,83 @@
+# Handoff link templates. Substituted over resolved identifiers (requires_scheme
+# = an Identifier.scheme) or over query facts (requires_scheme = title | artist
+# | year). Tiers per schemas.LinkTier: deep_link, prefilled_search, guided_manual.
+
+- name: MusicBrainz recording
+  tier: deep_link
+  url_template: "https://musicbrainz.org/recording/{value}"
+  requires_scheme: musicbrainz_recording
+  applicable_types: [music]
+  purpose: verify
+  description: "The recording entity this determination is based on"
+  authoritative: false
+
+- name: MusicBrainz work
+  tier: deep_link
+  url_template: "https://musicbrainz.org/work/{value}"
+  requires_scheme: musicbrainz_work
+  applicable_types: [music]
+  purpose: verify
+  description: "The composition (work) entity, with writer credits and ISWCs"
+  authoritative: false
+
+- name: Wikidata
+  tier: deep_link
+  url_template: "https://www.wikidata.org/wiki/{value}"
+  requires_scheme: wikidata
+  applicable_types: [music, text, film]
+  purpose: verify
+  description: "Wikidata item for the work (publication date, composer, lyricist)"
+  authoritative: false
+
+- name: MLC public search
+  tier: prefilled_search
+  url_template: "https://portal.themlc.com/search?query={value}"
+  requires_scheme: title
+  applicable_types: [music]
+  purpose: license
+  description: "Mechanical Licensing Collective — publishers, administrators and shares for \"{value}\""
+  authoritative: true
+
+- name: ASCAP repertory
+  tier: guided_manual
+  url_template: "https://www.ascap.com/repertory"
+  requires_scheme: title
+  applicable_types: [music]
+  purpose: license
+  description: "ASCAP ACE repertory — writer and publisher credits"
+  navigation_hint: "Search by title; paste the string below"
+  authoritative: true
+
+- name: BMI repertoire
+  tier: guided_manual
+  url_template: "https://repertoire.bmi.com/"
+  requires_scheme: title
+  applicable_types: [music]
+  purpose: license
+  description: "BMI repertoire — writer and publisher credits"
+  navigation_hint: "Search by title; paste the string below"
+  authoritative: true
+
+# Only emitted when the pipeline sets the `renewal_title` extra, i.e. the
+# composition falls in the 1931-1963 renewal window.
+- name: Catalog of Copyright Entries (scans)
+  tier: guided_manual
+  url_template: "https://archive.org/details/copyrightrecords"
+  requires_scheme: renewal_title
+  applicable_types: [music, text]
+  purpose: resolve
+  description: "US Copyright Office catalog scans on the Internet Archive — renewal registrations"
+  navigation_hint: "Catalog of Copyright Entries, Third Series, Music; renewals volume for {year}"
+  authoritative: true
+
+# Only emitted when the pipeline sets the `unconfirmed_recording` extra, i.e.
+# the recording has no dated session and its year is unconfirmed.
+- name: DAHR — Discography of American Historical Recordings
+  tier: guided_manual
+  url_template: "https://adp.library.ucsb.edu/"
+  requires_scheme: unconfirmed_recording
+  applicable_types: [music]
+  purpose: resolve
+  description: "UCSB discography of pre-1950s recordings — matrix numbers, session and release dates"
+  navigation_hint: "Search by title, then filter by artist {artist}"
+  authoritative: true
