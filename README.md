@@ -99,6 +99,16 @@ schemas.py   canonical Pydantic models
 - **Coverage follows the sources.** A recording MusicBrainz has not dated, or a work Wikidata has not described, ends in an unresolved question rather than an answer. Writer lists that cannot be corroborated cap the UK/EU confidence at LOW.
 - **Music first.** Text and film (work, edition, translation) share the same skeleton but are not built yet. Images, fonts, characters, footage and trademarks are recognised and refused with an explanation, not researched.
 
+## Why the provenance rules exist
+
+Three times during the build a source returned a plausible fact that had never actually been established, and each would have become a confident wrong verdict with no visible tell:
+
+- **A reissue date is not a publication date.** MusicBrainz's `first-release-date` for the 1928 Armstrong *West End Blues* was 1975 — a 42-year error on the one fact the recording term depends on.
+- **An incomplete author list understates a life+70 term.** MusicBrainz credited King Oliver alone; co-writer Clarence Williams died in 1965, which moves the EU expiry from 2009 to 2036.
+- **A name search can return the wrong person.** Searching Wikidata for "Clarence Williams" returned the actor (d. 2021), not the pianist (d. 1965).
+
+Each became a rule: a recording's date must come from a trustworthy basis, a writer list must be corroborated before life+70 is applied, and people are resolved through identifier links between databases rather than by name. When a rule can't be met the layer is *undetermined* and the response names the fact that would settle it.
+
 ## What we learned from the data
 
 - **MusicBrainz** returned a 1975 reissue date for a 1928 session — a 42-year error on the one fact the CLASSICS calculation depends on. Only the dated performance relation is trustworthy. Popular standards have 600–1,800 linked recording entities, and the service returns 503s on roughly a quarter of first attempts at one request per second; "Tier 2 degrades, never fails" turned out to be necessary rather than cautious.
