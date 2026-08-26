@@ -5,6 +5,7 @@ google-adk>=1.0            # accepted Google Cloud SDK (COMPLIANCE §2)
 
 httpx>=0.27
 pydantic>=2.5
+pyyaml>=6
 pytest>=8
 
 # Cloud Run cache backend (CACHE_BACKEND=firestore) — not needed locally
