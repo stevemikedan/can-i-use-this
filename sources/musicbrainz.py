@@ -72,6 +72,43 @@ def search_recordings(title: str, artist: Optional[str] = None, limit: int = 25)
     return f
 
 
+def _norm_title(s: str) -> str:
+    return "".join(ch for ch in (s or "").lower() if ch.isalnum() or ch == " ").strip()
+
+
+def search_works(title: str, limit: int = 25, min_score: int = 85) -> Fetched:
+    """
+    /work?query=work:"title" — every MB work entity with (nearly) this title,
+    in one call. Aug 26 measurement: for all six spike titles this returned
+    every work the 10-call recording sweep had found, at rank <= 7. Do NOT
+    filter on type — instrumental works have type null.
+
+    Returns [{work_mbid, title, disambiguation, iswcs, score, composers}]
+    limited to exact (normalised) title matches with score >= min_score.
+    """
+    q = f'work:"{_lucene_phrase(title)}"'
+    key = f"mb:search:work:{hashlib.sha1(q.encode()).hexdigest()[:16]}:{limit}"
+    f = _mb("work", {"query": q, "limit": limit}, key, max_age_s=SEARCH_MAX_AGE_S)
+    if not f.ok:
+        return f
+    want = _norm_title(title)
+    out = []
+    for w in f.data.get("works", []):
+        if (w.get("score") or 0) < min_score or _norm_title(w.get("title")) != want:
+            continue
+        out.append({
+            "work_mbid": w["id"],
+            "title": w.get("title"),
+            "disambiguation": w.get("disambiguation") or "",
+            "iswcs": w.get("iswcs") or [],
+            "score": w.get("score"),
+            "composers": [r["artist"]["name"] for r in w.get("relations", [])
+                          if r.get("type") in WRITER_REL_TYPES and r.get("artist")],
+        })
+    f.data = out
+    return f
+
+
 # --- recording -> work(s) -----------------------------------------------------
 
 def _parse_work_rels(relations: list, only_work: Optional[str] = None) -> list[dict]:
@@ -139,6 +176,28 @@ def work_details(work_mbid: str) -> Fetched:
         "writers": writers,
         "wikidata": wikidata,
     }
+    return f
+
+
+# --- artist -> Wikidata ---------------------------------------------------------
+
+def artist_wikidata(artist_mbid: str) -> Fetched:
+    """
+    /artist/{mbid}?inc=url-rels -> the artist's Wikidata QID (or None).
+    Identifies the exact person MusicBrainz credited. A Wikidata NAME search
+    is not a substitute: "Clarence Williams" returns the actor (d. 2021), not
+    the pianist who co-wrote West End Blues (d. 1965).
+    """
+    f = _mb(f"artist/{artist_mbid}", {"inc": "url-rels"}, f"mb:artist:{artist_mbid}:url-rels")
+    if not f.ok:
+        return f
+    qid = None
+    for rel in f.data.get("relations") or []:
+        if rel.get("target-type") == "url" and rel.get("type") == "wikidata":
+            qid = rel["url"]["resource"].rstrip("/").rsplit("/", 1)[-1]
+            break
+    f.data = {"mbid": artist_mbid, "name": f.data.get("name"), "wikidata": qid,
+              "life_span_end": (f.data.get("life-span") or {}).get("end")}
     return f
 
 
