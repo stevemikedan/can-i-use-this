@@ -35,6 +35,8 @@ A composition can be public domain while every recording of it is protected. A b
 
 3. **Decompose into layers BEFORE researching.** Research fans out per layer, concurrently.
 
+3b. **Parallel's SEARCH API must be called on the primary request path.** The track requires it explicitly; Task alone does not satisfy it and Stage One screening may be automated. Search handles renewal research and first-publication-date research; Task handles structured multi-field layer research. Both in the codebase is correct — Search is the mandatory one. See `docs/COMPLIANCE.md` §1.
+
 4. **No unsourced facts.** Every value is a `ResearchedFact` with sources and confidence, or it becomes an `UnresolvedQuestion`. No third option. If the model wants to assert something it can't cite, that's a bug.
 
 5. **Conservative roll-up.** Use `REQUIRED_LAYERS` and `VERDICT_ORDER` from `schemas.py` — not inference. `UNDETERMINED` is the *most* restrictive value. If we don't know, we don't say clear.
@@ -77,9 +79,11 @@ MusicBrainz: ~1 req/sec, requires a descriptive User-Agent, cache everything.
 
 ## Stack
 
-Google ADK / Agent Builder · Gemini via Vertex AI · Parallel SDK (`parallel-web`) · FastAPI on Cloud Run with SSE · Firestore cache · React + Tailwind · no auth.
+`google-adk` · Gemini via Vertex AI · `parallel-web` · FastAPI on Cloud Run with SSE · Firestore cache · React + Tailwind · no auth.
 
-Build the pipeline as plain Python that ADK wraps, so provisioning delays never block work.
+**`google-adk` is explicitly named in the rules as an accepted SDK** — no Gemini Enterprise provisioning needed. Build the pipeline as plain Python that ADK wraps.
+
+**Runtime AI is restricted to Google Cloud AI services and Parallel.** No OpenAI, Anthropic, AWS, Azure, or any other model provider may appear in `requirements.txt` or the runtime. Non-AI third-party services are unrestricted. See `docs/COMPLIANCE.md` §3.
 
 ---
 
@@ -108,7 +112,7 @@ agent/          ADK orchestration — build LAST
 api/            FastAPI + SSE
 web/            React frontend
 spike/          throwaway verification, kept for reference
-docs/           PROJECT.md, design-system.md, design-reference.md
+docs/           PROJECT.md, COMPLIANCE.md, design-system.md, design-reference.md
 schemas.py      CANONICAL. Read its docstring. Do not redesign.
 ```
 
