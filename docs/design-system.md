@@ -120,5 +120,4 @@ All pass AA. `LEDGER_BLUE` on `INK` is 1.85 — never use it there; that's what 
 
 The `.dc.html` files are Design Composer format — `<x-dc>`, `<sc-if>`, `<dc-import>`, `{{ }}` bindings, `support.js` runtime. **Not React, not plain HTML.** Use them as visual reference only; the inline styles are real CSS and translate directly, but the templating must be rewritten in React.
 
-Use only: `Entry Screen.dc.html`, `Progress Screen.dc.html`, `Result Screen v3.dc.html`.
-**Ignore:** `Result Screen.dc.html` (v1), `Result Screen v2.dc.html` (En Dash version), and the `_ds/` folder. All rejected.
+The three current screens are `docs/design/entry.dc.html`, `progress.dc.html` and `result-v3.dc.html`. Earlier Result revisions were rejected and are not in the repository.

@@ -263,7 +263,7 @@ Ordered by blocking risk.
 
 1. **Request MLC Public Search API access** (`publicapi@themlc.com` or themlc.com/dataprograms). Unknown wait, no equal-quality fallback.
 2. **Request Gemini Enterprise Agent Platform / Agent Builder access.**
-3. **Ask the organizers, on the Devpost forum, whether ADK + Vertex AI satisfies the "Agent Builder" requirement.** See §8.1 — this is a live eligibility ambiguity and the answer changes your critical path.
+3. ~~Ask the organizers whether ADK + Vertex AI satisfies the "Agent Builder" requirement.~~ Resolved: the rules name `google-adk` as accepted. See §8.1.
 4. Register on Devpost, select the Parallel track.
 5. GCP project: enable Vertex AI, Agent Builder, Cloud Run, Firestore. **Set a billing budget alert.**
 6. Install Parallel Search MCP into your coding agent (free, no key).
@@ -297,13 +297,11 @@ superseded by the DONE / Aug 26–30 schedule above. Retained only as a record o
 
 ## 8. Open risks
 
-### 8.1 Eligibility ambiguity — resolve today
+### 8.1 Eligibility — resolved Aug 26
 
-The rules require an agent "powered by Gemini and Google Cloud Agent Builder." It is **not clear** whether the open-source ADK running against Vertex AI satisfies this, or whether provisioned Gemini Enterprise Agent Platform access is mandatory.
+The rules require an agent "powered by Gemini and Google Cloud Agent Builder." The official rules name **`google-adk` as an accepted SDK** (see `docs/COMPLIANCE.md` §2), so the open-source ADK against Vertex AI satisfies the requirement and no Gemini Enterprise Agent Platform provisioning is needed. `google-adk` is installed and in `requirements.txt`.
 
-This matters enormously: ADK is `pip install` and available immediately; Gemini Enterprise provisioning may take days. **Ask on the Devpost forum today.** If ADK counts, your critical path shortens by whatever the provisioning wait would have been.
-
-Either way, build the pipeline as plain Python that ADK wraps. Then provisioning delay never blocks real work.
+The pipeline is still built as plain Python that ADK wraps, so the agent runtime never blocks pipeline work.
 
 ### 8.2 Other risks
 
@@ -312,7 +310,7 @@ Either way, build the pipeline as plain Python that ADK wraps. Then provisioning
 | **Latency: MB recording selection 20-30s** | **High** | Persistent cache keyed by MBID; cap pagination; minimize work-rels sweep. See §4.6. Now the top technical risk |
 | **Renewal wall: most 20th-c. works land in 1931-1963** | **High** | Tier 3 research (Stanford Copyright Renewal DB, USCO records, CCE scans) before falling back to UnresolvedQuestion |
 | MusicBrainz 503s / TCP resets at 1 req/s | **High** | Backoff + degrade to Tier 3. "Tier 2 degrades, never fails" is necessary, not optional |
-| Agent Builder access delayed | Medium | §8.1. Plain-Python pipeline that ADK wraps |
+| Agent Builder access delayed | Resolved | `google-adk` is an accepted SDK (§8.1); no provisioning wait |
 | MLC access delayed or refused | Medium | Composition layer degrades to Tier 3. Core demo survives — it needs only MB dated relations plus arithmetic |
 | Confidence never reaches HIGH | Medium | Every spike case came back MEDIUM. Recalibrate: dated performance relation + corroborated writers + ISWC should reach HIGH, or the dimension carries no information |
 | Wrong recording entity selected | Medium | Artist required; alternates surfaced; earliest dated session preferred |
