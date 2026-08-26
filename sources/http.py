@@ -64,6 +64,20 @@ _sleep: Callable[[float], None] = time.sleep
 _last_call: dict[str, float] = {}
 _throttle_lock = threading.Lock()
 
+# Process-wide counters so cold timings can be read honestly: how much was
+# real work vs. retry backoff vs. throttle waits.
+_stats = {"cache_hits": 0, "live_calls": 0, "retries": 0, "failures": 0,
+          "backoff_s": 0.0, "throttle_s": 0.0}
+
+
+def stats() -> dict:
+    return dict(_stats)
+
+
+def reset_stats() -> None:
+    for k in _stats:
+        _stats[k] = 0.0 if isinstance(_stats[k], float) else 0
+
 
 def configure(client: Optional[httpx.Client] = None,
               sleep: Optional[Callable[[float], None]] = None) -> None:
@@ -92,6 +106,7 @@ def _throttle(host: str) -> None:
         # Reserve the slot before sleeping so concurrent callers queue up.
         _last_call[host] = time.monotonic() + max(wait, 0.0)
     if wait > 0:
+        _stats["throttle_s"] += wait
         _sleep(wait)
 
 
@@ -113,9 +128,15 @@ def get_json(url: str, params: Optional[dict] = None, *, cache_key: str,
 
     entry = cache.get(cache_key, max_age_s=max_age_s)
     if entry is not None:
+        _stats["cache_hits"] += 1
         return Fetched(entry.value, str(httpx.URL(url, params=params)),
                        datetime.fromtimestamp(entry.fetched_at, tz=timezone.utc),
                        from_cache=True)
+
+    def backoff(seconds: float) -> None:
+        _stats["retries"] += 1
+        _stats["backoff_s"] += seconds
+        _sleep(seconds)
 
     host = httpx.URL(url).host or ""
     client = _get_client()
@@ -123,6 +144,7 @@ def get_json(url: str, params: Optional[dict] = None, *, cache_key: str,
     last_error = "no attempts"
     for attempt in range(1, attempts + 1):
         _throttle(host)
+        _stats["live_calls"] += 1
         try:
             resp = client.get(url, params=params, timeout=timeout_s,
                               headers={"User-Agent": UA, "Accept": "application/json"})
@@ -130,13 +152,14 @@ def get_json(url: str, params: Optional[dict] = None, *, cache_key: str,
             last_error = f"{type(e).__name__}: {e}"
             log.warning("attempt %d/%d %s -> %s", attempt, attempts, full_url, last_error)
             if attempt < attempts:
-                _sleep(backoff_s * (2 ** (attempt - 1)))
+                backoff(backoff_s * (2 ** (attempt - 1)))
             continue
 
         if resp.status_code == 200:
             try:
                 data = resp.json()
             except ValueError as e:
+                _stats["failures"] += 1
                 return Fetched(None, full_url, datetime.now(timezone.utc),
                                error=f"invalid JSON: {e}", attempts=attempt)
             cache.set(cache_key, data)
@@ -145,11 +168,12 @@ def get_json(url: str, params: Optional[dict] = None, *, cache_key: str,
         last_error = f"http {resp.status_code}"
         log.warning("attempt %d/%d %s -> %s", attempt, attempts, full_url, last_error)
         if resp.status_code in RETRY_STATUSES and attempt < attempts:
-            _sleep(_retry_after(resp, backoff_s * (2 ** (attempt - 1))))
+            backoff(_retry_after(resp, backoff_s * (2 ** (attempt - 1))))
             continue
         if resp.status_code not in RETRY_STATUSES:
             break  # 4xx other than 429: retrying won't help
 
+    _stats["failures"] += 1
     return Fetched(None, full_url, datetime.now(timezone.utc),
                    error=last_error, attempts=attempts)
 

@@ -19,12 +19,14 @@ import logging
 import sys
 import time
 
+from . import http
 from . import musicbrainz as mb
 from . import wikidata as wd
 from .cache import get_cache
 
 
 def warm(title: str, artist: str | None, k: int = 10) -> dict:
+    http.reset_stats()
     t0 = time.monotonic()
     report: dict = {"title": title, "artist": artist, "steps": []}
 
@@ -64,6 +66,10 @@ def warm(title: str, artist: str | None, k: int = 10) -> dict:
                 step(f"wd search {w['name']}", lambda w=w: wd.search_entities(w["name"]))
 
     report["total_seconds"] = round(time.monotonic() - t0, 2)
+    # How much of the wall clock was retry backoff / throttle vs. real work.
+    s = http.stats()
+    report["http"] = {**s, "backoff_s": round(s["backoff_s"], 2),
+                      "throttle_s": round(s["throttle_s"], 2)}
     report["cache"] = get_cache().stats()
     return report
 

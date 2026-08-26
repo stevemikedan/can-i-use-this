@@ -90,6 +90,22 @@ def test_max_age_forces_refetch(cache, transport, monkeypatch):
     assert len(calls) == 2
 
 
+def test_stats_count_hits_live_calls_retries_and_failures(cache, transport, monkeypatch):
+    monkeypatch.setitem(http.MIN_INTERVAL_S, "musicbrainz.org", 0.5)
+    responses = iter([httpx.Response(503), httpx.Response(200, json={}),   # key a: 1 retry
+                      httpx.Response(404)])                                 # key b: failure
+    transport(lambda req: next(responses))
+    http.reset_stats()
+    get_json(URL, cache_key="a")
+    get_json(URL, cache_key="a")        # cache hit
+    get_json(URL, cache_key="b")
+    s = http.stats()
+    assert s["cache_hits"] == 1 and s["live_calls"] == 3
+    assert s["retries"] == 1 and s["backoff_s"] == 1.0 and s["failures"] == 1
+    # two throttled waits; with sleep mocked the reserved slot makes the second ~1.0
+    assert 0.5 <= s["throttle_s"] <= 1.5
+
+
 def test_as_source_builds_schema_source(cache, transport):
     transport(ok({}))
     f = get_json(URL, cache_key="k")
