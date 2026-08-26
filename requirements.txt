@@ -1,3 +1,8 @@
+# Runtime AI — ONLY Google Cloud AI services and Parallel are permitted
+# (docs/COMPLIANCE.md §3). Never add openai, anthropic, AWS, or Azure here.
+parallel-web>=0.1          # Tier 3. Search API on the primary request path (COMPLIANCE §1)
+google-adk>=1.0            # accepted Google Cloud SDK (COMPLIANCE §2)
+
 httpx>=0.27
 pydantic>=2.5
 pytest>=8
