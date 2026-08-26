@@ -535,8 +535,13 @@ class Determination(BaseModel):
     expiry_year: int | None = None
     rule_id: str = Field(
         ...,
-        description="e.g. 'us_sound_recording_mma_1923_1946', "
-                    "'us_pub_1929_1963_renewal', 'eu_life_plus_70'",
+        description="Must match a rule_id emitted by rules/. Canonical set: "
+                    "us_sr_pre_1923, us_sr_mma_1923_1946, us_sr_mma_1947_1956, "
+                    "us_sr_mma_1957_1972, us_published_expired, "
+                    "us_renewal_unknown, us_renewal_not_filed, "
+                    "us_renewal_filed, us_published_1964_1977, "
+                    "us_published_post_1978, eu_life_plus_70, uk_life_plus_70. "
+                    "rules/ is authoritative — never invent a rule_id here.",
     )
     rule_explanation: str
     confidence: Confidence

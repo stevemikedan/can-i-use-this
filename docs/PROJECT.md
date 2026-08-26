@@ -271,43 +271,11 @@ Ordered by blocking risk.
 8. Spotify developer credentials.
 9. Public GitHub repo, **MIT license in the initial commit**, `schemas.py` in the second.
 
-### Aug 25–26 — the spike (2 days)
+### Archive — superseded schedule
 
-Build one script. No app, no framework, no Parallel, no Gemini.
-
-> A song with a pre-1926 recording of a still-copyrighted composition. MusicBrainz → work + recording. MMA/CLASSICS schedule on the recording year. Life+70 on the composition writers via Wikidata. Print two determinations and one roll-up.
-
-Then the same shape for a book via HathiTrust + Wikidata.
-
-**Gate, end of Aug 26:** correct two-layer cited verdict for both a song and a book. If not, cut text/film and ship music only.
-
-### Aug 26 PM – Aug 27 AM — design pass (1 day, timeboxed)
-
-Full UI, not one screen. the design tool, prompt in `UX-SPEC.md` §7. Screens are tiered — four get full visual design, four get a defined state, two can be plain.
-
-Deliverable is an **information hierarchy decision plus a design system** (tokens, type scale, component inventory), not polished visuals.
-
-**Cost note:** this adds half a day over the earlier plan, largely offset because the Sep 1–4 frontend block goes faster from a settled design. Net cost ≈ half a day, taken out of remaining slack. The six questions in `UX-SPEC.md` §8 are the exit criteria — if they aren't answered, you'll redesign during the build block, which is where there is no room.
-
-### Aug 27 PM – Aug 31 — pipeline (4.5 days)
-
-Agent orchestration, Tier 3 research, MLC integration, disagreement logic, assembly. Command line output only.
-
-**Gate, end of Aug 31:** query in → complete cited multi-layer response out, unattended.
-
-### Sep 1–4 — product (4 days)
-
-Frontend with staged progress. Cloud Run deploy. Handoff panel. Cache. README with architecture diagram.
-
-**Gate, end of Sep 4:** hosted URL works cold, for a stranger, on a machine that isn't yours.
-
-### Sep 5–6 — hardening and freeze (2 days)
-
-**Sep 5 morning: feature freeze.** Verify all 8 demo assets by hand. Pre-warm cache. Fix only what's broken.
-
-### Sep 7–8 — package and submit
-
-Video (budget a full day, expect 5–10 takes). Devpost writeup. DQ checklist. **Submit Sep 8.**
+The pre-spike plan (spike Aug 25–26, design Aug 26–27, pipeline Aug 27–31, product Sep 1–4) is
+superseded by the DONE / Aug 26–30 schedule above. Retained only as a record of what was planned;
+**do not take dates from here.**
 
 ---
 
@@ -351,14 +319,6 @@ Either way, build the pipeline as plain Python that ADK wraps. Then provisioning
 | Scope creep returns | High | §2 cut list is binding |
 | Schema drift mid-build | Medium | `schemas.py` changes are decisions, not edits |
 
----|---|---|
-| Agent Builder access delayed | **High** | §8.1. Plain-Python pipeline that ADK wraps |
-| MLC access delayed or refused | **High** | Composition layer degrades to Parallel Tier 3. **The core demo survives** — asset #1 needs only MusicBrainz plus arithmetic |
-| Latency worse than budgeted | **Medium** | Staged progress UI, progressive render, pre-warmed demo cache, never `pro`/`ultra` in request path |
-| Renewal records unautomatable | **Medium** | Designed around — `UnresolvedQuestion` is demo asset #6, not a failure |
-| Scope creep returns | **High** | §2 cut list is binding. Adding anything requires cutting something |
-| Schema drift mid-build | **Medium** | `schemas.py` in version control from commit two; changes require a deliberate decision |
-| Demo asset produces wrong answer live | **Medium** | Hand-verify all 8 on Sep 5 |
 
 ---
 
