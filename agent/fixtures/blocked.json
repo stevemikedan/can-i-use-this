@@ -1,0 +1,530 @@
+{
+  "all_determinations": [
+    {
+      "blocked_by": [],
+      "confidence": "high",
+      "depends_on_facts": [
+        "first_publication_year",
+        "renewal_filed"
+      ],
+      "expiry_year": 2024,
+      "jurisdiction": "US",
+      "layer_id": "composition",
+      "rule_explanation": "Published 1928 in the US. The 95-year term expired 1 January 2024.",
+      "rule_id": "us_published_expired",
+      "status": "public_domain"
+    },
+    {
+      "blocked_by": [
+        "composition:writers"
+      ],
+      "confidence": "none",
+      "depends_on_facts": [],
+      "expiry_year": null,
+      "jurisdiction": "UK",
+      "layer_id": "composition",
+      "rule_explanation": "The term runs from the death of the last surviving author, and the writer list could not be corroborated against a second source; a missing co-writer would shorten the computed term.",
+      "rule_id": "life_plus_70_writers_uncorroborated",
+      "status": "undetermined"
+    },
+    {
+      "blocked_by": [
+        "composition:writers"
+      ],
+      "confidence": "none",
+      "depends_on_facts": [],
+      "expiry_year": null,
+      "jurisdiction": "EU",
+      "layer_id": "composition",
+      "rule_explanation": "The term runs from the death of the last surviving author, and the writer list could not be corroborated against a second source; a missing co-writer would shorten the computed term.",
+      "rule_id": "life_plus_70_writers_uncorroborated",
+      "status": "undetermined"
+    },
+    {
+      "blocked_by": [],
+      "confidence": "high",
+      "depends_on_facts": [
+        "recording_first_published_year",
+        "recording_date_basis"
+      ],
+      "expiry_year": 2029,
+      "jurisdiction": "US",
+      "layer_id": "sound_recording",
+      "rule_explanation": "Published 1928. Under the CLASSICS Act (95-year term plus 5 additional years), protected until 1 January 2029.",
+      "rule_id": "us_sr_mma_1923_1946",
+      "status": "protected"
+    },
+    {
+      "blocked_by": [],
+      "confidence": "high",
+      "depends_on_facts": [
+        "recording_first_published_year",
+        "recording_date_basis"
+      ],
+      "expiry_year": 1979,
+      "jurisdiction": "UK",
+      "layer_id": "sound_recording",
+      "rule_explanation": "Published 1928. The 50-year term expired 1 January 1979, before the 2013 extension to 70 years, which did not revive expired recordings.",
+      "rule_id": "uk_sr_pre_1963",
+      "status": "public_domain"
+    },
+    {
+      "blocked_by": [],
+      "confidence": "high",
+      "depends_on_facts": [
+        "recording_first_published_year",
+        "recording_date_basis"
+      ],
+      "expiry_year": 1979,
+      "jurisdiction": "EU",
+      "layer_id": "sound_recording",
+      "rule_explanation": "Published 1928. The 50-year term expired 1 January 1979, before the 2013 extension to 70 years, which did not revive expired recordings.",
+      "rule_id": "eu_sr_pre_1963",
+      "status": "public_domain"
+    }
+  ],
+  "alternatives": [],
+  "boundary_note": null,
+  "cache_key": "music:a97c426c-0000-0000-0000-000000000001:web-1928",
+  "disagreements": [],
+  "disclaimer": "This is research, not legal advice. Verify before relying on it for anything consequential.",
+  "entity": {
+    "alternate_candidates": [],
+    "asset_type": "music",
+    "canonical_title": "West End Blues",
+    "creators": [
+      {
+        "confidence": "low",
+        "conflicting_values": [],
+        "reasoning": null,
+        "sources": [
+          {
+            "authoritative": false,
+            "excerpt": null,
+            "method": "direct_api",
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/work/a97c426c-0000-0000-0000-000000000001?inc=artist-rels%2Burl-rels&fmt=json"
+          },
+          {
+            "authoritative": false,
+            "excerpt": "artist linked to Wikidata Q313368",
+            "method": "direct_api",
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/artist/a-oliver?inc=url-rels&fmt=json"
+          },
+          {
+            "authoritative": false,
+            "excerpt": "P570 = 1938",
+            "method": "direct_api",
+            "name": "Wikidata",
+            "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q313368&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+          }
+        ],
+        "value": "King Oliver"
+      }
+    ],
+    "layers": [
+      {
+        "claimed_statuses": [],
+        "clearance": {
+          "difficulty": "moderate",
+          "difficulty_reasoning": null,
+          "is_one_stop": null,
+          "party_count": null,
+          "unclaimed_share_percent": null
+        },
+        "existing_license": null,
+        "holders": [
+          {
+            "contact_path": null,
+            "enforcement_evidence": [],
+            "enforcement_posture": "unknown",
+            "is_administrator": false,
+            "name": {
+              "confidence": "low",
+              "conflicting_values": [],
+              "reasoning": "credited by MB",
+              "sources": [
+                {
+                  "authoritative": false,
+                  "excerpt": null,
+                  "method": "direct_api",
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/work/a97c426c-0000-0000-0000-000000000001?inc=artist-rels%2Burl-rels&fmt=json"
+                },
+                {
+                  "authoritative": false,
+                  "excerpt": "artist linked to Wikidata Q313368",
+                  "method": "direct_api",
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/artist/a-oliver?inc=url-rels&fmt=json"
+                },
+                {
+                  "authoritative": false,
+                  "excerpt": "P570 = 1938",
+                  "method": "direct_api",
+                  "name": "Wikidata",
+                  "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q313368&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+                }
+              ],
+              "value": "King Oliver"
+            },
+            "role": "author",
+            "share_percent": null,
+            "territory": null
+          }
+        ],
+        "identifiers": [
+          {
+            "confidence": "medium",
+            "is_primary": true,
+            "layer_id": "composition",
+            "scheme": "musicbrainz_work",
+            "source": null,
+            "value": "a97c426c-0000-0000-0000-000000000001"
+          }
+        ],
+        "kind": "composition",
+        "label": "Composition (1928)",
+        "layer_id": "composition",
+        "term_facts": {
+          "author_death_year": {
+            "confidence": "low",
+            "conflicting_values": [
+              "1965 (Clarence Williams, per sibling MusicBrainz work)"
+            ],
+            "reasoning": "Last surviving author: King Oliver d. 1938",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/a97c426c-0000-0000-0000-000000000001?inc=artist-rels%2Burl-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "artist linked to Wikidata Q313368",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/a-oliver?inc=url-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "P570 = 1938",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q313368&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              }
+            ],
+            "value": 1938
+          },
+          "copyright_notice_present": null,
+          "creation_year": null,
+          "first_publication_country": null,
+          "first_publication_year": {
+            "confidence": "high",
+            "conflicting_values": [],
+            "reasoning": "Wikidata P577_publication corroborated by MusicBrainz composer-relation date; Writer list could not be cross-checked against Wikidata (no composer/lyricist on the item); MusicBrainz sibling work also credits: Clarence Williams (d. 1965)",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": "P577_publication = 1928",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q4019073&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/a97c426c-0000-0000-0000-000000000001?inc=artist-rels%2Burl-rels&fmt=json"
+              }
+            ],
+            "value": 1928
+          },
+          "is_anonymous_or_pseudonymous": null,
+          "is_derivative": null,
+          "is_work_for_hire": null,
+          "recording_date_basis": null,
+          "recording_first_published_year": null,
+          "recording_fixed_before_feb_1972": null,
+          "renewal_filed": null,
+          "underlying_work_ref": null,
+          "writer_list_corroborated": false
+        }
+      },
+      {
+        "claimed_statuses": [],
+        "clearance": {
+          "difficulty": "moderate",
+          "difficulty_reasoning": null,
+          "is_one_stop": null,
+          "party_count": null,
+          "unclaimed_share_percent": null
+        },
+        "existing_license": null,
+        "holders": [],
+        "identifiers": [
+          {
+            "confidence": "medium",
+            "is_primary": true,
+            "layer_id": "sound_recording",
+            "scheme": "musicbrainz_recording",
+            "source": {
+              "authoritative": false,
+              "excerpt": "performance relation dated 1928-06-28; earliest release on file 1928-07",
+              "method": "direct_api",
+              "name": "MusicBrainz",
+              "url": "https://musicbrainz.org/recording/web-1928"
+            },
+            "value": "web-1928"
+          }
+        ],
+        "kind": "sound_recording",
+        "label": "Sound recording (1928)",
+        "layer_id": "sound_recording",
+        "term_facts": {
+          "author_death_year": null,
+          "copyright_notice_present": null,
+          "creation_year": null,
+          "first_publication_country": null,
+          "first_publication_year": null,
+          "is_anonymous_or_pseudonymous": null,
+          "is_derivative": null,
+          "is_work_for_hire": null,
+          "recording_date_basis": "dated_performance",
+          "recording_first_published_year": {
+            "confidence": "high",
+            "conflicting_values": [],
+            "reasoning": "Dated performance relation in MusicBrainz; earliest release on file is contemporaneous; other dated sessions by this artist: 1939-04-05; 2 undated recording entities not used",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": "performance relation dated 1928-06-28; earliest release on file 1928-07",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/recording/web-1928"
+              }
+            ],
+            "value": 1928
+          },
+          "recording_fixed_before_feb_1972": null,
+          "renewal_filed": null,
+          "underlying_work_ref": null,
+          "writer_list_corroborated": false
+        }
+      }
+    ],
+    "resolution_confidence": "medium",
+    "year": {
+      "confidence": "high",
+      "conflicting_values": [],
+      "reasoning": "Wikidata P577_publication corroborated by MusicBrainz composer-relation date; Writer list could not be cross-checked against Wikidata (no composer/lyricist on the item); MusicBrainz sibling work also credits: Clarence Williams (d. 1965)",
+      "sources": [
+        {
+          "authoritative": false,
+          "excerpt": "P577_publication = 1928",
+          "method": "direct_api",
+          "name": "Wikidata",
+          "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q4019073&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+        },
+        {
+          "authoritative": false,
+          "excerpt": null,
+          "method": "direct_api",
+          "name": "MusicBrainz",
+          "url": "https://musicbrainz.org/ws/2/work/a97c426c-0000-0000-0000-000000000001?inc=artist-rels%2Burl-rels&fmt=json"
+        }
+      ],
+      "value": 1928
+    }
+  },
+  "handoff_links": [
+    {
+      "description": "The recording entity this determination is based on",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "verify",
+      "source_name": "MusicBrainz recording",
+      "tier": "deep_link",
+      "url": "https://musicbrainz.org/recording/web-1928"
+    },
+    {
+      "description": "The composition (work) entity, with writer credits and ISWCs",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "verify",
+      "source_name": "MusicBrainz work",
+      "tier": "deep_link",
+      "url": "https://musicbrainz.org/work/a97c426c-0000-0000-0000-000000000001"
+    },
+    {
+      "description": "Mechanical Licensing Collective — publishers, administrators and shares for \"West End Blues\"",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "license",
+      "source_name": "MLC public search",
+      "tier": "prefilled_search",
+      "url": "https://portal.themlc.com/search?query=West+End+Blues"
+    },
+    {
+      "description": "ASCAP ACE repertory — writer and publisher credits",
+      "navigation_hint": "Search by title; paste the string below",
+      "paste_string": "West End Blues",
+      "purpose": "license",
+      "source_name": "ASCAP repertory",
+      "tier": "guided_manual",
+      "url": "https://www.ascap.com/repertory"
+    },
+    {
+      "description": "BMI repertoire — writer and publisher credits",
+      "navigation_hint": "Search by title; paste the string below",
+      "paste_string": "West End Blues",
+      "purpose": "license",
+      "source_name": "BMI repertoire",
+      "tier": "guided_manual",
+      "url": "https://repertoire.bmi.com/"
+    }
+  ],
+  "layer_verdicts": [
+    {
+      "clearance": {
+        "difficulty": "moderate",
+        "difficulty_reasoning": null,
+        "is_one_stop": null,
+        "party_count": null,
+        "unclaimed_share_percent": null
+      },
+      "cost_band": null,
+      "determination": {
+        "blocked_by": [],
+        "confidence": "high",
+        "depends_on_facts": [
+          "first_publication_year",
+          "renewal_filed"
+        ],
+        "expiry_year": 2024,
+        "jurisdiction": "US",
+        "layer_id": "composition",
+        "rule_explanation": "Published 1928 in the US. The 95-year term expired 1 January 2024.",
+        "rule_id": "us_published_expired",
+        "status": "public_domain"
+      },
+      "headline": "Public domain in the US since 1 January 2024",
+      "holders": [
+        {
+          "contact_path": null,
+          "enforcement_evidence": [],
+          "enforcement_posture": "unknown",
+          "is_administrator": false,
+          "name": {
+            "confidence": "low",
+            "conflicting_values": [],
+            "reasoning": "credited by MB",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/a97c426c-0000-0000-0000-000000000001?inc=artist-rels%2Burl-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "artist linked to Wikidata Q313368",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/a-oliver?inc=url-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "P570 = 1938",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q313368&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              }
+            ],
+            "value": "King Oliver"
+          },
+          "role": "author",
+          "share_percent": null,
+          "territory": null
+        }
+      ],
+      "intent_note": null,
+      "is_required": true,
+      "layer_id": "composition",
+      "layer_label": "Composition (1928)",
+      "licensing_path": null,
+      "reasoning": "Published 1928 in the US. The 95-year term expired 1 January 2024.",
+      "verdict": "clear"
+    },
+    {
+      "clearance": {
+        "difficulty": "moderate",
+        "difficulty_reasoning": null,
+        "is_one_stop": null,
+        "party_count": null,
+        "unclaimed_share_percent": null
+      },
+      "cost_band": "$500–$5,000 master use fee for an indie film; often matched to the sync fee",
+      "determination": {
+        "blocked_by": [],
+        "confidence": "high",
+        "depends_on_facts": [
+          "recording_first_published_year",
+          "recording_date_basis"
+        ],
+        "expiry_year": 2029,
+        "jurisdiction": "US",
+        "layer_id": "sound_recording",
+        "rule_explanation": "Published 1928. Under the CLASSICS Act (95-year term plus 5 additional years), protected until 1 January 2029.",
+        "rule_id": "us_sr_mma_1923_1946",
+        "status": "protected"
+      },
+      "headline": "Protected in the US until 1 January 2029",
+      "holders": [],
+      "intent_note": null,
+      "is_required": true,
+      "layer_id": "sound_recording",
+      "layer_label": "Sound recording (1928)",
+      "licensing_path": "Master use license from the label or current rights holder of this recording",
+      "reasoning": "Published 1928. Under the CLASSICS Act (95-year term plus 5 additional years), protected until 1 January 2029.",
+      "verdict": "license_required"
+    }
+  ],
+  "overall_confidence": "high",
+  "overall_headline": "License required: the sound recording is protected in the US until 1 January 2029. The composition is public domain.",
+  "overall_verdict": "license_required",
+  "permalink": null,
+  "query": {
+    "asset_type_hint": "music",
+    "disambiguation_choice": null,
+    "intent": "film_tv",
+    "jurisdiction": "US",
+    "raw_input": "West End Blues — Louis Armstrong"
+  },
+  "served_from_cache": false,
+  "stop_for_disambiguation": false,
+  "unresolved": [
+    {
+      "affects_layer_ids": [
+        "composition"
+      ],
+      "estimated_effort": "minutes",
+      "if_no": "With King Oliver (d. 1938) as the complete list the UK/EU term ended 1 January 2009.",
+      "if_yes": "With Clarence Williams as co-writer the UK/EU term runs to 1 January 2036.",
+      "question": "Who are all the credited writers of \"West End Blues\"?",
+      "question_id": "composition:writers",
+      "resolution_links": [],
+      "search_terms": [
+        "\"West End Blues\" composer lyricist",
+        "\"West End Blues\" ISWC",
+        "\"West End Blues\" Clarence Williams"
+      ],
+      "why_it_matters": "UK/EU terms run from the death of the LAST surviving author; a missing co-writer silently shortens the term. Credited on the selected MusicBrainz work: King Oliver (d. 1938); this list could not be corroborated against Wikidata. MusicBrainz's other entry for this title also credits Clarence Williams (d. 1965)."
+    }
+  ]
+}

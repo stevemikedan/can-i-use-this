@@ -1,0 +1,79 @@
+{
+  "all_determinations": [],
+  "alternatives": [],
+  "boundary_note": null,
+  "cache_key": null,
+  "disagreements": [],
+  "disclaimer": "This is research, not legal advice. Verify before relying on it for anything consequential.",
+  "entity": {
+    "alternate_candidates": [
+      {
+        "disambiguator": "earliest release on file 1961; 1 recording entity",
+        "identifiers": [
+          {
+            "confidence": "low",
+            "is_primary": false,
+            "layer_id": "sound_recording",
+            "scheme": "musicbrainz_recording",
+            "source": null,
+            "value": "bm-ella"
+          }
+        ],
+        "label": "Ella Fitzgerald — Blue Moon",
+        "likelihood": "low"
+      },
+      {
+        "disambiguator": "earliest release on file 1961-01; 2 recording entities",
+        "identifiers": [
+          {
+            "confidence": "low",
+            "is_primary": false,
+            "layer_id": "sound_recording",
+            "scheme": "musicbrainz_recording",
+            "source": null,
+            "value": "bm-marcels-1961"
+          }
+        ],
+        "label": "The Marcels — Blue Moon",
+        "likelihood": "low"
+      },
+      {
+        "disambiguator": "earliest release on file 1999; 1 recording entity",
+        "identifiers": [
+          {
+            "confidence": "low",
+            "is_primary": false,
+            "layer_id": "sound_recording",
+            "scheme": "musicbrainz_recording",
+            "source": null,
+            "value": "bm-bennett"
+          }
+        ],
+        "label": "Tony Bennett — Blue Moon",
+        "likelihood": "low"
+      }
+    ],
+    "asset_type": "music",
+    "canonical_title": "Blue Moon",
+    "creators": [],
+    "layers": [],
+    "resolution_confidence": "low",
+    "year": null
+  },
+  "handoff_links": [],
+  "layer_verdicts": [],
+  "overall_confidence": "none",
+  "overall_headline": "Which recording of \"Blue Moon\" did you mean? 3 artists have recorded it — add the artist.",
+  "overall_verdict": "undetermined",
+  "permalink": null,
+  "query": {
+    "asset_type_hint": "music",
+    "disambiguation_choice": null,
+    "intent": "film_tv",
+    "jurisdiction": "US",
+    "raw_input": "Blue Moon"
+  },
+  "served_from_cache": false,
+  "stop_for_disambiguation": true,
+  "unresolved": []
+}

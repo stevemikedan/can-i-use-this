@@ -1,0 +1,727 @@
+{
+  "all_determinations": [
+    {
+      "blocked_by": [
+        "composition:renewal"
+      ],
+      "confidence": "none",
+      "depends_on_facts": [
+        "first_publication_year",
+        "renewal_filed"
+      ],
+      "expiry_year": null,
+      "jurisdiction": "US",
+      "layer_id": "composition",
+      "rule_explanation": "Published 1934 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.",
+      "rule_id": "us_renewal_unknown",
+      "status": "undetermined"
+    },
+    {
+      "blocked_by": [],
+      "confidence": "high",
+      "depends_on_facts": [
+        "author_death_year",
+        "writer_list_corroborated"
+      ],
+      "expiry_year": 2050,
+      "jurisdiction": "UK",
+      "layer_id": "composition",
+      "rule_explanation": "Last surviving author died 1979. Protected until 1 January 2050.",
+      "rule_id": "uk_life_plus_70",
+      "status": "protected"
+    },
+    {
+      "blocked_by": [],
+      "confidence": "high",
+      "depends_on_facts": [
+        "author_death_year",
+        "writer_list_corroborated"
+      ],
+      "expiry_year": 2050,
+      "jurisdiction": "EU",
+      "layer_id": "composition",
+      "rule_explanation": "Last surviving author died 1979. Protected until 1 January 2050.",
+      "rule_id": "eu_life_plus_70",
+      "status": "protected"
+    },
+    {
+      "blocked_by": [
+        "sound_recording:first_publication"
+      ],
+      "confidence": "none",
+      "depends_on_facts": [],
+      "expiry_year": null,
+      "jurisdiction": "US",
+      "layer_id": "sound_recording",
+      "rule_explanation": "The only date on file is an earliest release that may be a reissue; a term computed from it could be decades wrong.",
+      "rule_id": "recording_pub_year_unconfirmed",
+      "status": "undetermined"
+    },
+    {
+      "blocked_by": [
+        "sound_recording:first_publication"
+      ],
+      "confidence": "none",
+      "depends_on_facts": [],
+      "expiry_year": null,
+      "jurisdiction": "UK",
+      "layer_id": "sound_recording",
+      "rule_explanation": "The only date on file is an earliest release that may be a reissue; a term computed from it could be decades wrong.",
+      "rule_id": "recording_pub_year_unconfirmed",
+      "status": "undetermined"
+    },
+    {
+      "blocked_by": [
+        "sound_recording:first_publication"
+      ],
+      "confidence": "none",
+      "depends_on_facts": [],
+      "expiry_year": null,
+      "jurisdiction": "EU",
+      "layer_id": "sound_recording",
+      "rule_explanation": "The only date on file is an earliest release that may be a reissue; a term computed from it could be decades wrong.",
+      "rule_id": "recording_pub_year_unconfirmed",
+      "status": "undetermined"
+    }
+  ],
+  "alternatives": [],
+  "boundary_note": null,
+  "cache_key": "music:3c339d3d-0000-0000-0000-000000000002:bm-marcels-1961",
+  "disagreements": [],
+  "disclaimer": "This is research, not legal advice. Verify before relying on it for anything consequential.",
+  "entity": {
+    "alternate_candidates": [],
+    "asset_type": "music",
+    "canonical_title": "Blue Moon",
+    "creators": [
+      {
+        "confidence": "high",
+        "conflicting_values": [],
+        "reasoning": null,
+        "sources": [
+          {
+            "authoritative": false,
+            "excerpt": null,
+            "method": "direct_api",
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/work/3c339d3d-0000-0000-0000-000000000002?inc=artist-rels%2Burl-rels&fmt=json"
+          },
+          {
+            "authoritative": false,
+            "excerpt": "artist linked to Wikidata Q269094",
+            "method": "direct_api",
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/artist/a-rodgers?inc=url-rels&fmt=json"
+          },
+          {
+            "authoritative": false,
+            "excerpt": "P570 = 1979",
+            "method": "direct_api",
+            "name": "Wikidata",
+            "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094%7CQ725828&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+          }
+        ],
+        "value": "Richard Rodgers"
+      },
+      {
+        "confidence": "high",
+        "conflicting_values": [],
+        "reasoning": null,
+        "sources": [
+          {
+            "authoritative": false,
+            "excerpt": null,
+            "method": "direct_api",
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/work/3c339d3d-0000-0000-0000-000000000002?inc=artist-rels%2Burl-rels&fmt=json"
+          },
+          {
+            "authoritative": false,
+            "excerpt": "artist linked to Wikidata Q725828",
+            "method": "direct_api",
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/artist/a-hart?inc=url-rels&fmt=json"
+          },
+          {
+            "authoritative": false,
+            "excerpt": "P570 = 1943",
+            "method": "direct_api",
+            "name": "Wikidata",
+            "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094%7CQ725828&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+          }
+        ],
+        "value": "Lorenz Hart"
+      }
+    ],
+    "layers": [
+      {
+        "claimed_statuses": [],
+        "clearance": {
+          "difficulty": "moderate",
+          "difficulty_reasoning": null,
+          "is_one_stop": null,
+          "party_count": null,
+          "unclaimed_share_percent": null
+        },
+        "existing_license": null,
+        "holders": [
+          {
+            "contact_path": null,
+            "enforcement_evidence": [],
+            "enforcement_posture": "unknown",
+            "is_administrator": false,
+            "name": {
+              "confidence": "high",
+              "conflicting_values": [],
+              "reasoning": "credited by MB+WD",
+              "sources": [
+                {
+                  "authoritative": false,
+                  "excerpt": null,
+                  "method": "direct_api",
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/work/3c339d3d-0000-0000-0000-000000000002?inc=artist-rels%2Burl-rels&fmt=json"
+                },
+                {
+                  "authoritative": false,
+                  "excerpt": "artist linked to Wikidata Q269094",
+                  "method": "direct_api",
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/artist/a-rodgers?inc=url-rels&fmt=json"
+                },
+                {
+                  "authoritative": false,
+                  "excerpt": "P570 = 1979",
+                  "method": "direct_api",
+                  "name": "Wikidata",
+                  "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094%7CQ725828&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+                }
+              ],
+              "value": "Richard Rodgers"
+            },
+            "role": "author",
+            "share_percent": null,
+            "territory": null
+          },
+          {
+            "contact_path": null,
+            "enforcement_evidence": [],
+            "enforcement_posture": "unknown",
+            "is_administrator": false,
+            "name": {
+              "confidence": "high",
+              "conflicting_values": [],
+              "reasoning": "credited by MB+WD",
+              "sources": [
+                {
+                  "authoritative": false,
+                  "excerpt": null,
+                  "method": "direct_api",
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/work/3c339d3d-0000-0000-0000-000000000002?inc=artist-rels%2Burl-rels&fmt=json"
+                },
+                {
+                  "authoritative": false,
+                  "excerpt": "artist linked to Wikidata Q725828",
+                  "method": "direct_api",
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/artist/a-hart?inc=url-rels&fmt=json"
+                },
+                {
+                  "authoritative": false,
+                  "excerpt": "P570 = 1943",
+                  "method": "direct_api",
+                  "name": "Wikidata",
+                  "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094%7CQ725828&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+                }
+              ],
+              "value": "Lorenz Hart"
+            },
+            "role": "author",
+            "share_percent": null,
+            "territory": null
+          }
+        ],
+        "identifiers": [
+          {
+            "confidence": "low",
+            "is_primary": true,
+            "layer_id": "composition",
+            "scheme": "musicbrainz_work",
+            "source": null,
+            "value": "3c339d3d-0000-0000-0000-000000000002"
+          }
+        ],
+        "kind": "composition",
+        "label": "Composition (1934)",
+        "layer_id": "composition",
+        "term_facts": {
+          "author_death_year": {
+            "confidence": "high",
+            "conflicting_values": [],
+            "reasoning": "Last surviving author: Richard Rodgers d. 1979, Lorenz Hart d. 1943",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/3c339d3d-0000-0000-0000-000000000002?inc=artist-rels%2Burl-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "artist linked to Wikidata Q269094",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/a-rodgers?inc=url-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "P570 = 1979",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094%7CQ725828&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/3c339d3d-0000-0000-0000-000000000002?inc=artist-rels%2Burl-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "artist linked to Wikidata Q725828",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/a-hart?inc=url-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "P570 = 1943",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094%7CQ725828&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              }
+            ],
+            "value": 1979
+          },
+          "copyright_notice_present": null,
+          "creation_year": null,
+          "first_publication_country": null,
+          "first_publication_year": {
+            "confidence": "high",
+            "conflicting_values": [],
+            "reasoning": "Wikidata P577_publication corroborated by MusicBrainz composer-relation date",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": "P577_publication = 1934",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q804574&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/3c339d3d-0000-0000-0000-000000000002?inc=artist-rels%2Burl-rels&fmt=json"
+              }
+            ],
+            "value": 1934
+          },
+          "is_anonymous_or_pseudonymous": null,
+          "is_derivative": null,
+          "is_work_for_hire": null,
+          "recording_date_basis": null,
+          "recording_first_published_year": null,
+          "recording_fixed_before_feb_1972": null,
+          "renewal_filed": null,
+          "underlying_work_ref": null,
+          "writer_list_corroborated": true
+        }
+      },
+      {
+        "claimed_statuses": [],
+        "clearance": {
+          "difficulty": "moderate",
+          "difficulty_reasoning": null,
+          "is_one_stop": null,
+          "party_count": null,
+          "unclaimed_share_percent": null
+        },
+        "existing_license": null,
+        "holders": [],
+        "identifiers": [
+          {
+            "confidence": "low",
+            "is_primary": true,
+            "layer_id": "sound_recording",
+            "scheme": "musicbrainz_recording",
+            "source": {
+              "authoritative": false,
+              "excerpt": "no dated session; earliest release on file 1961-01",
+              "method": "direct_api",
+              "name": "MusicBrainz",
+              "url": "https://musicbrainz.org/recording/bm-marcels-1961"
+            },
+            "value": "bm-marcels-1961"
+          }
+        ],
+        "kind": "sound_recording",
+        "label": "Sound recording (1961)",
+        "layer_id": "sound_recording",
+        "term_facts": {
+          "author_death_year": null,
+          "copyright_notice_present": null,
+          "creation_year": null,
+          "first_publication_country": null,
+          "first_publication_year": null,
+          "is_anonymous_or_pseudonymous": null,
+          "is_derivative": null,
+          "is_work_for_hire": null,
+          "recording_date_basis": "first_release_date",
+          "recording_first_published_year": {
+            "confidence": "low",
+            "conflicting_values": [],
+            "reasoning": "Earliest release on file only — may be a reissue; 2 undated recording entities not used",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": "no dated session; earliest release on file 1961-01",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/recording/bm-marcels-1961"
+              }
+            ],
+            "value": 1961
+          },
+          "recording_fixed_before_feb_1972": null,
+          "renewal_filed": null,
+          "underlying_work_ref": null,
+          "writer_list_corroborated": false
+        }
+      }
+    ],
+    "resolution_confidence": "low",
+    "year": {
+      "confidence": "high",
+      "conflicting_values": [],
+      "reasoning": "Wikidata P577_publication corroborated by MusicBrainz composer-relation date",
+      "sources": [
+        {
+          "authoritative": false,
+          "excerpt": "P577_publication = 1934",
+          "method": "direct_api",
+          "name": "Wikidata",
+          "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q804574&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+        },
+        {
+          "authoritative": false,
+          "excerpt": null,
+          "method": "direct_api",
+          "name": "MusicBrainz",
+          "url": "https://musicbrainz.org/ws/2/work/3c339d3d-0000-0000-0000-000000000002?inc=artist-rels%2Burl-rels&fmt=json"
+        }
+      ],
+      "value": 1934
+    }
+  },
+  "handoff_links": [
+    {
+      "description": "The recording entity this determination is based on",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "verify",
+      "source_name": "MusicBrainz recording",
+      "tier": "deep_link",
+      "url": "https://musicbrainz.org/recording/bm-marcels-1961"
+    },
+    {
+      "description": "The composition (work) entity, with writer credits and ISWCs",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "verify",
+      "source_name": "MusicBrainz work",
+      "tier": "deep_link",
+      "url": "https://musicbrainz.org/work/3c339d3d-0000-0000-0000-000000000002"
+    },
+    {
+      "description": "Mechanical Licensing Collective — publishers, administrators and shares for \"Blue Moon\"",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "license",
+      "source_name": "MLC public search",
+      "tier": "prefilled_search",
+      "url": "https://portal.themlc.com/search?query=Blue+Moon"
+    },
+    {
+      "description": "ASCAP ACE repertory — writer and publisher credits",
+      "navigation_hint": "Search by title; paste the string below",
+      "paste_string": "Blue Moon",
+      "purpose": "license",
+      "source_name": "ASCAP repertory",
+      "tier": "guided_manual",
+      "url": "https://www.ascap.com/repertory"
+    },
+    {
+      "description": "BMI repertoire — writer and publisher credits",
+      "navigation_hint": "Search by title; paste the string below",
+      "paste_string": "Blue Moon",
+      "purpose": "license",
+      "source_name": "BMI repertoire",
+      "tier": "guided_manual",
+      "url": "https://repertoire.bmi.com/"
+    },
+    {
+      "description": "US Copyright Office catalog scans on the Internet Archive — renewal registrations",
+      "navigation_hint": "Catalog of Copyright Entries, Third Series, Music; renewals volume for 1961",
+      "paste_string": "Blue Moon",
+      "purpose": "resolve",
+      "source_name": "Catalog of Copyright Entries (scans)",
+      "tier": "guided_manual",
+      "url": "https://archive.org/details/copyrightrecords"
+    },
+    {
+      "description": "UCSB discography of pre-1950s recordings — matrix numbers, session and release dates",
+      "navigation_hint": "Search by title, then filter by artist The Marcels",
+      "paste_string": "Blue Moon",
+      "purpose": "resolve",
+      "source_name": "DAHR — Discography of American Historical Recordings",
+      "tier": "guided_manual",
+      "url": "https://adp.library.ucsb.edu/"
+    }
+  ],
+  "layer_verdicts": [
+    {
+      "clearance": {
+        "difficulty": "moderate",
+        "difficulty_reasoning": null,
+        "is_one_stop": null,
+        "party_count": null,
+        "unclaimed_share_percent": null
+      },
+      "cost_band": null,
+      "determination": {
+        "blocked_by": [
+          "composition:renewal"
+        ],
+        "confidence": "none",
+        "depends_on_facts": [
+          "first_publication_year",
+          "renewal_filed"
+        ],
+        "expiry_year": null,
+        "jurisdiction": "US",
+        "layer_id": "composition",
+        "rule_explanation": "Published 1934 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.",
+        "rule_id": "us_renewal_unknown",
+        "status": "undetermined"
+      },
+      "headline": "Undetermined — its year-28 renewal status is unknown",
+      "holders": [
+        {
+          "contact_path": null,
+          "enforcement_evidence": [],
+          "enforcement_posture": "unknown",
+          "is_administrator": false,
+          "name": {
+            "confidence": "high",
+            "conflicting_values": [],
+            "reasoning": "credited by MB+WD",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/3c339d3d-0000-0000-0000-000000000002?inc=artist-rels%2Burl-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "artist linked to Wikidata Q269094",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/a-rodgers?inc=url-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "P570 = 1979",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094%7CQ725828&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              }
+            ],
+            "value": "Richard Rodgers"
+          },
+          "role": "author",
+          "share_percent": null,
+          "territory": null
+        },
+        {
+          "contact_path": null,
+          "enforcement_evidence": [],
+          "enforcement_posture": "unknown",
+          "is_administrator": false,
+          "name": {
+            "confidence": "high",
+            "conflicting_values": [],
+            "reasoning": "credited by MB+WD",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/3c339d3d-0000-0000-0000-000000000002?inc=artist-rels%2Burl-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "artist linked to Wikidata Q725828",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/a-hart?inc=url-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "P570 = 1943",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094%7CQ725828&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              }
+            ],
+            "value": "Lorenz Hart"
+          },
+          "role": "author",
+          "share_percent": null,
+          "territory": null
+        }
+      ],
+      "intent_note": null,
+      "is_required": true,
+      "layer_id": "composition",
+      "layer_label": "Composition (1934)",
+      "licensing_path": null,
+      "reasoning": "Published 1934 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.",
+      "verdict": "undetermined"
+    },
+    {
+      "clearance": {
+        "difficulty": "moderate",
+        "difficulty_reasoning": null,
+        "is_one_stop": null,
+        "party_count": null,
+        "unclaimed_share_percent": null
+      },
+      "cost_band": null,
+      "determination": {
+        "blocked_by": [
+          "sound_recording:first_publication"
+        ],
+        "confidence": "none",
+        "depends_on_facts": [],
+        "expiry_year": null,
+        "jurisdiction": "US",
+        "layer_id": "sound_recording",
+        "rule_explanation": "The only date on file is an earliest release that may be a reissue; a term computed from it could be decades wrong.",
+        "rule_id": "recording_pub_year_unconfirmed",
+        "status": "undetermined"
+      },
+      "headline": "Undetermined — the only date on file may be a reissue",
+      "holders": [],
+      "intent_note": null,
+      "is_required": true,
+      "layer_id": "sound_recording",
+      "layer_label": "Sound recording (1961)",
+      "licensing_path": null,
+      "reasoning": "The only date on file is an earliest release that may be a reissue; a term computed from it could be decades wrong.",
+      "verdict": "undetermined"
+    }
+  ],
+  "overall_confidence": "none",
+  "overall_headline": "Not yet determined: the composition layer is blocked — its year-28 renewal status is unknown.",
+  "overall_verdict": "undetermined",
+  "permalink": null,
+  "query": {
+    "asset_type_hint": "music",
+    "disambiguation_choice": null,
+    "intent": "film_tv",
+    "jurisdiction": "US",
+    "raw_input": "Blue Moon — The Marcels"
+  },
+  "served_from_cache": false,
+  "stop_for_disambiguation": false,
+  "unresolved": [
+    {
+      "affects_layer_ids": [
+        "composition"
+      ],
+      "estimated_effort": "hours",
+      "if_no": "Entered the public domain 1 January 1963.",
+      "if_yes": "Protected until 1 January 2030.",
+      "question": "Was the 1934 US copyright in \"Blue Moon\" renewed in 1961–1962?",
+      "question_id": "composition:renewal",
+      "resolution_links": [
+        {
+          "description": "Search hit for the 1961-1962 renewal of \"Blue Moon\"",
+          "navigation_hint": null,
+          "paste_string": null,
+          "purpose": "resolve",
+          "source_name": "CCE 1962 renewals",
+          "tier": "deep_link",
+          "url": "https://archive.org/details/cce-1962"
+        },
+        {
+          "description": "Search hit for the 1961-1962 renewal of \"Blue Moon\"",
+          "navigation_hint": null,
+          "paste_string": null,
+          "purpose": "resolve",
+          "source_name": "DAHR",
+          "tier": "deep_link",
+          "url": "https://adp.library.ucsb.edu/x"
+        }
+      ],
+      "search_terms": [
+        "\"Blue Moon\" renewal 1961",
+        "\"Blue Moon\" renewal 1962"
+      ],
+      "why_it_matters": "Works published 1931–1963 lost protection after 28 years unless renewed. Renewal records are scanned catalogs, not a queryable database. Search found renewal-style registration numbers ['R290123'] — check them."
+    },
+    {
+      "affects_layer_ids": [
+        "sound_recording"
+      ],
+      "estimated_effort": "minutes",
+      "if_no": "Without a year the recording layer stays undetermined and the roll-up cannot be clear.",
+      "if_yes": "A confirmed year lets the CLASSICS Act schedule compute the expiry exactly.",
+      "question": "In what year was the recording of \"Blue Moon\" by The Marcels first released?",
+      "question_id": "sound_recording:first_publication",
+      "resolution_links": [
+        {
+          "description": "Search hit for the original release of \"Blue Moon\" by The Marcels",
+          "navigation_hint": null,
+          "paste_string": null,
+          "purpose": "resolve",
+          "source_name": "CCE 1962 renewals",
+          "tier": "deep_link",
+          "url": "https://archive.org/details/cce-1962"
+        },
+        {
+          "description": "Search hit for the original release of \"Blue Moon\" by The Marcels",
+          "navigation_hint": null,
+          "paste_string": null,
+          "purpose": "resolve",
+          "source_name": "DAHR",
+          "tier": "deep_link",
+          "url": "https://adp.library.ucsb.edu/x"
+        }
+      ],
+      "search_terms": [
+        "\"Blue Moon\" The Marcels discography",
+        "\"Blue Moon\" The Marcels 78 rpm"
+      ],
+      "why_it_matters": "The US term for pre-1972 recordings runs from first publication. MusicBrainz only has a release from 1961-01, which may be a reissue."
+    }
+  ]
+}
