@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Optional
 
+from agent.reader_schema import recording_year_to_fact, renewal_to_fact
 from research import parallel_client as pc
 from research.music import renewal_numbers, search_recording_date, search_renewal
 from rules import CURRENT_YEAR
@@ -394,8 +395,18 @@ def _research_composition(sel: Selection, em: Emitter) -> CompositionFacts:
 
 # --- the pipeline ---------------------------------------------------------------
 
-def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None) -> tuple:
-    """Returns (RightsResponse, Emitter)."""
+def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None, reader=None) -> tuple:
+    """
+    Returns (RightsResponse, Emitter).
+
+    reader: the Tier 3 reading step (agent.reader.Reader). Defaults to the
+    NullReader — no evidence is read into a fact, every open question stays
+    open. A real reader resolves the renewal window and the recording-date
+    window from the searched evidence, producing a cited fact for the rules
+    engine. The reader never computes a term.
+    """
+    from agent.reader import NullReader
+    reader = reader or NullReader()
     em = emitter or Emitter()
     title, artist = parse_query(query.raw_input)
     em.emit(S.CLASSIFY, "complete", "Music — a composition and a sound recording, owned separately",
@@ -492,7 +503,7 @@ def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None) -> tuple:
             tf.author_death_year.conflicting_values = [
                 f"{s.death_year} ({s.name}, per sibling MusicBrainz work)" for s in cf.sibling_extra if s.death_year]
 
-    # Renewal window -> Tier 3 SEARCH (primary path)
+    # Renewal window -> Tier 3 SEARCH (primary path), then read the evidence
     cliff = CURRENT_YEAR - 95
     if cf.year and cliff <= cf.year <= 1963:
         em.emit(S.RESEARCH, "progress",
@@ -502,21 +513,29 @@ def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None) -> tuple:
         if not out.ok:
             em.emit(S.RESEARCH, "progress", "Parallel Search unavailable — renewal left unresolved",
                     degraded=True, error_message=out.error)
-        rn = renewal_numbers(out)
-        qid_ = f"{COMPOSITION}:renewal"
-        question_ids["renewal_filed"] = qid_
-        questions.append(UnresolvedQuestion(
-            question_id=qid_,
-            question=f'Was the {cf.year} US copyright in "{cf.title or title}" renewed in {cf.year + 27}–{cf.year + 28}?',
-            why_it_matters="Works published 1931–1963 lost protection after 28 years unless renewed. Renewal records are scanned catalogs, not a queryable database."
-                           + (f" Search found renewal-style registration numbers {rn[:3]} — check them." if rn else ""),
-            if_yes=f"Protected until 1 January {cf.year + 96}.",
-            if_no=f"Entered the public domain 1 January {cf.year + 29}.",
-            affects_layer_ids=[COMPOSITION],
-            resolution_links=links,
-            search_terms=[f'"{cf.title or title}" renewal {cf.year + 27}', f'"{cf.title or title}" renewal {cf.year + 28}'],
-            estimated_effort="hours",
-        ))
+        answer = reader.read_renewal(title=cf.title or title, writers=writer_names, year=cf.year, evidence=out)
+        fact = renewal_to_fact(answer, retrieved_at=out.retrieved_at)
+        if fact is not None:
+            tf.renewal_filed = fact
+            em.emit(S.RESEARCH, "progress",
+                    f"Renewal resolved from evidence: {'renewed' if fact.value else 'not renewed'} "
+                    f"({fact.confidence.value} confidence, {len(fact.sources)} citation(s))")
+        else:
+            rn = renewal_numbers(out)
+            qid_ = f"{COMPOSITION}:renewal"
+            question_ids["renewal_filed"] = qid_
+            questions.append(UnresolvedQuestion(
+                question_id=qid_,
+                question=f'Was the {cf.year} US copyright in "{cf.title or title}" renewed in {cf.year + 27}–{cf.year + 28}?',
+                why_it_matters="Works published 1931–1963 lost protection after 28 years unless renewed. Renewal records are scanned catalogs, not a queryable database."
+                               + (f" Search found renewal-style registration numbers {rn[:3]} — check them." if rn else ""),
+                if_yes=f"Protected until 1 January {cf.year + 96}.",
+                if_no=f"Entered the public domain 1 January {cf.year + 29}.",
+                affects_layer_ids=[COMPOSITION],
+                resolution_links=links,
+                search_terms=[f'"{cf.title or title}" renewal {cf.year + 27}', f'"{cf.title or title}" renewal {cf.year + 28}'],
+                estimated_effort="hours",
+            ))
 
     # Recording layer facts
     rtf = recording.term_facts
@@ -545,19 +564,29 @@ def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None) -> tuple:
         if not out.ok:
             em.emit(S.RESEARCH, "progress", "Parallel Search unavailable — release year left unresolved",
                     degraded=True, error_message=out.error)
-        qid_ = f"{RECORDING}:first_publication"
-        question_ids["recording_pub_year"] = qid_
-        questions.append(UnresolvedQuestion(
-            question_id=qid_,
-            question=f'In what year was the recording of "{title}" by {sel.pick["artist"]} first released?',
-            why_it_matters=f"The US term for pre-1972 recordings runs from first publication. MusicBrainz only has a release from {sel.pick['date'] or 'an unknown year'}, which may be a reissue.",
-            if_yes="A confirmed year lets the CLASSICS Act schedule compute the expiry exactly.",
-            if_no="Without a year the recording layer stays undetermined and the roll-up cannot be clear.",
-            affects_layer_ids=[RECORDING],
-            resolution_links=links,
-            search_terms=[f'"{title}" {sel.pick["artist"]} discography', f'"{title}" {sel.pick["artist"]} 78 rpm'],
-            estimated_effort="minutes",
-        ))
+        answer = reader.read_recording_year(title=title, artist=sel.pick["artist"],
+                                            year_on_file=sel.pick["date"], evidence=out)
+        fact = recording_year_to_fact(answer, retrieved_at=out.retrieved_at)
+        if fact is not None:
+            rtf.recording_first_published_year = fact
+            rtf.recording_date_basis = RecordingDateBasis.RESEARCHED
+            em.emit(S.RESEARCH, "progress",
+                    f"Recording first-publication year resolved from evidence: {fact.value} "
+                    f"({fact.confidence.value} confidence, {len(fact.sources)} citation(s))")
+        else:
+            qid_ = f"{RECORDING}:first_publication"
+            question_ids["recording_pub_year"] = qid_
+            questions.append(UnresolvedQuestion(
+                question_id=qid_,
+                question=f'In what year was the recording of "{title}" by {sel.pick["artist"]} first released?',
+                why_it_matters=f"The US term for pre-1972 recordings runs from first publication. MusicBrainz only has a release from {sel.pick['date'] or 'an unknown year'}, which may be a reissue.",
+                if_yes="A confirmed year lets the CLASSICS Act schedule compute the expiry exactly.",
+                if_no="Without a year the recording layer stays undetermined and the roll-up cannot be clear.",
+                affects_layer_ids=[RECORDING],
+                resolution_links=links,
+                search_terms=[f'"{title}" {sel.pick["artist"]} discography', f'"{title}" {sel.pick["artist"]} 78 rpm'],
+                estimated_effort="minutes",
+            ))
     em.emit(S.RESEARCH, "complete", f"Consulted {em.sources_consulted} sources"
             + (" — Tier 3 degraded" if any(e.degraded for e in em.events) else ""))
 
