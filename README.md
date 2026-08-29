@@ -1,6 +1,6 @@
 # Can I Use This?
 
-A rights-determination agent for people about to publish something — a documentary editor with a music cue, a podcaster, a YouTuber, an archivist clearing a backlog. Paste a song (books and films are next), say what you want to do with it, and get a cited verdict: whether you can use it, who owns it, roughly what it would cost, and an honest account of what could not be determined.
+A rights-determination agent for documentary and independent film production. Paste a music cue, say what you're making, and get a cited verdict: whether you can use it, who owns it, roughly what it would cost, and an honest account of what could not be determined.
 
 Built for the Agentic Cinema hackathon, Parallel track.
 
@@ -55,9 +55,12 @@ pip install -r requirements.txt
 python -m pipeline "West End Blues" "Louis Armstrong"
 python -m pipeline "Rhapsody in Blue" "Paul Whiteman" --jurisdiction UK --intent film_tv
 python -m pipeline "Take Five" --json            # no artist → stops with candidates
+python -m pipeline "Blue Moon" "Ella Fitzgerald" --read    # Gemini reads the Parallel evidence (GCP + ADC)
+python -m pipeline "West End Blues" "Louis Armstrong" --graph   # through the google-adk graph
 
-python -m pytest                                # rules, sources, research, registry, pipeline
+python -m pytest                                # rules, sources, research, registry, pipeline, agent
 python -m sources.warm "Blue Moon" "The Marcels" # pre-warm the cache and print timings
+python -m agent.live_cases                      # the reader over live Parallel Search, per-case report
 ```
 
 | Environment variable | Purpose |
@@ -65,7 +68,7 @@ python -m sources.warm "Blue Moon" "The Marcels" # pre-warm the cache and print 
 | `PARALLEL_API_KEY` | Tier 3 research through the `parallel-web` SDK. Without it Tier 3 degrades: questions are still emitted, just without search hits. |
 | `CACHE_BACKEND` | `sqlite` (default, `.cache/tier2.sqlite`), `firestore`, or `memory` |
 | `CACHE_PATH` / `CACHE_COLLECTION` | SQLite file / Firestore collection |
-| `GOOGLE_CLOUD_PROJECT` | Vertex AI (Gemini) and Firestore when deployed on Cloud Run |
+| `GOOGLE_CLOUD_PROJECT` / `GOOGLE_CLOUD_LOCATION` | Vertex AI (the Gemini reading step, via `google-adk`) and Firestore. The reader is credential-gated: without them every Tier 3 question stays open. |
 
 Runtime AI is limited to Google Cloud AI services and Parallel; everything else is ordinary open infrastructure (httpx, Pydantic, SQLite, FastAPI).
 
@@ -88,16 +91,18 @@ schemas.py   canonical Pydantic models
 ## Status
 
 - Music path runs end to end from the command line. Both reference queries produce the expected cited two-layer verdict — *West End Blues / Louis Armstrong* (composition public domain, recording protected, license required) in about 8 seconds cold and *Rhapsody in Blue / Paul Whiteman* (both layers public domain, clear) in about 19 seconds cold; under a second when cached.
-- 94 tests across the rules engine, the cache layer, the Parallel wrappers, the link registry, and the pipeline (ambiguity stop, reissue-only path, renewal window, degraded Tier 3).
-- Not yet built: the Gemini step that reads Tier 3 evidence into cited facts, MLC integration (publishers, shares, clearance difficulty), the text/film path, the ADK agent, the API, the frontend, and the Cloud Run deployment.
+- **The reading step** — Gemini via Vertex AI, wrapped as a `google-adk` `LlmAgent` — reads Parallel Search evidence into a cited fact or leaves the question open. Its output schema makes an uncited fact unrepresentable; confidence is capped by the class of source cited (primary record / rightsholder notice / secondary). Over live evidence it resolved one of four renewal windows (Blue Moon, medium, from a publisher's notice) and declined the other three honestly — see *Known limitations*.
+- **The `google-adk` graph** (`agent/workflow.py`) runs the pipeline's stages as deterministic agents with the two research stages in parallel, and reproduces the five frozen acceptance fixtures byte-for-byte.
+- 149 tests across the rules engine, the cache layer, the Parallel wrappers, the link registry, the pipeline, the reader schema and the graph.
+- Not yet built: the API, the frontend, the Cloud Run deployment, MLC integration (publishers, shares, clearance difficulty). Text/film is cut — see `docs/ENDGAME.md`.
 
 ## Known limitations
 
-- **The renewal window.** US works published 1931–1963 lost protection after 28 years unless renewed, and most of the 20th-century songbook falls in that window. The renewal records are scanned catalog pages with no machine-readable database. The tool searches for candidate entries and hands them over as an unresolved question with exact search terms; it does not guess. Expect many mid-century compositions to come back *undetermined* rather than *clear* or *protected*.
+- **The renewal window.** US works published 1931–1963 lost protection after 28 years unless renewed, and most of the 20th-century songbook falls in that window. Renewals filed before 1978 are in scanned catalog pages with no machine-readable database; renewals filed from 1978 on (works published 1951–1963) are in the Copyright Office's online catalog, which web search excerpts cannot reach. The tool searches for evidence, reads it only when a passage actually states the renewal, and otherwise hands the question over with exact search terms and a link to the record system that holds the answer; it does not guess. Expect many mid-century compositions to come back *undetermined* rather than *clear* or *protected* — on the first live run, one of four resolved.
 - **No database publishes sync licensing contacts or prices.** Sync is negotiated one-off. The tool identifies the parties, the administrator, and the shape of the negotiation, and gives cost bands as ranges — never a point estimate.
 - **Determinations are US-centric.** The US rules are the most complete. UK and EU determinations cover the composition (life+70) and the recording (70 years from publication); other jurisdictions are not modelled.
 - **Coverage follows the sources.** A recording MusicBrainz has not dated, or a work Wikidata has not described, ends in an unresolved question rather than an answer. Writer lists that cannot be corroborated cap the UK/EU confidence at LOW.
-- **Music first.** Text and film (work, edition, translation) share the same skeleton but are not built yet. Images, fonts, characters, footage and trademarks are recognised and refused with an explanation, not researched.
+- **Music only.** Text and film (work, edition, translation) share the same skeleton and were cut for the submission. Images, fonts, characters, footage and trademarks are recognised and refused with an explanation, not researched.
 
 ## Why the provenance rules exist
 

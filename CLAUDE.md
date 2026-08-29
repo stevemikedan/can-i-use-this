@@ -1,8 +1,8 @@
 # Can I Use This?
 
-A rights-determination agent. Paste a song or a book, say what you want to do with it, get a cited verdict: can you use it, who owns it, roughly what it costs, what to use instead, and what couldn't be determined.
+A rights-determination agent for documentary and independent film production. Paste a music cue, say what you want to do with it, get a cited verdict: can you use it, who owns it, roughly what it costs, what to use instead, and what couldn't be determined.
 
-Built for the Agentic Cinema hackathon (Parallel track). The project plan, schedule and scope decisions live in `docs/PROJECT.md`; the competition's technical constraints in `docs/COMPLIANCE.md`.
+Built for the Agentic Cinema hackathon (Parallel track). The project plan and scope decisions live in `docs/PROJECT.md`; the current schedule, cuts and gates in `docs/ENDGAME.md`; the competition's technical constraints in `docs/COMPLIANCE.md`.
 
 ---
 
@@ -51,19 +51,21 @@ A composition can be public domain while every recording of it is protected. A b
 
 ---
 
-## Scope — exactly two asset types
+## Scope — one asset type
 
-**In:** music (composition + sound recording), text/film (work + edition + translation).
+**In:** music (composition + sound recording). Text/film (work + edition + translation) shares the skeleton and was **cut on Aug 29** for the submission — see `docs/ENDGAME.md`.
 
 **Recognized but not researched:** images, fonts, characters, footage, trademarks. These return a `boundary_note` explaining honestly what the tool can't do yet.
 
-**Out of scope:** audio fingerprinting, image matching, licensing marketplace, accounts/auth, saved history, researched alternatives (curated static lists only), Parallel Monitor, batch/CSV mode. The reasoning behind each cut is in `docs/PROJECT.md` §2.
+**Out of scope:** audio fingerprinting, image matching, licensing marketplace, accounts/auth, saved history, researched alternatives (curated static lists only), Parallel Monitor, batch/CSV mode, chat interface, skills registry. The reasoning behind each cut is in `docs/PROJECT.md` §2 and `docs/ENDGAME.md`.
 
 ---
 
 ## Known-hard problem
 
-US works published 1931–1963 required renewal in year 28. Those records are partly scanned card images with no machine access. **If renewal can't be determined, do not guess** — Parallel Search gathers candidate records, and if they don't settle it the result is an `UnresolvedQuestion` with exact search terms and the right catalog range. That is designed behavior, not a gap.
+US works published 1931–1963 required renewal in year 28. Renewals filed before 1978 are partly scanned card images with no machine access; renewals filed from 1978 on (works published 1951–1963) are in the Copyright Office online catalog, which search excerpts cannot reach (`research.music.renewal_record_system`). **If renewal can't be determined, do not guess** — Parallel Search gathers candidate records, the reader reads them only if a passage states the renewal, and otherwise the result is an `UnresolvedQuestion` with exact search terms pointing at the record system that holds the answer. That is designed behavior, not a gap. On the first live run one of four windows resolved; that is the honest number.
+
+The reader's confidence is capped by the class of source it cites — primary record → high, rightsholder/publisher notice → medium, anything else → low — in a validator, not the prompt. A "not renewed" finding needs a primary record.
 
 (The renewal window rolls forward every 1 January as the 95-year cliff advances.)
 
@@ -124,9 +126,13 @@ schemas.py      canonical data model — read its docstring before changing anyt
 ## Commands
 
 ```bash
-python -m pytest                                   # rules, sources, research, registry, pipeline
+python -m pytest                                   # rules, sources, research, registry, pipeline, agent
 python -m pipeline "West End Blues" "Louis Armstrong"
 python -m pipeline "Take Five" --json              # no artist → stops with candidates
+python -m pipeline "Blue Moon" "Ella Fitzgerald" --read     # with the Gemini reader (GCP + ADC)
+python -m pipeline "West End Blues" "Louis Armstrong" --graph   # through the ADK graph
+python -m agent.live_cases                         # reader over live Parallel Search; --case, --all-raw
+python -m agent.freeze_fixtures                    # re-freeze acceptance fixtures — deliberately, never to pass a test
 python -m sources.warm "Blue Moon" "The Marcels"   # pre-warm the cache, print timings
 python -m uvicorn api.main:app --reload            # once api/ exists
 ```
@@ -149,7 +155,8 @@ python -m uvicorn api.main:app --reload            # once api/ exists
 - `sources/` — Tier 2 cache layer: SQLite/Firestore cache, throttled + retried HTTP that fails soft, MusicBrainz and Wikidata clients.
 - `research/` — Parallel Search and Task wrappers, cached, degrading cleanly when no key is present.
 - `registry/` — handoff link templates.
-- `pipeline/` — music path end to end. Both demo queries produce the expected cited two-layer verdict from the CLI: West End Blues / Louis Armstrong in 7.5 s cold, Rhapsody in Blue / Paul Whiteman in 19.1 s cold, under a second warm.
+- `pipeline/` — music path end to end, as stage functions over a `MusicRun` (`STAGES` in `pipeline/music.py`). Both demo queries produce the expected cited two-layer verdict from the CLI: West End Blues / Louis Armstrong in 7.5 s cold, Rhapsody in Blue / Paul Whiteman in 19.1 s cold, under a second warm.
+- `agent/` — the reading step (`gemini_reader.py`, gemini-2.5-flash on Vertex; `gemini-flash-latest` is AI Studio only and 404s on Vertex), its schema (`reader_schema.py`), the ADK graph (`workflow.py`) and the frozen acceptance fixtures it reproduces. The `anthropic` package must not be installed: ADK's model registry imports it, 0.40.0 crashes past ADK's guard, and it violates COMPLIANCE §3.
 - `spike/` — verified MusicBrainz work↔recording linkage and Wikidata death years; its findings became rules 9 and 10 above.
 - Design — Entry, Progress, Result complete. Disambiguation and error/boundary states not yet designed; specify from `docs/design-reference.md`.
-- Not yet built: the Gemini reading step for Tier 3 evidence, MLC integration, text/film path, `agent/`, `api/`, `web/`.
+- Not yet built: `api/`, `web/`, the Cloud Run deployment, MLC integration. Schedule and gates: `docs/ENDGAME.md`.

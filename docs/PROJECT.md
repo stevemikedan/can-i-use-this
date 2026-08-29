@@ -229,31 +229,32 @@ Each exists to demonstrate one specific behavior. Verify each by hand before bui
 
 ## 6. Schedule
 
-### DONE — Aug 24–25
+**The current schedule, cuts and gates are in `docs/ENDGAME.md`** (Aug 29). The
+schedule below is what was planned on Aug 26; it predates the reading step and
+the ADK graph and is kept as a record.
 
-- Procurement, GCP project, repo with MIT license in first commit
-- Design pass: Entry, Progress, Result complete; design system extracted to `docs/design-system.md`
-- **Spike passed.** Rules engine (`rules/`) written, 35 tests green under pytest. Recording selection, date-basis discipline, and writer cross-checking all verified against live APIs.
+### DONE — Aug 24–29
 
-### Aug 26 – Aug 30 — pipeline (5 days)
+- Aug 24–25: procurement, GCP project, repo with MIT license in first commit; design pass (Entry, Progress, Result); spike passed; rules engine green.
+- Aug 26–28: Tier 2 cache layer, Parallel Search/Task wrappers, link registry, music pipeline end to end (7.5 s / 19 s cold on the demo queries).
+- Aug 29: the Gemini reading step verified against live Parallel Search (one in four renewal windows resolved, three open for a structural reason — see ENDGAME.md); confidence calibrated by source class; post-1978 windows pointed at the Copyright Office online catalog; the ADK graph reproducing the frozen acceptance fixtures.
 
-Cache layer first (it's now the latency fix, not an optimization), then MLC integration if access arrived, renewal research via Tier 3, disagreement logic, assembly. Command line output only.
+### Aug 30 – Sep 8 — see `docs/ENDGAME.md`
 
-**Gate, end of Aug 30:** query in → complete cited multi-layer response out, unattended, under 90 seconds cold.
+| Dates | Work |
+|---|---|
+| Aug 30 | First Cloud Run deploy, API only |
+| Aug 31 – Sep 3 | Frontend — Entry, Progress, Result, minimal Disambiguation |
+| Sep 4 | Redeploy with UI |
+| Sep 5–6 | Harden, hand-verify demo assets, pre-warm cache. Freeze Sep 6 |
+| Sep 7 | Video |
+| Sep 8 | Writeup, DQ checklist, submit |
 
-### Aug 31 – Sep 3 — product (4 days)
+### Archive — the Aug 26 schedule (superseded by ENDGAME.md)
 
-Frontend from the approved design. Cloud Run deploy. Handoff panel. Firestore cache. README with architecture diagram.
-
-**Gate, end of Sep 3:** hosted URL works cold, for a stranger, on a machine that isn't yours.
-
-### Sep 4–6 — hardening and freeze (3 days)
-
-**Sep 5 morning: feature freeze.** Verify all demo assets by hand. Pre-warm cache. Fix only what's broken.
-
-### Sep 7–8 — package and submit
-
-Video (budget a full day, 5–10 takes). Devpost writeup. DQ checklist. **Submit Sep 8.**
+- Aug 26 – Aug 30 — pipeline. Gate, end of Aug 30: query in → complete cited multi-layer response out, unattended, under 90 seconds cold. **Met Aug 28.**
+- Aug 31 – Sep 3 — product: frontend, Cloud Run deploy, handoff panel, Firestore cache, README diagram. Gate, end of Sep 3: hosted URL works cold for a stranger. **Replaced: deploy moved to Aug 30, before the frontend.**
+- Sep 4–6 — hardening and freeze; Sep 7–8 — package and submit.
 
 ---
 
