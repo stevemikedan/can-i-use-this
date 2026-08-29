@@ -23,7 +23,12 @@ Built and tested (`python -m pytest`, all green):
 - Design: Entry, Progress, Result. Disambiguation and error states not yet
   designed; specify from `design-reference.md`.
 
-Not built: the API, the frontend, the Cloud Run deployment, MLC.
+- **The API** (`api/`, later on Aug 29): FastAPI over the graph, SSE progress,
+  `/healthz` with a real cache round-trip; Dockerfile; `deploy/deploy.sh` with
+  the deploy checklist baked in (re-runnable). Local smoke passed; the Cloud
+  Run run is the user's `gcloud` step.
+
+Not built: the frontend, MLC.
 
 ### The reader against real evidence — Aug 29
 
@@ -56,8 +61,9 @@ is the failure mode.
 | Sep 7 | Video |
 | Sep 8 | Writeup, DQ checklist, submit |
 
-If the graph or the API finishes early, deploy early. Do not pull frontend
-work forward: it is a different kind of task and starts clean on Aug 31.
+If the graph or the API finishes early, deploy early — both finished Aug 29,
+so the deploy runs Aug 29 (`deploy/deploy.sh`). Do not pull frontend work
+forward: it is a different kind of task and starts clean on Aug 31.
 
 ### Why deploy before the frontend
 
@@ -71,7 +77,10 @@ Deploy day must cover:
 - `PARALLEL_API_KEY` via Secret Manager
 - the Firestore role grant for the Cloud Run service account
 - `CACHE_BACKEND=firestore`, and confirmation that the Firestore cache backend
-  actually works — it is the one component that has never been exercised
+  actually works — it was the one component never exercised until Aug 29,
+  when a local write/read round-trip through ADC succeeded against the real
+  database (`tier2_cache`, count aggregation working). On Cloud Run
+  `/healthz` repeats that probe as the service account.
 - Vertex AI access from the service account (the reader has only ever run on ADC)
 - `--min-instances=1` before judging; the service stays live Sep 23 – Oct 7
 - the billing alert stays on

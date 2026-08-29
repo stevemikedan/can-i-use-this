@@ -58,14 +58,18 @@ python -m pipeline "Take Five" --json            # no artist → stops with cand
 python -m pipeline "Blue Moon" "Ella Fitzgerald" --read    # Gemini reads the Parallel evidence (GCP + ADC)
 python -m pipeline "West End Blues" "Louis Armstrong" --graph   # through the google-adk graph
 
-python -m pytest                                # rules, sources, research, registry, pipeline, agent
+python -m pytest                                # rules, sources, research, registry, pipeline, agent, api
 python -m sources.warm "Blue Moon" "The Marcels" # pre-warm the cache and print timings
 python -m agent.live_cases                      # the reader over live Parallel Search, per-case report
+
+python -m uvicorn api.main:app --reload         # the API: /healthz, POST /api/query, GET /api/query/stream (SSE)
+deploy/deploy.sh                                # Cloud Run, re-runnable; carries the deploy checklist
 ```
 
 | Environment variable | Purpose |
 |---|---|
-| `PARALLEL_API_KEY` | Tier 3 research through the `parallel-web` SDK. Without it Tier 3 degrades: questions are still emitted, just without search hits. |
+| `PARALLEL_API_KEY` | Tier 3 research through the `parallel-web` SDK. Without it Tier 3 degrades: questions are still emitted, just without search hits. On Cloud Run it comes from Secret Manager. |
+| `CIUT_READER` | `off` forces the NullReader even when `GOOGLE_CLOUD_PROJECT` is set — the pipeline without the model. |
 | `CACHE_BACKEND` | `sqlite` (default, `.cache/tier2.sqlite`), `firestore`, or `memory` |
 | `CACHE_PATH` / `CACHE_COLLECTION` | SQLite file / Firestore collection |
 | `GOOGLE_CLOUD_PROJECT` / `GOOGLE_CLOUD_LOCATION` | Vertex AI (the Gemini reading step, via `google-adk`) and Firestore. The reader is credential-gated: without them every Tier 3 question stays open. |
@@ -94,7 +98,8 @@ schemas.py   canonical Pydantic models
 - **The reading step** — Gemini via Vertex AI, wrapped as a `google-adk` `LlmAgent` — reads Parallel Search evidence into a cited fact or leaves the question open. Its output schema makes an uncited fact unrepresentable; confidence is capped by the class of source cited (primary record / rightsholder notice / secondary). Over live evidence it resolved one of four renewal windows (Blue Moon, medium, from a publisher's notice) and declined the other three honestly — see *Known limitations*.
 - **The `google-adk` graph** (`agent/workflow.py`) runs the pipeline's stages as deterministic agents with the two research stages in parallel, and reproduces the five frozen acceptance fixtures byte-for-byte.
 - 149 tests across the rules engine, the cache layer, the Parallel wrappers, the link registry, the pipeline, the reader schema and the graph.
-- Not yet built: the API, the frontend, the Cloud Run deployment, MLC integration (publishers, shares, clearance difficulty). Text/film is cut — see `docs/ENDGAME.md`.
+- **The API** (`api/`): FastAPI over the graph. `POST /api/query` returns the response; `GET /api/query/stream` streams every pipeline stage as SSE and then the response; `/healthz` probes the cache backend with a real write and read. `deploy/deploy.sh` deploys it to Cloud Run with the Parallel key in Secret Manager, a runtime service account (no ADC on Cloud Run) and the Firestore cache.
+- Not yet built: the frontend, MLC integration (publishers, shares, clearance difficulty). Text/film is cut — see `docs/ENDGAME.md`.
 
 ## Known limitations
 

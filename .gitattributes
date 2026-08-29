@@ -1,0 +1,5 @@
+# Shell scripts and the Dockerfile must stay LF: Git Bash and the Cloud Build
+# container both break on CRLF ("$'\r': command not found").
+*.sh        text eol=lf
+Dockerfile  text eol=lf
+.dockerignore text eol=lf
