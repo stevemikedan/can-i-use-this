@@ -102,9 +102,10 @@ gcloud run deploy "$SERVICE" \
   --min-instances 1 --max-instances 3 --concurrency 8 \
   --cpu 1 --memory 1Gi --timeout 300 \
   --allow-unauthenticated \
-  --quiet
+  --quiet --format=none
 
 URL="$(gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)')"
+echo "Service URL: $URL"   # status.url resolves; the deterministic *.run.app name gcloud prints did not
 
 step "6/6 Smoke — $URL"
 echo "-- /api/health before a query (cache probe must show roundtrip=true, backend=firestore)"
