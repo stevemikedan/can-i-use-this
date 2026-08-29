@@ -21,6 +21,8 @@ Implementations:
 
 from __future__ import annotations
 
+import logging
+import os
 from typing import Optional, Protocol, runtime_checkable
 
 from research.parallel_client import SearchOutcome
@@ -28,6 +30,9 @@ from research.parallel_client import SearchOutcome
 from .reader_schema import (
     RecordingYearAnswer, RenewalAnswer, Unresolved,
 )
+
+
+log = logging.getLogger("agent.reader")
 
 
 @runtime_checkable
@@ -80,8 +85,15 @@ class FakeReader:
 
 def default_reader() -> Reader:
     """
-    The reader the request path uses. NullReader until the Gemini reader is
-    wired (needs GOOGLE_CLOUD_PROJECT + ADC). Swapping this to GeminiReader is
-    the whole activation of the reading step.
+    The reader the request path uses: GeminiReader when GOOGLE_CLOUD_PROJECT
+    is set (Vertex via ADC locally, the service account on Cloud Run), else
+    NullReader. CIUT_READER=off forces NullReader — e.g. to measure the
+    pipeline without the model.
     """
+    if os.environ.get("GOOGLE_CLOUD_PROJECT") and os.environ.get("CIUT_READER", "gemini").lower() != "off":
+        try:
+            from .gemini_reader import GeminiReader
+            return GeminiReader()
+        except Exception as e:                 # missing SDK, bad model name — degrade to no reading
+            log.warning("GeminiReader unavailable (%s); using NullReader", e)
     return NullReader()

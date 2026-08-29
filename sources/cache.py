@@ -118,8 +118,9 @@ class FirestoreCache:
     Firestore backend for Cloud Run. Same interface. Document id is a hash of
     the key (Firestore ids can't contain '/'); the key is stored in the doc.
 
-    Requires google-cloud-firestore and ADC credentials. NOT exercised in the
-    local build — verify on first deploy.
+    Requires google-cloud-firestore and credentials: ADC locally, the runtime
+    service account (roles/datastore.user) on Cloud Run. /healthz probes it
+    with a real write and read; deploy/deploy.sh checks that on every deploy.
     """
 
     def __init__(self, collection: str = "tier2_cache", project: Optional[str] = None) -> None:
@@ -148,7 +149,12 @@ class FirestoreCache:
         })
 
     def stats(self) -> dict:
-        return {"backend": "firestore", "collection": self.collection}
+        out = {"backend": "firestore", "collection": self.collection}
+        try:                                   # aggregation count: one read, proves the collection is live
+            out["entries"] = int(self._col.count().get()[0][0].value)
+        except Exception as e:                 # older client library or missing permission
+            out["entries_error"] = f"{type(e).__name__}: {e}"
+        return out
 
 
 _default: Optional[Cache] = None
