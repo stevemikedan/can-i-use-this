@@ -10,8 +10,9 @@
 #      --set-env-vars, so it is not in the service definition or the console.
 #
 # And the one component never exercised: CACHE_BACKEND=firestore. The smoke
-# test at the end proves it with /healthz (a real write/read probe and a
-# document count) before and after a query.
+# test at the end proves it with /api/health (a real write/read probe and a
+# document count) before and after a query. (/healthz is reserved by the
+# Cloud Run edge, which answers it with a 404 before the container sees it.)
 #
 # Usage:
 #   export PARALLEL_API_KEY=...          # only needed the first time (creates the secret version)
@@ -106,15 +107,15 @@ gcloud run deploy "$SERVICE" \
 URL="$(gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)')"
 
 step "6/6 Smoke — $URL"
-echo "-- /healthz before a query (cache probe must show roundtrip=true, backend=firestore)"
-curl -sS "$URL/healthz" | python -m json.tool
+echo "-- /api/health before a query (cache probe must show roundtrip=true, backend=firestore)"
+curl -sS "$URL/api/health" | python -m json.tool
 echo
 echo "-- streamed query, cold (West End Blues / Louis Armstrong): progress events, then the response"
 curl -sS -N --max-time 180 "$URL/api/query/stream?title=West%20End%20Blues&artist=Louis%20Armstrong" \
   | grep -E '^(event|data)' | sed -E 's/^(data: .{0,160}).*/\1 …/'
 echo
-echo "-- /healthz after: the Firestore document count should have grown"
-curl -sS "$URL/healthz" | python -m json.tool
+echo "-- /api/health after: the Firestore document count should have grown"
+curl -sS "$URL/api/health" | python -m json.tool
 echo
 echo "-- same query, warm (should be well under 5 s)"
 time curl -sS -o /dev/null -X POST "$URL/api/query" -H 'content-type: application/json' \

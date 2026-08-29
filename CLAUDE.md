@@ -134,7 +134,7 @@ python -m pipeline "West End Blues" "Louis Armstrong" --graph   # through the AD
 python -m agent.live_cases                         # reader over live Parallel Search; --case, --all-raw
 python -m agent.freeze_fixtures                    # re-freeze acceptance fixtures — deliberately, never to pass a test
 python -m sources.warm "Blue Moon" "The Marcels"   # pre-warm the cache, print timings
-python -m uvicorn api.main:app --reload            # /healthz · POST /api/query · GET /api/query/stream (SSE)
+python -m uvicorn api.main:app --reload            # /api/health · POST /api/query · GET /api/query/stream (SSE)
 deploy/deploy.sh                                   # Cloud Run; re-runnable; the checklist is in the script
 ```
 
@@ -160,5 +160,5 @@ deploy/deploy.sh                                   # Cloud Run; re-runnable; the
 - `agent/` — the reading step (`gemini_reader.py`, gemini-2.5-flash on Vertex; `gemini-flash-latest` is AI Studio only and 404s on Vertex), its schema (`reader_schema.py`), the ADK graph (`workflow.py`) and the frozen acceptance fixtures it reproduces. The `anthropic` package must not be installed: ADK's model registry imports it, 0.40.0 crashes past ADK's guard, and it violates COMPLIANCE §3.
 - `spike/` — verified MusicBrainz work↔recording linkage and Wikidata death years; its findings became rules 9 and 10 above.
 - Design — Entry, Progress, Result complete. Disambiguation and error/boundary states not yet designed; specify from `docs/design-reference.md`.
-- `api/` — FastAPI + SSE over the graph; `/healthz` proves the cache backend with a real round-trip. `deploy/deploy.sh` is the Cloud Run deploy: Secret Manager for the Parallel key, a runtime service account with datastore.user / aiplatform.user / secretAccessor (there is no ADC on Cloud Run), `CACHE_BACKEND=firestore`, `--min-instances 1`.
+- `api/` — FastAPI + SSE over the graph; `/api/health` proves the cache backend with a real round-trip. `deploy/deploy.sh` is the Cloud Run deploy: Secret Manager for the Parallel key, a runtime service account with datastore.user / aiplatform.user / secretAccessor (there is no ADC on Cloud Run), `CACHE_BACKEND=firestore`, `--min-instances 1`.
 - Not yet built: `web/`, MLC integration. Schedule and gates: `docs/ENDGAME.md`.

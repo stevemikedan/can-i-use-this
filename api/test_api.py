@@ -34,8 +34,8 @@ def parse_sse(text: str) -> list[tuple[str, dict]]:
     return out
 
 
-def test_healthz_probes_the_cache(client):
-    h = client.get("/healthz").json()
+def test_health_probes_the_cache(client):
+    h = client.get("/api/health").json()
     assert h["ok"] is True
     assert h["cache"]["roundtrip"] is True and h["cache"]["backend"] == "memory"
     assert "available" in h["reader"] and "available" in h["parallel"]

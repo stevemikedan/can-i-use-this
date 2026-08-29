@@ -62,7 +62,7 @@ python -m pytest                                # rules, sources, research, regi
 python -m sources.warm "Blue Moon" "The Marcels" # pre-warm the cache and print timings
 python -m agent.live_cases                      # the reader over live Parallel Search, per-case report
 
-python -m uvicorn api.main:app --reload         # the API: /healthz, POST /api/query, GET /api/query/stream (SSE)
+python -m uvicorn api.main:app --reload         # the API: /api/health, POST /api/query, GET /api/query/stream (SSE)
 deploy/deploy.sh                                # Cloud Run, re-runnable; carries the deploy checklist
 ```
 
@@ -98,7 +98,7 @@ schemas.py   canonical Pydantic models
 - **The reading step** — Gemini via Vertex AI, wrapped as a `google-adk` `LlmAgent` — reads Parallel Search evidence into a cited fact or leaves the question open. Its output schema makes an uncited fact unrepresentable; confidence is capped by the class of source cited (primary record / rightsholder notice / secondary). Over live evidence it resolved one of four renewal windows (Blue Moon, medium, from a publisher's notice) and declined the other three honestly — see *Known limitations*.
 - **The `google-adk` graph** (`agent/workflow.py`) runs the pipeline's stages as deterministic agents with the two research stages in parallel, and reproduces the five frozen acceptance fixtures byte-for-byte.
 - 149 tests across the rules engine, the cache layer, the Parallel wrappers, the link registry, the pipeline, the reader schema and the graph.
-- **The API** (`api/`): FastAPI over the graph. `POST /api/query` returns the response; `GET /api/query/stream` streams every pipeline stage as SSE and then the response; `/healthz` probes the cache backend with a real write and read. `deploy/deploy.sh` deploys it to Cloud Run with the Parallel key in Secret Manager, a runtime service account (no ADC on Cloud Run) and the Firestore cache.
+- **The API** (`api/`): FastAPI over the graph. `POST /api/query` returns the response; `GET /api/query/stream` streams every pipeline stage as SSE and then the response; `/api/health` probes the cache backend with a real write and read. `deploy/deploy.sh` deploys it to Cloud Run with the Parallel key in Secret Manager, a runtime service account (no ADC on Cloud Run) and the Firestore cache.
 - Not yet built: the frontend, MLC integration (publishers, shares, clearance difficulty). Text/film is cut — see `docs/ENDGAME.md`.
 
 ## Known limitations

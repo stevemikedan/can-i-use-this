@@ -2,9 +2,12 @@
 FastAPI over the ADK graph: one query in, a RightsResponse out, with the
 staged progress streamed as Server-Sent Events while it runs.
 
-    GET  /healthz                     liveness, and which backends are live:
+    GET  /api/health                  liveness, and which backends are live:
                                       cache (with a real read/write probe),
-                                      the reader, Parallel
+                                      the reader, Parallel. Not /healthz: the
+                                      Cloud Run edge answers that path itself
+                                      with a 404 and the request never reaches
+                                      the container.
     POST /api/query                   {title, artist?, intent?, jurisdiction?}
                                       -> RightsResponse (waits for the result)
     GET  /api/query/stream?title=&artist=&intent=&jurisdiction=
@@ -84,13 +87,13 @@ def _check_jurisdiction(j: Jurisdiction) -> None:
 
 # --- endpoints -------------------------------------------------------------------
 
-@app.get("/healthz")
-async def healthz() -> dict:
+@app.get("/api/health")
+async def health() -> dict:
     """Liveness plus a real probe of each backend. On Cloud Run this is the proof the Firestore cache works."""
     cache = get_cache()
     probe = {"roundtrip": False}
     try:
-        key, value = "healthz:probe", {"t": time.time()}
+        key, value = "health:probe", {"t": time.time()}
         await asyncio.to_thread(cache.set, key, value)
         got = await asyncio.to_thread(cache.get, key)
         probe["roundtrip"] = bool(got and got.value == value)
@@ -172,5 +175,5 @@ if os.path.isdir(WEB_DIST):
 else:
     @app.get("/")
     async def root() -> JSONResponse:
-        return JSONResponse({"service": "can-i-use-this", "api": ["/healthz", "POST /api/query", "GET /api/query/stream"],
+        return JSONResponse({"service": "can-i-use-this", "api": ["/api/health", "POST /api/query", "GET /api/query/stream"],
                              "docs": "/docs"})

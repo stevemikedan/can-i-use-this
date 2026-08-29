@@ -24,7 +24,7 @@ Built and tested (`python -m pytest`, all green):
   designed; specify from `design-reference.md`.
 
 - **The API** (`api/`, later on Aug 29): FastAPI over the graph, SSE progress,
-  `/healthz` with a real cache round-trip; Dockerfile; `deploy/deploy.sh` with
+  `/api/health` with a real cache round-trip; Dockerfile; `deploy/deploy.sh` with
   the deploy checklist baked in (re-runnable). Local smoke passed; the Cloud
   Run run is the user's `gcloud` step.
 
@@ -80,7 +80,7 @@ Deploy day must cover:
   actually works — it was the one component never exercised until Aug 29,
   when a local write/read round-trip through ADC succeeded against the real
   database (`tier2_cache`, count aggregation working). On Cloud Run
-  `/healthz` repeats that probe as the service account.
+  `/api/health` repeats that probe as the service account.
 - Vertex AI access from the service account (the reader has only ever run on ADC)
 - `--min-instances=1` before judging; the service stays live Sep 23 – Oct 7
 - the billing alert stays on
