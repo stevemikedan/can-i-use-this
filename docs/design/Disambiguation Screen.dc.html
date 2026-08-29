@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    html, body { margin: 0; padding: 0; background: #FAFAF4; color: #16233A; font-family: 'Archivo', sans-serif; font-weight: 500; }
+    a { color: #2244AA; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+    a:hover { color: #16233A; }
+    ::selection { background: rgba(34,68,170,0.18); }
+    button { font-family: inherit; }
+  </style>
+</helmet>
+
+<!-- Band -->
+<div style="background: #16233A; color: #FAFAF4">
+  <div style="max-width: 920px; margin: 0 auto; padding: {{ bandPad }}; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.12em">CAN I USE THIS? — INQUIRY PAUSED</div>
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.12em; color: rgba(250,250,244,0.72)">US · DOCUMENTARY</div>
+    </div>
+    <div>
+      <div style="font-weight: 900; font-size: {{ headSize }}; line-height: 1; letter-spacing: -0.01em; text-transform: uppercase; text-wrap: balance">Which one<span style="color: #8FACF2">?</span></div>
+      <div style="font-size: 28px; font-weight: 500; line-height: 1.3; margin-top: 20px; max-width: 42ch; text-wrap: pretty; color: #FAFAF4">“Take Five” matches 18 recorded works. The answer differs between them, so research stops here until you point at one.</div>
+    </div>
+    <div style="display: flex; gap: 24px 40px; flex-wrap: wrap; align-items: flex-start">
+      <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 300px; min-width: 240px">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(250,250,244,0.72)">WHAT WE UNDERSTOOD</div>
+        <div style="font-size: 16px; line-height: 1.5; color: #FAFAF4">A musical work titled <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500">Take Five</span> — no artist, year, or label given.</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 300px; min-width: 240px">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(250,250,244,0.72)">WHAT'S AMBIGUOUS</div>
+        <div style="font-size: 16px; line-height: 1.5; color: #FAFAF4">One composition, many recordings — each master is separately owned.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="max-width: 920px; margin: 0 auto; padding: {{ docPad }}">
+
+  <!-- Candidates -->
+  <div style="margin-top: 48px">
+    <div style="border-bottom: 1px solid #16233A; padding-bottom: 14px; display: flex; flex-direction: column; gap: 6px">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em">CANDIDATES — SHOWING {{ shownCount }} OF 18</div>
+      <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">Most-issued first. Pick one and research resumes with the full 30–90 second pass.</div>
+    </div>
+    <div style="display: flex; flex-direction: column">
+      <sc-for list="{{ candidates }}" as="c" hint-placeholder-count="5">
+        <a href="Progress Screen.dc.html" onClick="{{ c.onPick }}" style="display: flex; gap: 8px 24px; align-items: baseline; flex-wrap: wrap; padding: 18px 4px; border-top: 1px solid rgba(22,35,58,0.2); text-decoration: none; color: #16233A" style-hover="background: rgba(34,68,170,0.05); color: #16233A">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; color: rgba(22,35,58,0.7); flex: 0 0 36px">{{ c.year }}</div>
+          <div style="flex: 1 1 240px; min-width: 180px; display: flex; flex-direction: column; gap: 2px">
+            <div style="font-weight: 700; font-size: 21px">{{ c.artist }}</div>
+            <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">{{ c.note }}</div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; color: rgba(22,35,58,0.7); white-space: nowrap">{{ c.issue }}</div>
+          <div style="font-weight: 600; font-size: 16px; color: #2244AA; white-space: nowrap">Research this →</div>
+        </a>
+      </sc-for>
+    </div>
+    <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ showAll }}" style="background: none; border: none; padding: 14px 4px; cursor: pointer; font-size: 16px; font-weight: 600; color: #2244AA; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px" style-hover="color: #16233A" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">Show the other {{ moreCount }} — mostly later covers and reissues</button>
+    </sc-if>
+  </div>
+
+  <!-- The composition shortcut -->
+  <div style="margin-top: 48px; border: 1px dashed rgba(22,35,58,0.2); border-radius: 6px; padding: 20px 22px; display: flex; gap: 12px 24px; align-items: baseline; flex-wrap: wrap">
+    <div style="flex: 1 1 320px; min-width: 240px; display: flex; flex-direction: column; gap: 4px">
+      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em; color: rgba(22,35,58,0.7)">NOT USING A SPECIFIC RECORDING?</div>
+      <div style="font-size: 16px; line-height: 1.55; max-width: 58ch">If you're performing or re-recording it yourself, only the composition matters — Paul Desmond, 1959, one answer for all 18.</div>
+    </div>
+    <a href="Progress Screen.dc.html" onClick="{{ onComposition }}" style="font-weight: 600; font-size: 16px; white-space: nowrap">Research the composition only →</a>
+  </div>
+
+  <!-- Escape hatch -->
+  <div style="margin-top: 48px; border-top: 2px dashed rgba(22,35,58,0.2); padding-top: 20px; display: flex; gap: 8px 24px; align-items: baseline; flex-wrap: wrap">
+    <div style="font-size: 16px; color: rgba(22,35,58,0.7)">None of these is it?</div>
+    <a href="Entry Screen.dc.html" onClick="{{ onRefine }}" style="font-weight: 600; font-size: 16px">Refine the inquiry — add an artist, year, or label →</a>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { all: false, narrow: false };
+
+  componentDidMount() {
+    this.mqNarrow = window.matchMedia('(max-width: 560px)');
+    this.onMq = () => this.setState({ narrow: this.mqNarrow.matches });
+    this.mqNarrow.addEventListener('change', this.onMq);
+    this.setState({ narrow: this.mqNarrow.matches });
+  }
+  componentWillUnmount() { if (this.mqNarrow) this.mqNarrow.removeEventListener('change', this.onMq); }
+
+  renderVals() {
+    const { all, narrow } = this.state;
+    const base = [
+      { year: '1959', artist: 'The Dave Brubeck Quartet', note: 'The original — from “Time Out”, the recording most people mean.', issue: 'Columbia CL 1397' },
+      { year: '1961', artist: 'Carmen McRae with Dave Brubeck', note: 'First vocal version, with Iola Brubeck’s lyric — a distinct composition layer.', issue: 'Columbia CS 8478' },
+      { year: '1962', artist: 'The Dave Brubeck Quartet (live)', note: 'Carnegie Hall recording — separate master from the studio original.', issue: 'Columbia C2S 826' },
+      { year: '1976', artist: 'The Dave Brubeck Quartet', note: '25th-anniversary re-recording — later master, different ownership history.', issue: 'A&M / Horizon SP-714' },
+      { year: '1990', artist: 'George Benson', note: 'Representative of the later covers — each has its own recording layer.', issue: 'Warner Bros. 26295' },
+    ];
+    const extra = [
+      { year: '1963', artist: 'The Dave Brubeck Quartet (At Carnegie Hall reissue)', note: 'Reissue of the 1962 live master — no new rights layer.', issue: 'Columbia' },
+      { year: '1972', artist: 'Chet Atkins', note: 'Guitar instrumental cover.', issue: 'RCA' },
+      { year: '1987', artist: 'Quincy Jones', note: 'Arrangement for ensemble — arrangement may carry its own layer.', issue: 'Qwest' },
+      { year: '1993', artist: 'Grover Washington Jr.', note: 'Smooth-jazz cover.', issue: 'Columbia' },
+      { year: '1997', artist: 'Tito Puente', note: 'Latin-jazz arrangement.', issue: 'RMM' },
+      { year: '2004', artist: 'Sachal Studios Orchestra', note: 'Orchestral cover, later viral.', issue: 'Sachal Music' },
+    ];
+    const list = all ? base.concat(extra) : base;
+    const noop = (e) => {};
+    return {
+      bandPad: narrow ? '24px 16px 36px 16px' : '28px 24px 48px 24px',
+      docPad: narrow ? '0 16px 64px 16px' : '0 24px 80px 24px',
+      headSize: narrow ? '38px' : '64px',
+      shownCount: String(list.length),
+      candidates: list.map(c => ({ ...c, onPick: noop })),
+      hasMore: !all,
+      moreCount: String(18 - base.length),
+      showAll: () => this.setState({ all: true }),
+      onComposition: noop,
+      onRefine: noop,
+    };
+  }
+}
+</script>
+</body>
+</html>

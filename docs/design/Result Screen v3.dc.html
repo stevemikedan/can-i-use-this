@@ -86,7 +86,7 @@
         </sc-if>
         <div style="display: flex; gap: 24px 32px; flex-wrap: wrap">
           <div style="flex: 0 1 240px; min-width: 180px; display: flex; flex-direction: column; gap: 8px">
-            <div style="font-weight: 700; font-size: 28px; line-height: 1.05; text-transform: uppercase; letter-spacing: 0.01em; color: {{ row.stamp.color }}; border-bottom: {{ row.stamp.underline }}; padding-bottom: 8px; align-self: flex-start; text-wrap: balance">{{ row.stamp.word }}</div>
+            <div style="font-weight: 700; font-size: {{ row.stampSize }}; line-height: 1.05; text-transform: uppercase; letter-spacing: 0.01em; color: {{ row.stamp.color }}; border-bottom: {{ row.stamp.underline }}; padding-bottom: 8px; align-self: flex-start; text-wrap: balance">{{ row.stamp.word }}</div>
             <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 12px; letter-spacing: 0.06em; color: rgba(22,35,58,0.7)">{{ row.expiry }}</div>
           </div>
           <div style="flex: 1 1 380px; min-width: 240px; display: flex; flex-direction: column; gap: 10px">
@@ -172,9 +172,29 @@
     </sc-for>
 
     <!-- Clearance, next to the layers it describes -->
-    <div style="border-top: 1px solid rgba(22,35,58,0.2); padding: 20px 4px; display: flex; gap: 12px 32px; flex-wrap: wrap; align-items: baseline">
-      <div style="flex: 0 1 240px; min-width: 180px; font-weight: 600; font-size: 12px; letter-spacing: 0.14em">CLEARANCE</div>
-      <div style="flex: 1 1 380px; min-width: 240px; font-size: 16px; line-height: 1.55; max-width: 62ch">{{ clearanceText }}</div>
+    <div style="border-top: 1px solid rgba(22,35,58,0.2); padding: 20px 4px; display: flex; gap: 12px 32px; flex-wrap: wrap">
+      <div style="flex: 0 1 240px; min-width: 180px; font-weight: 600; font-size: 12px; letter-spacing: 0.14em; padding-top: 4px">CLEARANCE</div>
+      <div style="flex: 1 1 380px; min-width: 240px; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; gap: 8px 20px; align-items: baseline; flex-wrap: wrap">
+          <div style="font-size: 16px; line-height: 1.55; max-width: 56ch">{{ clearanceSummary }}</div>
+          <sc-if value="{{ hasClearanceDetail }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ toggleClearance }}" aria-expanded="{{ clearanceOpen }}" style="background: none; border: none; padding: 2px 0; cursor: pointer; font-size: 16px; font-weight: 600; color: #2244AA; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; white-space: nowrap" style-hover="color: #16233A" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ clearanceToggleLabel }}</button>
+          </sc-if>
+        </div>
+        <sc-if value="{{ clearanceOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 10px">
+            <div style="display: flex; gap: 20px 40px; flex-wrap: wrap">
+              <sc-for list="{{ clearanceStats }}" as="cs" hint-placeholder-count="3">
+                <div style="display: flex; flex-direction: column; gap: 4px">
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 38px; line-height: 1">{{ cs.value }}</div>
+                  <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.1em; color: rgba(22,35,58,0.7)">{{ cs.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-size: 16px; line-height: 1.55; color: rgba(22,35,58,0.7); max-width: 60ch">{{ clearanceDetail }}</div>
+          </div>
+        </sc-if>
+      </div>
     </div>
 
     <!-- Non-required -->
@@ -204,26 +224,29 @@
       <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">What research couldn’t settle, and exactly where to settle it.</div>
     </div>
     <sc-for list="{{ unresolved }}" as="q" hint-placeholder-count="1">
-      <div style="padding: 28px 0 8px 0">
+      <div style="padding: 24px 0 8px 0">
         <div style="display: flex; gap: 10px 16px; align-items: flex-start; flex-wrap: wrap">
           <div style="font-weight: 700; font-size: 21px; flex: 1 1 240px; max-width: 48ch; text-wrap: pretty">{{ q.question }}</div>
           <div style="margin-left: auto; font-weight: 600; font-size: 12px; letter-spacing: 0.1em; border: 1px solid rgba(22,35,58,0.2); border-radius: 6px; padding: 3px 9px; white-space: nowrap">EFFORT: {{ q.effort }}</div>
         </div>
         <div style="font-size: 16px; line-height: 1.55; margin-top: 10px; max-width: 68ch">{{ q.why }}</div>
-        <div style="font-size: 16px; line-height: 1.55; margin-top: 6px; color: rgba(22,35,58,0.7); max-width: 68ch">{{ q.change }}</div>
-        <div style="margin-top: 18px; border: 1px dashed rgba(22,35,58,0.2); border-radius: 6px; padding: 16px 18px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap">
-          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 16px; flex: 1 1 320px; min-width: 220px; line-height: 1.5">{{ q.terms }}</div>
-          <button onClick="{{ q.copy }}" style="font-weight: 600; font-size: 12px; letter-spacing: 0.08em; background: #2244AA; color: #FAFAF4; border: none; border-radius: 6px; padding: 11px 18px; cursor: pointer" style-hover="background: #16233A" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ q.copyLabel }}</button>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px">
-          <sc-for list="{{ q.links }}" as="l" hint-placeholder-count="1">
-            <div style="font-size: 16px; display: flex; gap: 6px 10px; align-items: baseline; flex-wrap: wrap">
-              <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.08em; border: 1px solid rgba(22,35,58,0.2); border-radius: 6px; padding: 1px 7px; white-space: nowrap">{{ l.tier }}</div>
-              <a href="{{ l.href }}" target="_blank" rel="noopener">{{ l.name }}</a>
-              <sc-if value="{{ l.hasNote }}" hint-placeholder-val="{{ false }}"><span style="flex-basis: 100%; color: rgba(22,35,58,0.7); font-size: 16px; line-height: 1.5; max-width: 64ch">{{ l.note }}</span></sc-if>
-            </div>
-          </sc-for>
-        </div>
+        <button onClick="{{ q.toggle }}" aria-expanded="{{ q.expanded }}" style="background: none; border: none; padding: 2px 0; cursor: pointer; font-size: 16px; font-weight: 600; color: #2244AA; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; margin-top: 10px" style-hover="color: #16233A" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ q.toggleLabel }}</button>
+        <sc-if value="{{ q.expanded }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size: 16px; line-height: 1.55; margin-top: 14px; color: rgba(22,35,58,0.7); max-width: 68ch">{{ q.change }}</div>
+          <div style="margin-top: 16px; border: 1px dashed rgba(22,35,58,0.2); border-radius: 6px; padding: 16px 18px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 16px; flex: 1 1 320px; min-width: 220px; line-height: 1.5">{{ q.terms }}</div>
+            <button onClick="{{ q.copy }}" style="font-weight: 600; font-size: 12px; letter-spacing: 0.08em; background: #2244AA; color: #FAFAF4; border: none; border-radius: 6px; padding: 11px 18px; cursor: pointer" style-hover="background: #16233A" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ q.copyLabel }}</button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px">
+            <sc-for list="{{ q.links }}" as="l" hint-placeholder-count="1">
+              <div style="font-size: 16px; display: flex; gap: 6px 10px; align-items: baseline; flex-wrap: wrap">
+                <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.08em; border: 1px solid rgba(22,35,58,0.2); border-radius: 6px; padding: 1px 7px; white-space: nowrap">{{ l.tier }}</div>
+                <a href="{{ l.href }}" target="_blank" rel="noopener">{{ l.name }}</a>
+                <sc-if value="{{ l.hasNote }}" hint-placeholder-val="{{ false }}"><span style="flex-basis: 100%; color: rgba(22,35,58,0.7); font-size: 16px; line-height: 1.5; max-width: 64ch">{{ l.note }}</span></sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
       </div>
     </sc-for>
   </div>
@@ -250,10 +273,14 @@
 
   <!-- Records: verify + act -->
   <div style="margin-top: 64px">
-    <div style="border-bottom: 1px solid #16233A; padding-bottom: 14px; display: flex; flex-direction: column; gap: 6px">
-      <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em">GO TO THE RECORDS</div>
-      <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">The records behind this verdict — check them, then act.</div>
+    <div style="border-bottom: 1px solid #16233A; padding-bottom: 14px; display: flex; gap: 6px 20px; align-items: baseline; flex-wrap: wrap">
+      <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 240px">
+        <div style="font-weight: 600; font-size: 12px; letter-spacing: 0.14em">GO TO THE RECORDS</div>
+        <div style="font-size: 16px; line-height: 1.5; color: rgba(22,35,58,0.7)">The records behind this verdict — check them, then act.</div>
+      </div>
+      <button onClick="{{ toggleRecords }}" aria-expanded="{{ recordsOpen }}" style="background: none; border: none; padding: 2px 0; cursor: pointer; font-size: 16px; font-weight: 600; color: #2244AA; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; white-space: nowrap" style-hover="color: #16233A" style-focus="outline: 2px solid #2244AA; outline-offset: 2px">{{ recordsToggleLabel }}</button>
     </div>
+    <sc-if value="{{ recordsOpen }}" hint-placeholder-val="{{ false }}">
     <div style="display: flex; gap: 32px 48px; flex-wrap: wrap; padding-top: 22px">
       <sc-for list="{{ handoff }}" as="group" hint-placeholder-count="2">
         <div style="flex: 1 1 320px; min-width: 240px">
@@ -271,6 +298,7 @@
         </div>
       </sc-for>
     </div>
+    </sc-if>
   </div>
 
   <div style="margin-top: 56px; font-size: 12px; font-weight: 500; line-height: 1.7; color: rgba(22,35,58,0.7); max-width: 78ch">This is research, not legal advice. Determinations are built from public records and can be wrong where those records are wrong or incomplete. For a distributed production, have a clearance professional confirm before you rely on it.</div>
@@ -415,6 +443,7 @@ class Component extends DCLogic {
       return {
         ...l,
         stamp: this.stampFor(l.verdict),
+        stampSize: blocking ? '38px' : '28px',
         confTicks: this.ticks(l.conf),
         blocking,
         wrapStyle: blocking
@@ -443,11 +472,18 @@ class Component extends DCLogic {
 
     const overallConfLevel = jur === 'US' ? 'high' : 'medium';
 
-    const clearanceText = blockingIds.length === 0
+    const noClear = blockingIds.length === 0;
+    const clearanceSummary = noClear
       ? 'Nothing to clear for this purpose.'
-      : (jur === 'US'
-        ? '1 party to clear · no unclaimed shares · Moderate — a major-label master for a distributed film typically quotes in the mid four figures and takes 4–8 weeks.'
-        : '1 party to clear · no unclaimed shares · Moderate — one synchronization license from the publisher covers it; the master itself is free in this territory.');
+      : '1 party to clear · no unclaimed shares · moderate difficulty.';
+    const clearanceDetail = jur === 'US'
+      ? 'A major-label master for a distributed film typically quotes in the mid four figures and takes 4–8 weeks. No unclaimed shares — the work can be fully cleared.'
+      : 'One synchronization license from the publisher covers it; the master itself is free in this territory. No unclaimed shares.';
+    const clearanceStats = [
+      { value: '1', label: 'PARTY TO CLEAR' },
+      { value: '0%', label: 'UNCLAIMED' },
+      { value: '4–8', label: 'WEEKS, TYPICAL' },
+    ];
 
     const unresolved = (jur === 'US' ? [{
       question: 'Was “West End Blues” first published in 1928, or only registered?',
@@ -463,8 +499,11 @@ class Component extends DCLogic {
       change: 'Doesn’t change the verdict, only who answers the request. Sending it to the wrong entity costs weeks.',
       terms: '“West End Blues” — PRS for Music works search · ICE works database',
       links: [{ tier: 'PRE-FILLED SEARCH', name: 'PRS for Music — works search', href: 'https://www.prsformusic.com/', hasNote: true, note: 'Affects the Composition layer.' }],
-    }]).map(q => ({
+    }]).map((q, i) => ({
       ...q,
+      expanded: !!expanded['q' + i],
+      toggleLabel: expanded['q' + i] ? 'Hide where to check' : 'Where to check, and what it would change',
+      toggle: () => this.setState(s => ({ expanded: { ...s.expanded, ['q' + i]: !s.expanded['q' + i] } })),
       copyLabel: copied ? 'COPIED ✓' : 'COPY SEARCH',
       copy: () => {
         navigator.clipboard && navigator.clipboard.writeText(q.terms);
@@ -503,7 +542,16 @@ class Component extends DCLogic {
       onNewInquiry: (e) => { if (this.props.onNewInquiry) { e.preventDefault(); this.props.onNewInquiry(); } },
       overallConf: `${overallConfLevel} confidence`,
       overallTicks: this.ticks(overallConfLevel),
-      clearanceText,
+      clearanceSummary,
+      clearanceDetail,
+      clearanceStats,
+      hasClearanceDetail: !noClear,
+      clearanceOpen: !noClear && !!expanded.clearance,
+      clearanceToggleLabel: expanded.clearance ? 'Hide breakdown' : 'Breakdown',
+      toggleClearance: () => this.setState(s => ({ expanded: { ...s.expanded, clearance: !s.expanded.clearance } })),
+      recordsOpen: !!expanded.records,
+      recordsToggleLabel: expanded.records ? 'Hide links' : 'Show links',
+      toggleRecords: () => this.setState(s => ({ expanded: { ...s.expanded, records: !s.expanded.records } })),
       intentOptions: Object.keys(intentLabels).map(k => ({ key: k, label: intentLabels[k], selected: intent === k, style: optStyle(intent === k), onSelect: () => pick({ intent: k }) })),
       jurOptions: ['US', 'UK', 'EU'].map(k => ({ key: k, label: k, selected: jur === k, style: optStyle(jur === k), onSelect: () => pick({ jur: k }) })),
       requiredRows: rows,
