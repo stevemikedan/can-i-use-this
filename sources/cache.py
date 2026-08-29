@@ -119,7 +119,7 @@ class FirestoreCache:
     the key (Firestore ids can't contain '/'); the key is stored in the doc.
 
     Requires google-cloud-firestore and credentials: ADC locally, the runtime
-    service account (roles/datastore.user) on Cloud Run. /healthz probes it
+    service account (roles/datastore.user) on Cloud Run. /api/health probes it
     with a real write and read; deploy/deploy.sh checks that on every deploy.
     """
 
