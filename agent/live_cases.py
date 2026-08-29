@@ -28,7 +28,11 @@ CASES = [
     ("renewal", "Mack the Knife", "Bobby Darin"),
     ("renewal", "Summertime", "Billie Holiday"),
     ("renewal", "Blue Moon", "Ella Fitzgerald"),
-    ("reissue", "Blue Moon", "The Marcels"),
+    # The Marcels' Blue Moon resolves at Tier 2 (MusicBrainz has a dated 1961
+    # performance), so it never reaches the reader. Billy Stewart's Summertime
+    # has only a first-release-date on file, so read_recording_year must
+    # establish the original release from evidence.
+    ("reissue", "Summertime", "Billy Stewart"),
 ]
 
 

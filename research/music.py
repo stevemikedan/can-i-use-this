@@ -25,7 +25,28 @@ from schemas import HandoffLink, LinkTier
 
 from .parallel_client import SearchOutcome, search
 
-_R_NUMBER = re.compile(r"\bR\s?\d{5,7}\b")
+# Pre-1978 renewals: "R290123". From 1978: "RE0000342857", "RE 342-857", "RE342857".
+_R_NUMBER = re.compile(r"\bRE\s?0*\d{3}-?\d{3}\b|\bR\s?\d{5,7}\b")
+
+# Renewals received by the Copyright Office from 1 January 1978 are in its
+# online public catalog; earlier ones only in the scanned Catalog of Copyright
+# Entries volumes. The scans are what web search excerpts can reach.
+RENEWAL_ONLINE_FROM = 1978
+
+
+def renewal_record_system(pub_year: int) -> str:
+    """
+    Which record system holds a work's year-28 renewal: "online" (window
+    1978 or later — the Copyright Office online catalog), "scans" (window
+    ends before 1978 — the scanned CCE volumes), or "both" (the window
+    straddles 1978).
+    """
+    y28 = pub_year + 27
+    if y28 >= RENEWAL_ONLINE_FROM:
+        return "online"
+    if y28 + 1 >= RENEWAL_ONLINE_FROM:
+        return "both"
+    return "scans"
 
 
 def _surname(name: str) -> str:
@@ -61,7 +82,17 @@ def search_renewal(title: str, writers: list[str], pub_year: int) -> tuple[Searc
         f'"{title}" copyright renewal {y28}',
         f'"{title}" {_surname(writers[0]) if writers else ""} renewal registration R'.strip(),
         f'Catalog of Copyright Entries music renewals {y28 + 1} "{title}"',
+        # publisher / rightsholder notices read "copyright 1934, renewed 1961"
+        f'"{title}" "renewed {y28}" OR "renewed {y28 + 1}"',
     ]
+    if renewal_record_system(pub_year) == "online":
+        # The scanned CCE ends in 1977; this window's record is in the online catalog.
+        objective += (
+            f' The window is 1978 or later, so the renewal record is a renewal registration '
+            f'(an "RE" number) in the US Copyright Office online public catalog, not in the '
+            f'scanned Catalog of Copyright Entries.'
+        )
+        queries[2] = f'"{title}" renewal registration RE copyright.gov'
     out = search(objective, queries)
     links = _links(out, "resolve",
                    f"Search hit for the {y28}-{y28 + 1} renewal of \"{title}\"")

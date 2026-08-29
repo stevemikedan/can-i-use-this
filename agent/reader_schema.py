@@ -29,11 +29,41 @@ from pydantic import BaseModel, Field, HttpUrl
 from rules import CURRENT_YEAR
 from schemas import Confidence, ResearchedFact, ResearchMethod, Source
 
+# What kind of source a citation is. Confidence is capped by the best class
+# cited (CONFIDENCE_CEILING): a clear sentence on a secondary page is still a
+# secondary source. The reader classifies; the validator enforces the cap.
+SourceClass = Literal["primary_record", "rightsholder_notice", "secondary"]
+
+CONFIDENCE_CEILING: dict[str, str] = {
+    "primary_record": "high",         # CCE entry, Copyright Office record, R/RE number with date, DAHR
+    "rightsholder_notice": "medium",  # publisher / rightsholder notice: "(c) 1934, renewed 1961"
+    "secondary": "low",               # books, articles, databases, Wikipedia, retail pages
+}
+_CONF_RANK = {"high": 3, "medium": 2, "low": 1}
+
+
+def confidence_ceiling(classes: list[str]) -> str:
+    """The highest confidence the cited source classes can support."""
+    if not classes:
+        return "low"
+    return max((CONFIDENCE_CEILING.get(c, "low") for c in classes), key=_CONF_RANK.__getitem__)
+
+
+def cap_confidence(claimed: str, classes: list[str]) -> str:
+    """claimed, lowered to what the cited source classes support."""
+    ceiling = confidence_ceiling(classes)
+    return claimed if _CONF_RANK[claimed] <= _CONF_RANK[ceiling] else ceiling
+
 
 class Citation(BaseModel):
     """A specific source passage that supports a claim. Required on every finding."""
 
     url: HttpUrl
+    source_class: SourceClass = Field(
+        "secondary",
+        description="primary_record (an official record of the fact), rightsholder_notice "
+                    "(a publisher/rightsholder copyright notice stating it), or secondary.",
+    )
     source_name: str = Field(min_length=1, description="e.g. 'Catalog of Copyright Entries, 1962'")
     excerpt: str = Field(
         min_length=1, max_length=500,
@@ -89,7 +119,8 @@ RecordingYearAnswer = Annotated[Union[RecordingYearFinding, Unresolved], Field(d
 
 def _sources(finding, retrieved_at: datetime) -> list[Source]:
     return [Source(name=c.source_name, url=c.url, method=ResearchMethod.PARALLEL_SEARCH,
-                   retrieved_at=retrieved_at, excerpt=c.excerpt[:200], authoritative=False)
+                   retrieved_at=retrieved_at, excerpt=c.excerpt[:200],
+                   authoritative=c.source_class == "primary_record")
             for c in finding.citations]
 
 

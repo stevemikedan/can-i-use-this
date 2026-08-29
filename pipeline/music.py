@@ -26,7 +26,7 @@ from typing import Optional
 
 from agent.reader_schema import recording_year_to_fact, renewal_to_fact
 from research import parallel_client as pc
-from research.music import renewal_numbers, search_recording_date, search_renewal
+from research.music import renewal_numbers, renewal_record_system, search_recording_date, search_renewal
 from rules import CURRENT_YEAR
 from schemas import (
     AssetQuery, AssetType, Candidate, Confidence, HandoffLink, Identifier, LinkTier,
@@ -393,6 +393,59 @@ def _research_composition(sel: Selection, em: Emitter) -> CompositionFacts:
                             year_sources, qid, iswcs, title, notes, sibling_extra)
 
 
+# --- the renewal question -------------------------------------------------------
+
+_RENEWAL_WHY = "Works published 1931–1963 lost protection after 28 years unless renewed."
+
+
+def renewal_question(title: str, year: int, links, numbers: list[str]) -> UnresolvedQuestion:
+    """
+    The open year-28 question, pointed at the record system that actually
+    holds the answer. Windows of 1978 or later are in the Copyright Office
+    online catalog — the scanned CCE volumes web search reaches end in 1977,
+    so sending someone there is a dead end, not a handoff.
+    """
+    y28 = year + 27
+    system = renewal_record_system(year)
+    if system == "online":
+        where = (f" The {y28}–{y28 + 1} renewal window falls after 1977, so the record is in the US Copyright "
+                 f"Office online public catalog (renewals received since 1978, RE-numbered), not in the scanned "
+                 f"Catalog of Copyright Entries volumes that web search reaches — search the online catalog by "
+                 f"title and claimant.")
+        effort = "minutes"
+    elif system == "both":
+        where = (f" The {y28}–{y28 + 1} renewal window straddles 1978: a {y28} renewal is in the scanned Catalog "
+                 f"of Copyright Entries, a {y28 + 1} renewal in the US Copyright Office online public catalog "
+                 f"(RE-numbered) — check both.")
+        effort = "hours"
+    else:
+        where = " Renewal records are scanned catalogs, not a queryable database."
+        effort = "hours"
+    return UnresolvedQuestion(
+        question_id=f"{COMPOSITION}:renewal",
+        question=f'Was the {year} US copyright in "{title}" renewed in {y28}–{y28 + 1}?',
+        why_it_matters=_RENEWAL_WHY + where
+                       + (f" Search found renewal-style registration numbers {numbers[:3]} — check them." if numbers else ""),
+        if_yes=f"Protected until 1 January {year + 96}.",
+        if_no=f"Entered the public domain 1 January {year + 29}.",
+        affects_layer_ids=[COMPOSITION],
+        resolution_links=links,
+        search_terms=[f'"{title}" renewal {y28}', f'"{title}" renewal {y28 + 1}'],
+        estimated_effort=effort,
+    )
+
+
+def renewal_extras(title: str, year: int) -> dict:
+    """Registry extras that select the CCE-scans and/or online-catalog handoff links."""
+    system = renewal_record_system(year)
+    extra = {"year": year + 27, "year_after": year + 28}
+    if system in ("scans", "both"):
+        extra["renewal_title"] = title
+    if system in ("online", "both"):
+        extra["renewal_online_title"] = title
+    return extra
+
+
 # --- the pipeline ---------------------------------------------------------------
 
 def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None, reader=None) -> tuple:
@@ -521,21 +574,9 @@ def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None, reader=No
                     f"Renewal resolved from evidence: {'renewed' if fact.value else 'not renewed'} "
                     f"({fact.confidence.value} confidence, {len(fact.sources)} citation(s))")
         else:
-            rn = renewal_numbers(out)
             qid_ = f"{COMPOSITION}:renewal"
             question_ids["renewal_filed"] = qid_
-            questions.append(UnresolvedQuestion(
-                question_id=qid_,
-                question=f'Was the {cf.year} US copyright in "{cf.title or title}" renewed in {cf.year + 27}–{cf.year + 28}?',
-                why_it_matters="Works published 1931–1963 lost protection after 28 years unless renewed. Renewal records are scanned catalogs, not a queryable database."
-                               + (f" Search found renewal-style registration numbers {rn[:3]} — check them." if rn else ""),
-                if_yes=f"Protected until 1 January {cf.year + 96}.",
-                if_no=f"Entered the public domain 1 January {cf.year + 29}.",
-                affects_layer_ids=[COMPOSITION],
-                resolution_links=links,
-                search_terms=[f'"{cf.title or title}" renewal {cf.year + 27}', f'"{cf.title or title}" renewal {cf.year + 28}'],
-                estimated_effort="hours",
-            ))
+            questions.append(renewal_question(cf.title or title, cf.year, links, renewal_numbers(out)))
 
     # Recording layer facts
     rtf = recording.term_facts
@@ -604,7 +645,7 @@ def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None, reader=No
     )
     extra = {"title": cf.title or title, "artist": artist or sel.pick["artist"]}
     if "renewal_filed" in question_ids:
-        extra.update(renewal_title=cf.title or title, year=cf.year + 27)
+        extra.update(renewal_extras(cf.title or title, cf.year))
     if "recording_pub_year" in question_ids:
         extra.update(unconfirmed_recording=title)
     resp = assemble(query, entity, dets, questions, em, extra=extra)

@@ -21,6 +21,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Optional
@@ -31,11 +32,13 @@ from google.adk.runners import InMemoryRunner
 from google.genai import types
 from pydantic import BaseModel, Field, model_validator
 
+from research.music import renewal_record_system
 from research.parallel_client import SearchOutcome
 from rules import CURRENT_YEAR
 
 from .reader_schema import (
-    Citation, RecordingYearAnswer, RecordingYearFinding, RenewalAnswer, RenewalFinding, Unresolved,
+    CONFIDENCE_CEILING, Citation, RecordingYearAnswer, RecordingYearFinding, RenewalAnswer,
+    RenewalFinding, Unresolved, cap_confidence,
 )
 from .tools import parallel_search
 
@@ -55,12 +58,47 @@ DEFAULT_MODEL = "gemini-2.5-flash"
 
 _CONF = pydantic.constr(pattern="^(high|medium|low)$")
 
+# A source_name that is (or contains) a filename / document id rather than a description.
+_FILENAME_LIKE = re.compile(r"(^|[\s(\[])[\w.\-]+\.(pdf|html?|txt|djvu|xml|json|jpe?g|png)(?=$|[\s)\],;:])",
+                            re.IGNORECASE)
+_CLASS_RANK = {"primary_record": 3, "rightsholder_notice": 2, "secondary": 1}
+
+
+def _looks_like_filename(name: str, url: str) -> bool:
+    n = name.strip()
+    if _FILENAME_LIKE.search(n):
+        return True
+    last = url.rstrip("/").rsplit("/", 1)[-1].split("?")[0]
+    return bool(last) and n.lower() == last.lower()
+
 
 class _FlatCitation(BaseModel):
     url: str = Field(description="The source URL the excerpt came from.")
-    source_name: str = Field(description="e.g. 'Catalog of Copyright Entries, 1962'.")
+    source_name: str = Field(description="What the source is, in words a person would recognise, e.g. "
+                                         "'Catalog of Copyright Entries, Music, Jan-Jun 1962' or "
+                                         "'permissions page of an Oxford University Press songbook'. "
+                                         "Never a filename, URL or document id.")
+    source_class: str = Field(description="primary_record, rightsholder_notice, or secondary — see the rules.")
     excerpt: str = Field(description="The exact passage that establishes the value.")
     supports: str = Field(description="One line: how this passage establishes the value.")
+
+    @model_validator(mode="after")
+    def _descriptive(self):
+        if self.source_class not in CONFIDENCE_CEILING:
+            raise ValueError(f"source_class must be one of {sorted(CONFIDENCE_CEILING)}")
+        if _looks_like_filename(self.source_name, self.url):
+            raise ValueError(f"source_name {self.source_name!r} is a filename, not a description")
+        return self
+
+
+def _capped(claimed: str, citations: list[_FlatCitation], label: str) -> str:
+    """Confidence cannot exceed what the cited source classes support."""
+    capped = cap_confidence(claimed, [c.source_class for c in citations])
+    if capped != claimed:
+        best = max((c.source_class for c in citations), key=_CLASS_RANK.__getitem__)
+        log.warning("%s: confidence %s lowered to %s — best cited source class is %s",
+                    label, claimed, capped, best)
+    return capped
 
 
 class _FlatRenewal(BaseModel):
@@ -85,6 +123,12 @@ class _FlatRenewal(BaseModel):
                 raise ValueError("a found renewal requires at least one citation")
             if not (self.reasoning and self.reasoning.strip()):
                 raise ValueError("a found renewal requires reasoning")
+            self.confidence = _capped(self.confidence, self.citations, "renewal")
+            # Rule 6, applied to the reader: "not renewed" is the public-domain
+            # direction, so only an official record may establish it. A
+            # secondary claim of non-renewal leaves the question open.
+            if self.renewal_filed is False and not any(c.source_class == "primary_record" for c in self.citations):
+                raise ValueError("renewal_filed=false requires a primary_record citation")
         elif self.status == "unresolved":
             if not (self.reason and self.reason.strip()):   # unresolved carries no fact; a missing reason is fine
                 self.reason = "The searched evidence did not establish the renewal status."
@@ -122,6 +166,7 @@ class _FlatRecordingYear(BaseModel):
                 raise ValueError("a found year requires at least one citation")
             if not (self.reasoning and self.reasoning.strip()):
                 raise ValueError("a found year requires reasoning")
+            self.confidence = _capped(self.confidence, self.citations, "recording_year")
         elif self.status == "unresolved":
             if not (self.reason and self.reason.strip()):
                 self.reason = "The searched evidence did not establish the first-publication year."
@@ -139,7 +184,8 @@ class _FlatRecordingYear(BaseModel):
 def _to_citation(c: _FlatCitation) -> Citation:
     # Canonical Citation validates the URL (HttpUrl); an invalid URL raises here
     # and the whole finding is discarded — no fact without a real source.
-    return Citation(url=c.url, source_name=c.source_name, excerpt=c.excerpt, supports=c.supports)
+    return Citation(url=c.url, source_name=c.source_name, source_class=c.source_class,
+                    excerpt=c.excerpt, supports=c.supports)
 
 
 COMMON_RULES = """\
@@ -160,6 +206,30 @@ Hard rules:
   unresolved), the Discography of American Historical Recordings.
 - You may call parallel_search to look for a primary record if the evidence
   provided is not sufficient. Abstaining honestly is better than reaching.
+
+Every citation carries a source_class:
+  primary_record      an official record of the fact itself: a Catalog of
+                      Copyright Entries entry, a Copyright Office catalog
+                      record, a renewal number (R or RE) with its date; for
+                      recordings, DAHR or a label ledger / discography giving
+                      the catalog or matrix number and the date.
+  rightsholder_notice a copyright or permissions notice from the publisher
+                      or rightsholder that states the fact, e.g. a songbook
+                      credit reading "copyright 1934, renewed 1961".
+  secondary           anything more indirect: books, articles, databases,
+                      Wikipedia, sheet-music, retail and streaming pages.
+
+Confidence follows the best source class you cite and never exceeds it:
+  high   = at least one primary_record citation
+  medium = at least one rightsholder_notice citation, no primary record
+  low    = secondary sources only
+A clear sentence on a secondary page is still a secondary source.
+
+source_name says what the source is, in words a person would recognise:
+"Catalog of Copyright Entries, Music, Jan-Jun 1962", "permissions page of an
+Oxford University Press songbook". Never a filename, a URL or a document id,
+not even in parentheses. If you cannot tell which document it is, describe
+what the page is: "permissions page of a songbook (publisher preview)".
 """
 
 RENEWAL_INSTRUCTION = COMMON_RULES + """
@@ -168,6 +238,14 @@ US works published 1931-1963 lost protection after 28 years unless a renewal
 was registered in year 28. Return renewal_filed=true only if a passage states
 that a renewal was registered for THIS work in that window; renewal_filed=false
 only if an authoritative source states no renewal exists; otherwise unresolved.
+
+Where the record lives depends on the window. Renewals received by the
+Copyright Office from 1978 on (windows of 1978 or later) are in its online
+public catalog and carry RE-prefixed numbers; the scanned Catalog of
+Copyright Entries volumes that web search reaches end in 1977 and will not
+contain them. Renewals before 1978 carry R-prefixed numbers and appear in
+the scanned CCE renewal sections. A registration that renews a DIFFERENT
+work, arrangement or version is not a renewal of this one.
 """
 
 RECORDING_YEAR_INSTRUCTION = COMMON_RULES + """
@@ -203,9 +281,16 @@ class GeminiReader:
     # --- public API (Reader protocol) -----------------------------------------
 
     def read_renewal(self, *, title, writers, year, evidence) -> RenewalAnswer:
+        system = {
+            "online": "the Copyright Office online public catalog (RE-numbered renewals received from 1978)",
+            "scans": "the scanned Catalog of Copyright Entries renewal sections (R-numbered, pre-1978)",
+            "both": (f"the scanned Catalog of Copyright Entries for a {year + 27} renewal, "
+                     f"the Copyright Office online catalog for a {year + 28} one"),
+        }[renewal_record_system(year)]
         prompt = (
             f'WORK: "{title}"\nWRITERS: {", ".join(writers) or "unknown"}\n'
-            f'US PUBLICATION YEAR: {year}\nRENEWAL WINDOW (year 28): {year + 27}-{year + 28}\n\n'
+            f'US PUBLICATION YEAR: {year}\nRENEWAL WINDOW (year 28): {year + 27}-{year + 28}\n'
+            f'WHERE THE RECORD LIVES: {system}\n\n'
             f"EVIDENCE:\n{_evidence_block(evidence)}"
         )
         out = self._read(prompt, RENEWAL_INSTRUCTION, _FlatRenewal, "renewal")

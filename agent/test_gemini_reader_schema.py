@@ -8,13 +8,75 @@ import pydantic
 import pytest
 
 from agent.gemini_reader import _FlatRecordingYear, _FlatRenewal
-from agent.reader_schema import RenewalFinding, Unresolved
+from agent.reader_schema import RenewalFinding, Unresolved, renewal_to_fact
 from schemas import Confidence
 
 
-def cite():
+def cite(source_class="primary_record", **over):
     return {"url": "https://archive.org/details/cce-1962", "source_name": "CCE 1962",
-            "excerpt": "BLUE MOON ... R290123 12Jan62", "supports": "renewal registration"}
+            "source_class": source_class,
+            "excerpt": "BLUE MOON ... R290123 12Jan62", "supports": "renewal registration", **over}
+
+
+NOTICE = dict(url="https://api.pageplace.de/preview/x.pdf",
+              source_name="permissions page of an Oxford University Press songbook",
+              excerpt='"Blue Moon," copyright 1934, renewed 1961 Metro-Goldwyn-Mayer Inc.',
+              supports="states the renewal")
+
+
+def found(conf, cites):
+    return _FlatRenewal(status="found", renewal_filed=True, confidence=conf, reasoning="x", citations=cites)
+
+
+def test_confidence_is_capped_by_source_class():
+    assert found("high", [cite("primary_record")]).confidence == "high"
+    assert found("high", [cite("rightsholder_notice", **NOTICE)]).confidence == "medium"
+    assert found("high", [cite("secondary")]).confidence == "low"
+    assert found("medium", [cite("secondary")]).confidence == "low"
+    # the best cited class sets the ceiling; a lower claim is left alone
+    assert found("high", [cite("secondary"), cite("primary_record")]).confidence == "high"
+    assert found("low", [cite("primary_record")]).confidence == "low"
+
+
+def test_not_renewed_needs_a_primary_record():
+    ok = _FlatRenewal(status="found", renewal_filed=False, confidence="high", reasoning="no entry",
+                      citations=[cite("primary_record")])
+    assert ok.renewal_filed is False and ok.confidence == "high"
+    for cls in ("rightsholder_notice", "secondary"):
+        with pytest.raises(pydantic.ValidationError):
+            _FlatRenewal(status="found", renewal_filed=False, confidence="low", reasoning="a blog says so",
+                         citations=[cite(cls, **(NOTICE if cls == "rightsholder_notice" else {}))])
+    # the protected direction is conservative: a secondary source may still support it, at low
+    assert found("high", [cite("secondary")]).confidence == "low"
+
+
+def test_cap_applies_to_recording_year_too():
+    flat = _FlatRecordingYear(status="found", first_published_year=1961, confidence="high",
+                              reasoning="Colpix 186", citations=[cite("secondary")])
+    assert flat.confidence == "low"
+
+
+def test_unknown_source_class_is_rejected():
+    with pytest.raises(pydantic.ValidationError):
+        found("high", [cite("authoritative")])
+    with pytest.raises(pydantic.ValidationError):
+        found("high", [{k: v for k, v in cite().items() if k != "source_class"}])
+
+
+def test_filename_source_name_is_rejected():
+    for bad in ["0195305698.pdf", "index.html", "cce-1962",       # third = the URL's final path segment
+                "0195305698.pdf (likely a songbook's permissions page)"]:
+        with pytest.raises(pydantic.ValidationError):
+            found("high", [cite(source_name=bad)])
+    ok = found("high", [cite(source_name="Catalog of Copyright Entries, Music, Jan-Jun 1962")])
+    assert ok.citations[0].source_name.startswith("Catalog")
+
+
+def test_source_class_reaches_the_pipeline_source():
+    primary = renewal_to_fact(found("high", [cite("primary_record")]).to_answer())
+    notice = renewal_to_fact(found("high", [cite("rightsholder_notice", **NOTICE)]).to_answer())
+    assert primary.sources[0].authoritative is True and primary.confidence is Confidence.HIGH
+    assert notice.sources[0].authoritative is False and notice.confidence is Confidence.MEDIUM
 
 
 def test_found_without_citation_is_rejected():

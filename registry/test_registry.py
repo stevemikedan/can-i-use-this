@@ -50,6 +50,17 @@ def test_conditional_resolve_links():
     assert "The Marcels" in dahr.navigation_hint
 
 
+def test_post_1978_window_points_at_the_online_catalog():
+    base = {"title": "Take Five", "artist": "The Dave Brubeck Quartet"}
+    links = handoff_links(ids(), AssetType.MUSIC,
+                          extra={**base, "renewal_online_title": "Take Five", "year": 1986, "year_after": 1987})
+    names = [l.source_name for l in links]
+    assert not any(n.startswith("Catalog") for n in names)          # the scans end in 1977
+    office = next(l for l in links if l.source_name.startswith("Copyright Office"))
+    assert str(office.url).startswith("https://publicrecords.copyright.gov")
+    assert office.paste_string == "Take Five" and "1986" in office.navigation_hint and "1987" in office.navigation_hint
+
+
 def test_asset_type_filter():
     links = handoff_links(ids(), AssetType.TEXT, extra={"title": "x"})
     assert all("musicbrainz" not in str(l.url) for l in links)

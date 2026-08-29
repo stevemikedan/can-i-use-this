@@ -70,6 +70,20 @@
   navigation_hint: "Catalog of Copyright Entries, Third Series, Music; renewals volume for {year}"
   authoritative: true
 
+# Only emitted when the pipeline sets the `renewal_online_title` extra, i.e.
+# the renewal window is 1978 or later. Renewals received from 1978 are in the
+# Copyright Office's online catalog; the scanned CCE volumes end in 1977 and
+# will not contain them.
+- name: Copyright Office public catalog
+  tier: guided_manual
+  url_template: "https://publicrecords.copyright.gov/"
+  requires_scheme: renewal_online_title
+  applicable_types: [music, text]
+  purpose: resolve
+  description: "US Copyright Office online public records — registrations and renewals received since 1978"
+  navigation_hint: "Search by title; look for a renewal (RE-numbered) record received {year} or {year_after} naming this work"
+  authoritative: true
+
 # Only emitted when the pipeline sets the `unconfirmed_recording` extra, i.e.
 # the recording has no dated session and its year is unconfirmed.
 - name: DAHR — Discography of American Historical Recordings

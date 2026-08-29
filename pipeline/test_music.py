@@ -104,6 +104,25 @@ def test_reissue_only_path_leaves_recording_undetermined(cache, transport, fake_
     assert resp.overall_verdict is Verdict.UNDETERMINED
 
 
+def test_renewal_question_names_the_record_system():
+    from pipeline.music import renewal_extras, renewal_question
+    scans = renewal_question("Blue Moon", 1934, [], ["R290123"])
+    assert "scanned catalogs" in scans.why_it_matters and "R290123" in scans.why_it_matters
+    assert scans.estimated_effort == "hours"
+    assert renewal_extras("Blue Moon", 1934) == {"year": 1961, "year_after": 1962, "renewal_title": "Blue Moon"}
+
+    online = renewal_question("Take Five", 1959, [], [])
+    assert "1986–1987" in online.question
+    assert "online public catalog" in online.why_it_matters and "RE-numbered" in online.why_it_matters
+    assert "scanned Catalog of Copyright Entries" in online.why_it_matters   # says why the scans won't have it
+    assert online.estimated_effort == "minutes"
+    assert renewal_extras("Take Five", 1959) == {"year": 1986, "year_after": 1987, "renewal_online_title": "Take Five"}
+
+    both = renewal_question("x", 1950, [], [])
+    assert "straddles 1978" in both.why_it_matters
+    assert set(renewal_extras("x", 1950)) == {"year", "year_after", "renewal_title", "renewal_online_title"}
+
+
 def test_renewal_window_composition(cache, transport, fake_parallel):
     transport(handler)
     resp, em = run_music(q("Blue Moon — Ella Fitzgerald"))
