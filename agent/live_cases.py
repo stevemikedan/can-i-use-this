@@ -5,6 +5,7 @@ from what sources.
 
     python -m agent.live_cases            (needs PARALLEL_API_KEY + GCP + ADC)
     python -m agent.live_cases --model gemini-3.7-flash
+    python -m agent.live_cases --case marcels --all-raw     (one case, every raw read)
 
 Reports per case: verdict, each layer's determination, and for every question
 the reader touched — resolved or unresolved, the confidence, how many
@@ -38,7 +39,7 @@ def fact_line(fact) -> str:
     return f"value={fact.value!r} confidence={fact.confidence.value} citations={len(fact.sources)} sources=[{srcs}]"
 
 
-def run(kind, title, artist, reader, shown):
+def run(kind, title, artist, reader, shown, all_raw=False):
     print("\n" + "=" * 78)
     print(f"{kind.upper()}: {title} — {artist}")
     print("=" * 78)
@@ -53,8 +54,13 @@ def run(kind, title, artist, reader, shown):
         print(f"  {lv.layer_id:<16} {d.status.value:<14} "
               + (f"-> {d.expiry_year} " if d.expiry_year else "")
               + f"[{d.rule_id}]" + (f" blocked_by={d.blocked_by}" if d.blocked_by else ""))
-    comp = next(l for l in resp.entity.layers if l.layer_id == "composition")
-    rec = next(l for l in resp.entity.layers if l.layer_id == "sound_recording")
+    comp = next((l for l in resp.entity.layers if l.layer_id == "composition"), None)
+    rec = next((l for l in resp.entity.layers if l.layer_id == "sound_recording"), None)
+    if comp is None or rec is None:
+        # Resolution failed before any layer existed (e.g. MusicBrainz 503 x3).
+        # The pipeline degraded honestly; there is nothing for the reader to read.
+        print("  no layers resolved: " + "; ".join(u.question_id + ": " + u.question for u in resp.unresolved))
+        return
     print(f"  renewal_filed fact:   {fact_line(comp.term_facts.renewal_filed)}")
     print(f"  recording_year fact:  {fact_line(rec.term_facts.recording_first_published_year)}")
     print(f"  recording_date_basis: {rec.term_facts.recording_date_basis.value if rec.term_facts.recording_date_basis else '-'}")
@@ -73,6 +79,9 @@ def run(kind, title, artist, reader, shown):
 def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--model", default=None)
+    p.add_argument("--case", default=None,
+                   help="only run cases whose title or artist contains this (case-insensitive)")
+    p.add_argument("--all-raw", action="store_true", help="print the raw model output for every case")
     a = p.parse_args(argv)
     if not os.environ.get("PARALLEL_API_KEY"):
         print("PARALLEL_API_KEY not set — cannot run the live Parallel Search. Aborting.")
@@ -81,8 +90,10 @@ def main(argv=None):
     print(f"reader model: {reader.model}")
     shown: set = set()
     for kind, title, artist in CASES:
+        if a.case and a.case.lower() not in f"{title} {artist}".lower():
+            continue
         try:
-            run(kind, title, artist, reader, shown)
+            run(kind, title, artist, reader, shown, all_raw=a.all_raw)
         except Exception as e:
             print(f"  CASE ERROR: {type(e).__name__}: {e}")
     return 0
