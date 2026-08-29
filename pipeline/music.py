@@ -22,7 +22,7 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Any, Callable, Optional
 
 from agent.reader_schema import recording_year_to_fact, renewal_to_fact
 from research import parallel_client as pc
@@ -31,7 +31,7 @@ from rules import CURRENT_YEAR
 from schemas import (
     AssetQuery, AssetType, Candidate, Confidence, HandoffLink, Identifier, LinkTier,
     PipelineStage as S, RecordingDateBasis, ResearchMethod, ResearchedFact, ResolvedEntity,
-    RightsLayer, RightsLayerKind, Source, TermFacts, UnresolvedQuestion,
+    RightsLayer, RightsLayerKind, RightsResponse, Source, TermFacts, UnresolvedQuestion,
 )
 from sources import musicbrainz as mb
 from sources import wikidata as wd
@@ -446,65 +446,109 @@ def renewal_extras(title: str, year: int) -> dict:
     return extra
 
 
-# --- the pipeline ---------------------------------------------------------------
+# --- the pipeline, as stages ------------------------------------------------------
+#
+# run_music runs these stage functions in order. agent/workflow.py runs the
+# same functions as ADK agents — the two research stages in parallel — against
+# the same MusicRun. Both must produce the same RightsResponse; the frozen
+# fixtures in agent/fixtures (agent/test_acceptance.py) pin it.
 
-def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None, reader=None) -> tuple:
-    """
-    Returns (RightsResponse, Emitter).
+@dataclass
+class MusicRun:
+    """The state of one music query as it moves through the stages."""
 
-    reader: the Tier 3 reading step (agent.reader.Reader). Defaults to the
-    NullReader — no evidence is read into a fact, every open question stays
-    open. A real reader resolves the renewal window and the recording-date
-    window from the searched evidence, producing a cited fact for the rules
-    engine. The reader never computes a term.
-    """
-    from agent.reader import NullReader
-    reader = reader or NullReader()
-    em = emitter or Emitter()
-    title, artist = parse_query(query.raw_input)
-    em.emit(S.CLASSIFY, "complete", "Music — a composition and a sound recording, owned separately",
-            detail=f'"{title}"' + (f" — {artist}" if artist else " (no artist given)"))
+    query: AssetQuery
+    em: Emitter
+    reader: Any
+    title: str = ""
+    artist: Optional[str] = None
+    cands: Optional[list[dict]] = None
+    sel: Optional[Selection] = None
+    composition: Optional[RightsLayer] = None
+    recording: Optional[RightsLayer] = None
+    cf: Optional[CompositionFacts] = None
+    # Each research stage owns its own questions so they can run concurrently;
+    # the rules stage reads them in a fixed order (composition, then recording).
+    comp_questions: list[UnresolvedQuestion] = field(default_factory=list)
+    rec_questions: list[UnresolvedQuestion] = field(default_factory=list)
+    comp_question_ids: dict[str, str] = field(default_factory=dict)
+    rec_question_ids: dict[str, str] = field(default_factory=dict)
+    dets: list = field(default_factory=list)
+    response: Optional[RightsResponse] = None
 
-    cands, early = _search_and_gate(query, title, artist, em)
+    @property
+    def done(self) -> bool:
+        """An earlier stage produced the response (disambiguation stop, not found, or assembled)."""
+        return self.response is not None
+
+    @property
+    def layers(self) -> list[RightsLayer]:
+        return [self.composition, self.recording]
+
+    @property
+    def questions(self) -> list[UnresolvedQuestion]:
+        return self.comp_questions + self.rec_questions
+
+    @property
+    def question_ids(self) -> dict[str, str]:
+        return {**self.comp_question_ids, **self.rec_question_ids}
+
+
+def stage_classify(run: MusicRun) -> None:
+    run.title, run.artist = parse_query(run.query.raw_input)
+    run.em.emit(S.CLASSIFY, "complete", "Music — a composition and a sound recording, owned separately",
+                detail=f'"{run.title}"' + (f" — {run.artist}" if run.artist else " (no artist given)"))
+
+
+def stage_identify(run: MusicRun) -> None:
+    em, title, artist = run.em, run.title, run.artist
+    cands, early = _search_and_gate(run.query, title, artist, em)
     if early is not None:
-        return early, em
+        run.response = early
+        return
+    run.cands = cands
     sel = _select_recording(title, cands, artist, em)
     if sel is None:
-        return failed_response(query, title, artist, em,
-                               "The recording could not be matched to a composition in MusicBrainz."), em
+        run.response = failed_response(run.query, title, artist, em,
+                                       "The recording could not be matched to a composition in MusicBrainz.")
+        return
+    run.sel = sel
     when = sel.sessions[0] if sel.sessions else f"earliest release on file {sel.pick['date']}"
     em.emit(S.IDENTIFY, "complete",
             f"Resolved: {sel.pick['artist']}, {when}" + ("" if sel.complete else " (partial scan)"),
             partial={"recording": sel.pick["mbid"], "work": sel.work["work_mbid"],
                      "recording_year": sel.rec_year, "date_basis": sel.basis.value})
 
-    # DECOMPOSE ------------------------------------------------------------------
+
+def stage_decompose(run: MusicRun) -> None:
+    sel = run.sel
     comp_ids = [Identifier(scheme="musicbrainz_work", value=sel.work["work_mbid"], layer_id=COMPOSITION,
                            confidence=sel.resolution, is_primary=True)]
     rec_ids = [Identifier(scheme="musicbrainz_recording", value=sel.pick["mbid"], layer_id=RECORDING,
                           confidence=sel.resolution, source=sel.source, is_primary=True)]
-    composition = RightsLayer(layer_id=COMPOSITION, kind=RightsLayerKind.COMPOSITION,
-                              label="Composition", identifiers=comp_ids)
-    recording = RightsLayer(layer_id=RECORDING, kind=RightsLayerKind.SOUND_RECORDING,
-                            label="Sound recording", identifiers=rec_ids)
-    layers = [composition, recording]
-    em.emit(S.DECOMPOSE, "complete", "Found 2 rights layers: composition and sound recording",
-            partial={"layers": [COMPOSITION, RECORDING]})
+    run.composition = RightsLayer(layer_id=COMPOSITION, kind=RightsLayerKind.COMPOSITION,
+                                  label="Composition", identifiers=comp_ids)
+    run.recording = RightsLayer(layer_id=RECORDING, kind=RightsLayerKind.SOUND_RECORDING,
+                                label="Sound recording", identifiers=rec_ids)
+    run.em.emit(S.DECOMPOSE, "complete", "Found 2 rights layers: composition and sound recording",
+                partial={"layers": [COMPOSITION, RECORDING]})
+    run.em.emit(S.RESEARCH, "started", "Researching both layers — Tier 2 first")
 
-    # RESEARCH ---------------------------------------------------------------------
-    em.emit(S.RESEARCH, "started", "Researching both layers — Tier 2 first")
+
+def stage_research_composition(run: MusicRun) -> None:
+    """Tier 2 facts for the composition; the renewal window goes to Parallel Search and the reader."""
+    sel, em, composition, title, reader = run.sel, run.em, run.composition, run.title, run.reader
     cf = _research_composition(sel, em)
+    run.cf = cf
+    comp_ids = composition.identifiers
     for iswc in cf.iswcs:
-        composition.identifiers.append(Identifier(scheme="iswc", value=iswc, layer_id=COMPOSITION, confidence=Confidence.MEDIUM))
+        comp_ids.append(Identifier(scheme="iswc", value=iswc, layer_id=COMPOSITION, confidence=Confidence.MEDIUM))
     if cf.wikidata:
-        composition.identifiers.append(Identifier(scheme="wikidata", value=cf.wikidata, layer_id=COMPOSITION, confidence=Confidence.MEDIUM))
+        comp_ids.append(Identifier(scheme="wikidata", value=cf.wikidata, layer_id=COMPOSITION, confidence=Confidence.MEDIUM))
     composition.label = f"Composition ({cf.year})" if cf.year else "Composition"
-    recording.label = f"Sound recording ({sel.rec_year})" if sel.rec_year else "Sound recording"
 
-    questions: list[UnresolvedQuestion] = []
-    question_ids: dict[str, str] = {}
+    questions, question_ids = run.comp_questions, run.comp_question_ids
     writer_names = [w.name for w in cf.writers]
-    death_years = [w.death_year for w in cf.writers] or [None]
 
     tf = composition.term_facts
     if cf.year:
@@ -578,7 +622,13 @@ def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None, reader=No
             question_ids["renewal_filed"] = qid_
             questions.append(renewal_question(cf.title or title, cf.year, links, renewal_numbers(out)))
 
-    # Recording layer facts
+
+def stage_research_recording(run: MusicRun) -> None:
+    """Recording facts from the selection; a reissue-only date goes to Parallel Search and the reader."""
+    sel, em, recording, title, reader = run.sel, run.em, run.recording, run.title, run.reader
+    recording.label = f"Sound recording ({sel.rec_year})" if sel.rec_year else "Sound recording"
+    questions, question_ids = run.rec_questions, run.rec_question_ids
+
     rtf = recording.term_facts
     rtf.recording_date_basis = sel.basis
     sel_notes = []
@@ -628,26 +678,71 @@ def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None, reader=No
                 search_terms=[f'"{title}" {sel.pick["artist"]} discography', f'"{title}" {sel.pick["artist"]} 78 rpm'],
                 estimated_effort="minutes",
             ))
+
+
+def stage_rules(run: MusicRun) -> None:
+    em = run.em
     em.emit(S.RESEARCH, "complete", f"Consulted {em.sources_consulted} sources"
             + (" — Tier 3 degraded" if any(e.degraded for e in em.events) else ""))
-
-    # RULES -----------------------------------------------------------------
-    dets = determine_all(layers, question_ids, death_years)
-    em.emit(S.RULES, "complete", f"{len(dets)} determinations: 2 layers × US / UK / EU")
+    death_years = [w.death_year for w in run.cf.writers] or [None]
+    run.dets = determine_all(run.layers, run.question_ids, death_years)
+    em.emit(S.RULES, "complete", f"{len(run.dets)} determinations: 2 layers × US / UK / EU")
     em.emit(S.COMPARE, "skipped", "No institutional rights statement to compare against")
 
-    # ASSEMBLE ----------------------------------------------------------------
+
+def stage_assemble(run: MusicRun) -> None:
+    cf, sel, title, artist = run.cf, run.sel, run.title, run.artist
+    question_ids = run.question_ids
     entity = ResolvedEntity(
         canonical_title=cf.title or title, asset_type=AssetType.MUSIC,
         creators=[ResearchedFact(value=w.name, confidence=cf.writer_conf, sources=w.sources) for w in cf.writers],
-        year=composition.term_facts.first_publication_year,
-        layers=layers, resolution_confidence=sel.resolution,
+        year=run.composition.term_facts.first_publication_year,
+        layers=run.layers, resolution_confidence=sel.resolution,
     )
     extra = {"title": cf.title or title, "artist": artist or sel.pick["artist"]}
     if "renewal_filed" in question_ids:
         extra.update(renewal_extras(cf.title or title, cf.year))
     if "recording_pub_year" in question_ids:
         extra.update(unconfirmed_recording=title)
-    resp = assemble(query, entity, dets, questions, em, extra=extra)
-    em.emit(S.ASSEMBLE, "complete", resp.overall_headline)
-    return resp, em
+    resp = assemble(run.query, entity, run.dets, run.questions, run.em, extra=extra)
+    run.em.emit(S.ASSEMBLE, "complete", resp.overall_headline)
+    run.response = resp
+
+
+# Name -> stage function, in run order. The two research stages are
+# independent of each other and may run concurrently (agent/workflow.py does).
+STAGES: list[tuple[str, Callable[[MusicRun], None]]] = [
+    ("classify", stage_classify),
+    ("identify", stage_identify),
+    ("decompose", stage_decompose),
+    ("research_composition", stage_research_composition),
+    ("research_recording", stage_research_recording),
+    ("rules", stage_rules),
+    ("assemble", stage_assemble),
+]
+STAGE_FN: dict[str, Callable[[MusicRun], None]] = dict(STAGES)
+PARALLEL_STAGES = ("research_composition", "research_recording")
+
+
+def new_run(query: AssetQuery, *, emitter: Optional[Emitter] = None, reader=None) -> MusicRun:
+    """A MusicRun ready for the stages: NullReader unless a reader is given."""
+    from agent.reader import NullReader
+    return MusicRun(query, emitter or Emitter(), reader or NullReader())
+
+
+def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None, reader=None) -> tuple:
+    """
+    Returns (RightsResponse, Emitter).
+
+    reader: the Tier 3 reading step (agent.reader.Reader). Defaults to the
+    NullReader — no evidence is read into a fact, every open question stays
+    open. A real reader resolves the renewal window and the recording-date
+    window from the searched evidence, producing a cited fact for the rules
+    engine. The reader never computes a term.
+    """
+    run = new_run(query, emitter=emitter, reader=reader)
+    for _, stage in STAGES:
+        if run.done:
+            break
+        stage(run)
+    return run.response, run.em

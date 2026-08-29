@@ -12,9 +12,10 @@ import os
 import pytest
 
 from pipeline import mockworld
-from pipeline.music import run_music
+from pipeline.music import PARALLEL_STAGES, STAGES, run_music
 
 from .freeze_fixtures import FIXTURES, mock_environment, query_for
+from .workflow import build_graph, run_workflow
 
 CASES = sorted(mockworld.CASES)
 EXPECTED_VERDICT = {"blocked": "license_required", "clean": "clear", "stop": "undetermined",
@@ -36,6 +37,44 @@ def test_pipeline_matches_fixture(name):
     with mock_environment():
         resp, _ = run_music(query_for(mockworld.CASES[name]))
     assert mockworld.normalize(resp) == load(name)
+
+
+@pytest.mark.parametrize("name", CASES)
+def test_graph_matches_fixture(name):
+    """The ADK graph reproduces the pipeline's response exactly — the contract."""
+    events = []
+    with mock_environment():
+        resp, em = run_workflow(query_for(mockworld.CASES[name]), on_event=events.append)
+    assert mockworld.normalize(resp) == load(name)
+    # every stage agent ran (or skipped, after a stop / not-found) and said so
+    authors = [e.author for e in events]
+    assert [n for n, _ in STAGES if n not in PARALLEL_STAGES] == [a for a in authors if a not in PARALLEL_STAGES]
+    assert set(PARALLEL_STAGES) <= set(authors)
+    # the same PipelineEvents the plain pipeline emits, for the progress UI
+    with mock_environment():
+        _, plain = run_music(query_for(mockworld.CASES[name]))
+    assert sorted((e.stage.value, e.status) for e in em.events) == sorted((e.stage.value, e.status) for e in plain.events)
+
+
+def test_graph_is_the_documented_shape():
+    g = build_graph()
+    names = [a.name for a in g.sub_agents]
+    assert names == ["classify", "identify", "decompose", "research", "rules", "assemble"]
+    research = g.sub_agents[3]
+    assert type(research).__name__ == "ParallelAgent"
+    assert [a.name for a in research.sub_agents] == list(PARALLEL_STAGES)
+    # no stage agent carries a model: the reader's LlmAgent is the only one on the path
+    for a in g.sub_agents + list(research.sub_agents):
+        assert not hasattr(a, "model") or getattr(a, "model", None) in (None, "")
+
+
+def test_graph_skips_research_after_a_stop():
+    events = []
+    with mock_environment():
+        resp, _ = run_workflow(query_for(mockworld.CASES["stop"]), on_event=events.append)
+    assert resp.stop_for_disambiguation
+    skipped = {e.author for e in events if (e.actions.state_delta or {}).get(f"stage.{e.author}", {}).get("status") == "skipped"}
+    assert {"decompose", "research_composition", "research_recording", "rules", "assemble"} <= skipped
 
 
 def test_fixtures_cover_the_failure_modes():

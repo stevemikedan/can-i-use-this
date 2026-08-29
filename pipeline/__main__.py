@@ -101,6 +101,7 @@ def main(argv=None) -> int:
     p.add_argument("--read", action="store_true",
                    help="activate the Gemini reading step (needs GOOGLE_CLOUD_PROJECT + ADC + PARALLEL_API_KEY)")
     p.add_argument("--model", default=None, help="reader model (default gemini-2.5-flash)")
+    p.add_argument("--graph", action="store_true", help="run through the google-adk graph (agent/workflow.py)")
     p.add_argument("-q", "--quiet", action="store_true", help="no progress ledger")
     p.add_argument("-v", action="store_true", help="log HTTP retries")
     a = p.parse_args(argv)
@@ -114,7 +115,11 @@ def main(argv=None) -> int:
         from agent.gemini_reader import GeminiReader
         reader = GeminiReader(model=a.model) if a.model else GeminiReader()
     em = Emitter(None if a.quiet else ledger)
-    resp, _ = run_music(query, emitter=em, reader=reader)
+    if a.graph:
+        from agent.workflow import run_workflow
+        resp, _ = run_workflow(query, emitter=em, reader=reader)
+    else:
+        resp, _ = run_music(query, emitter=em, reader=reader)
     if a.json:
         print(resp.model_dump_json(indent=2))
     else:
