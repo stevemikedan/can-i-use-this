@@ -43,6 +43,7 @@ UNDETERMINED_WHY = {
     "life_plus_70_writers_uncorroborated": "the writer list could not be corroborated, and a missing co-writer changes the term",
     "us_publication_year_unknown": "its publication year is unknown",
     "spike_no_work_link": "the recording is not linked to a composition",
+    "public_domain_withheld_low_confidence": "the only evidence pointing to public domain is low-confidence — a lead, not an answer",
 }
 
 LICENSING_PATH = {

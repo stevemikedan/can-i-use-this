@@ -27,6 +27,27 @@ _STATUS = {
 
 _CONF_RANK = {Confidence.HIGH: 3, Confidence.MEDIUM: 2, Confidence.LOW: 1, Confidence.NONE: 0}
 
+# Asymmetric trust in low-confidence evidence — decided 29 Aug 2026.
+#
+# A low-confidence fact may drive a determination toward PROTECTED, never
+# toward PUBLIC DOMAIN. The costs are not symmetric: a wrong "protected" costs
+# someone a license they did not need; a wrong "public domain" ends in a
+# takedown or a lawsuit. So when the rule that fired says public domain and
+# the weakest fact it depended on is LOW, the layer stays UNDETERMINED, the
+# question stays open, and the evidence is shown as a lead rather than an
+# answer (the research stages attach it to the question).
+#
+# The case this exists for: "Summertime" reading as "not renewed" from a
+# licensing-site FAQ. The fact is probably right and the confidence is
+# correctly capped at low by the source class — and it should still stay
+# open, because the only thing backing a public-domain verdict would be a
+# secondary web page. The same asymmetry already sits in the reader: a
+# "not renewed" finding needs a primary record.
+LOW_CONFIDENCE_PD_RULE = "public_domain_withheld_low_confidence"
+
+# fact name (depends_on_facts) -> the question_ids key the research stage uses for it
+_QUESTION_KEY = {"recording_first_published_year": "recording_pub_year"}
+
 
 def _min_conf(*cs: Optional[Confidence]) -> Confidence:
     present = [c for c in cs if c is not None]
@@ -37,6 +58,19 @@ def _min_conf(*cs: Optional[Confidence]) -> Confidence:
 
 def _from_rule(layer: RightsLayer, j: Jurisdiction, r: RuleResult, confidence: Confidence,
                depends_on: list[str], question_ids: dict[str, str]) -> Determination:
+    if r.status == "public_domain" and confidence is Confidence.LOW:
+        # See LOW_CONFIDENCE_PD_RULE above: low-confidence evidence is a lead,
+        # not grounds for a public-domain verdict.
+        return Determination(
+            layer_id=layer.layer_id, jurisdiction=j, status=DeterminationStatus.UNDETERMINED,
+            expiry_year=None, rule_id=LOW_CONFIDENCE_PD_RULE,
+            rule_explanation=(f"{r.explanation} That outcome rests on low-confidence evidence, and "
+                              f"low-confidence evidence may support 'protected' but never 'public domain' "
+                              f"(rule {r.rule_id} withheld). Treat the evidence as a lead and verify it."),
+            confidence=Confidence.NONE, depends_on_facts=depends_on,
+            blocked_by=[question_ids[_QUESTION_KEY.get(k, k)] for k in depends_on
+                        if _QUESTION_KEY.get(k, k) in question_ids],
+        )
     blocked = [question_ids[r.blocked_by]] if r.blocked_by and r.blocked_by in question_ids else []
     return Determination(
         layer_id=layer.layer_id, jurisdiction=j, status=_STATUS[r.status],

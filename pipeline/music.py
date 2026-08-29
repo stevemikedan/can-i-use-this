@@ -398,14 +398,36 @@ def _research_composition(sel: Selection, em: Emitter) -> CompositionFacts:
 _RENEWAL_WHY = "Works published 1931–1963 lost protection after 28 years unless renewed."
 
 
-def renewal_question(title: str, year: int, links, numbers: list[str]) -> UnresolvedQuestion:
+def _lead(fact: Optional[ResearchedFact], says: str) -> tuple[str, list[HandoffLink]]:
+    """
+    A low-confidence fact shown as a lead on the open question, not as the
+    answer (see LOW_CONFIDENCE_PD_RULE in determine.py). Returns the sentence
+    for why_it_matters and deep links to the sources.
+    """
+    if fact is None:
+        return "", []
+    srcs = fact.sources[:3]
+    where = "; ".join(f"{s.name} ({s.url})" for s in srcs)
+    text = (f" Lead, low confidence: {where} states {says}. That is not an official record — "
+            f"verify it against one before relying on it.")
+    links = [HandoffLink(source_name=s.name, url=s.url, tier=LinkTier.DEEP_LINK, purpose="resolve",
+                         description=f"Low-confidence lead: states {says}") for s in srcs]
+    return text, links
+
+
+def renewal_question(title: str, year: int, links, numbers: list[str],
+                     lead: Optional[ResearchedFact] = None) -> UnresolvedQuestion:
     """
     The open year-28 question, pointed at the record system that actually
     holds the answer. Windows of 1978 or later are in the Copyright Office
     online catalog — the scanned CCE volumes web search reaches end in 1977,
     so sending someone there is a dead end, not a handoff.
+
+    lead: a low-confidence reader finding, attached as a lead rather than
+    taken as the answer.
     """
     y28 = year + 27
+    lead_text, lead_links = _lead(lead, "it was renewed" if lead and lead.value else "it was not renewed")
     system = renewal_record_system(year)
     if system == "online":
         where = (f" The {y28}–{y28 + 1} renewal window falls after 1977, so the record is in the US Copyright "
@@ -425,13 +447,49 @@ def renewal_question(title: str, year: int, links, numbers: list[str]) -> Unreso
         question_id=f"{COMPOSITION}:renewal",
         question=f'Was the {year} US copyright in "{title}" renewed in {y28}–{y28 + 1}?',
         why_it_matters=_RENEWAL_WHY + where
-                       + (f" Search found renewal-style registration numbers {numbers[:3]} — check them." if numbers else ""),
+                       + (f" Search found renewal-style registration numbers {numbers[:3]} — check them." if numbers else "")
+                       + lead_text,
         if_yes=f"Protected until 1 January {year + 96}.",
         if_no=f"Entered the public domain 1 January {year + 29}.",
         affects_layer_ids=[COMPOSITION],
-        resolution_links=links,
+        resolution_links=lead_links + list(links),
         search_terms=[f'"{title}" renewal {y28}', f'"{title}" renewal {y28 + 1}'],
         estimated_effort=effort,
+    )
+
+
+def recording_question(title: str, artist: str, date_on_file: Optional[str], links,
+                       lead: Optional[ResearchedFact] = None) -> UnresolvedQuestion:
+    """The open first-publication question for a recording with no dated session."""
+    lead_text, lead_links = _lead(lead, f"the original release was {lead.value}" if lead else "")
+    return UnresolvedQuestion(
+        question_id=f"{RECORDING}:first_publication",
+        question=f'In what year was the recording of "{title}" by {artist} first released?',
+        why_it_matters=f"The US term for pre-1972 recordings runs from first publication. MusicBrainz only has a release from {date_on_file or 'an unknown year'}, which may be a reissue."
+                       + lead_text,
+        if_yes="A confirmed year lets the CLASSICS Act schedule compute the expiry exactly.",
+        if_no="Without a year the recording layer stays undetermined and the roll-up cannot be clear.",
+        affects_layer_ids=[RECORDING],
+        resolution_links=lead_links + list(links),
+        search_terms=[f'"{title}" {artist} discography', f'"{title}" {artist} 78 rpm'],
+        estimated_effort="minutes",
+    )
+
+
+def year_question(title: str, fact: ResearchedFact) -> UnresolvedQuestion:
+    """The composition's publication year rests on a weak Wikidata property (first performance / inception)."""
+    lead_text, lead_links = _lead(fact, f"the year is {fact.value}")
+    return UnresolvedQuestion(
+        question_id=f"{COMPOSITION}:publication_year",
+        question=f'In what year was "{title}" first published in the US?',
+        why_it_matters="The US term runs from publication. Wikidata has no publication date for this work; "
+                       "the year in use comes from a weaker property." + lead_text,
+        if_yes="A confirmed year lets the 95-year rule and the renewal window be applied exactly.",
+        if_no="Without a year the composition stays undetermined and the roll-up cannot be clear.",
+        affects_layer_ids=[COMPOSITION],
+        resolution_links=lead_links,
+        search_terms=[f'"{title}" first published', f'"{title}" copyright registration'],
+        estimated_effort="minutes",
     )
 
 
@@ -556,6 +614,10 @@ def stage_research_composition(run: MusicRun) -> None:
         tf.first_publication_year = ResearchedFact(value=cf.year, confidence=cf.year_conf,
                                                    sources=cf.year_sources,
                                                    reasoning=reasoning + ("; " + "; ".join(cf.notes) if cf.notes else ""))
+        if cf.year_conf is Confidence.LOW:
+            # A lead, not an answer (LOW_CONFIDENCE_PD_RULE): the question stays open.
+            question_ids["first_publication_year"] = f"{COMPOSITION}:publication_year"
+            questions.append(year_question(cf.title or title, tf.first_publication_year))
     known = [w.death_year for w in cf.writers if w.death_year is not None]
     if cf.writers and known and len(known) == len(cf.writers):
         last = max(known)
@@ -617,10 +679,13 @@ def stage_research_composition(run: MusicRun) -> None:
             em.emit(S.RESEARCH, "progress",
                     f"Renewal resolved from evidence: {'renewed' if fact.value else 'not renewed'} "
                     f"({fact.confidence.value} confidence, {len(fact.sources)} citation(s))")
-        else:
-            qid_ = f"{COMPOSITION}:renewal"
-            question_ids["renewal_filed"] = qid_
-            questions.append(renewal_question(cf.title or title, cf.year, links, renewal_numbers(out)))
+        if fact is None or fact.confidence is Confidence.LOW:
+            # No answer, or a low-confidence one: the question stays open. A
+            # low-confidence finding rides along as a lead; the rules engine
+            # lets it support "protected" but not "public domain"
+            # (LOW_CONFIDENCE_PD_RULE in determine.py).
+            question_ids["renewal_filed"] = f"{COMPOSITION}:renewal"
+            questions.append(renewal_question(cf.title or title, cf.year, links, renewal_numbers(out), lead=fact))
 
 
 def stage_research_recording(run: MusicRun) -> None:
@@ -664,20 +729,11 @@ def stage_research_recording(run: MusicRun) -> None:
             em.emit(S.RESEARCH, "progress",
                     f"Recording first-publication year resolved from evidence: {fact.value} "
                     f"({fact.confidence.value} confidence, {len(fact.sources)} citation(s))")
-        else:
-            qid_ = f"{RECORDING}:first_publication"
-            question_ids["recording_pub_year"] = qid_
-            questions.append(UnresolvedQuestion(
-                question_id=qid_,
-                question=f'In what year was the recording of "{title}" by {sel.pick["artist"]} first released?',
-                why_it_matters=f"The US term for pre-1972 recordings runs from first publication. MusicBrainz only has a release from {sel.pick['date'] or 'an unknown year'}, which may be a reissue.",
-                if_yes="A confirmed year lets the CLASSICS Act schedule compute the expiry exactly.",
-                if_no="Without a year the recording layer stays undetermined and the roll-up cannot be clear.",
-                affects_layer_ids=[RECORDING],
-                resolution_links=links,
-                search_terms=[f'"{title}" {sel.pick["artist"]} discography', f'"{title}" {sel.pick["artist"]} 78 rpm'],
-                estimated_effort="minutes",
-            ))
+        if fact is None or fact.confidence is Confidence.LOW:
+            # No answer, or a low-confidence one: the question stays open with
+            # the finding as a lead (LOW_CONFIDENCE_PD_RULE in determine.py).
+            question_ids["recording_pub_year"] = f"{RECORDING}:first_publication"
+            questions.append(recording_question(title, sel.pick["artist"], sel.pick["date"], links, lead=fact))
 
 
 def stage_rules(run: MusicRun) -> None:

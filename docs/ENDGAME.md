@@ -133,11 +133,20 @@ Devpost description.
 - What's next: the two gated integrations above, then MLC for publishers and
   shares, then cue sheets.
 
-## Open policy question (decide before freeze)
+## Decided Aug 29 — low-confidence evidence is asymmetric
 
-A **low**-confidence finding currently drives a determination, with the
-verdict's confidence shown as low. The conservative alternative is to let a
-low-confidence fact support only the *protected* direction and leave the
-public-domain direction undetermined (the reader already does this for
-"not renewed"). Cheap to implement in `pipeline/determine.py`; decide on
-Sep 5 with the demo assets in hand.
+A low-confidence finding may drive a determination toward *protected*, never
+toward *public domain*. If the only evidence for "not renewed" (or for a
+recording year that would put the recording out of term) is low confidence,
+the layer stays undetermined, the question stays open, and the evidence
+appears on it as a lead rather than an answer.
+
+Reason: a wrong "protected" costs someone a license they didn't need; a wrong
+"public domain" ends in a takedown or a lawsuit. Summertime resolving to PD
+on an audiosparx FAQ is exactly the case that should stay open, even though
+the fact is probably correct and the confidence is correctly capped.
+
+Where it lives: `LOW_CONFIDENCE_PD_RULE` in `pipeline/determine.py` (with the
+reasoning as a comment), the leads in `pipeline/music.py`
+(`renewal_question`, `recording_question`, `year_question`), and the reader's
+own version of the rule — a "not renewed" finding needs a primary record.
