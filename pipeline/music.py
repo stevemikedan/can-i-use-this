@@ -495,9 +495,9 @@ def run_music(query: AssetQuery, *, emitter: Optional[Emitter] = None, reader=No
     em.emit(S.RESEARCH, "started", "Researching both layers — Tier 2 first")
     cf = _research_composition(sel, em)
     for iswc in cf.iswcs:
-        comp_ids.append(Identifier(scheme="iswc", value=iswc, layer_id=COMPOSITION, confidence=Confidence.MEDIUM))
+        composition.identifiers.append(Identifier(scheme="iswc", value=iswc, layer_id=COMPOSITION, confidence=Confidence.MEDIUM))
     if cf.wikidata:
-        comp_ids.append(Identifier(scheme="wikidata", value=cf.wikidata, layer_id=COMPOSITION, confidence=Confidence.MEDIUM))
+        composition.identifiers.append(Identifier(scheme="wikidata", value=cf.wikidata, layer_id=COMPOSITION, confidence=Confidence.MEDIUM))
     composition.label = f"Composition ({cf.year})" if cf.year else "Composition"
     recording.label = f"Sound recording ({sel.rec_year})" if sel.rec_year else "Sound recording"
 

@@ -250,6 +250,22 @@
             "scheme": "musicbrainz_work",
             "source": null,
             "value": "3c339d3d-0000-0000-0000-000000000002"
+          },
+          {
+            "confidence": "medium",
+            "is_primary": false,
+            "layer_id": "composition",
+            "scheme": "iswc",
+            "source": null,
+            "value": "T-070.011.746-9"
+          },
+          {
+            "confidence": "medium",
+            "is_primary": false,
+            "layer_id": "composition",
+            "scheme": "wikidata",
+            "source": null,
+            "value": "Q804574"
           }
         ],
         "kind": "composition",
@@ -446,6 +462,15 @@
       "source_name": "MusicBrainz work",
       "tier": "deep_link",
       "url": "https://musicbrainz.org/work/3c339d3d-0000-0000-0000-000000000002"
+    },
+    {
+      "description": "Wikidata item for the work (publication date, composer, lyricist)",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "verify",
+      "source_name": "Wikidata",
+      "tier": "deep_link",
+      "url": "https://www.wikidata.org/wiki/Q804574"
     },
     {
       "description": "Mechanical Licensing Collective — publishers, administrators and shares for \"Blue Moon\"",
