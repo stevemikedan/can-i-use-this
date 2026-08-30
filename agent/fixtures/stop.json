@@ -8,21 +8,6 @@
   "entity": {
     "alternate_candidates": [
       {
-        "disambiguator": "earliest release on file 1961; 1 recording entity",
-        "identifiers": [
-          {
-            "confidence": "low",
-            "is_primary": false,
-            "layer_id": "sound_recording",
-            "scheme": "musicbrainz_recording",
-            "source": null,
-            "value": "bm-ella"
-          }
-        ],
-        "label": "Ella Fitzgerald — Blue Moon",
-        "likelihood": "low"
-      },
-      {
         "disambiguator": "earliest release on file 1961-01; 2 recording entities",
         "identifiers": [
           {
@@ -35,6 +20,21 @@
           }
         ],
         "label": "The Marcels — Blue Moon",
+        "likelihood": "low"
+      },
+      {
+        "disambiguator": "earliest release on file 1961; 1 recording entity",
+        "identifiers": [
+          {
+            "confidence": "low",
+            "is_primary": false,
+            "layer_id": "sound_recording",
+            "scheme": "musicbrainz_recording",
+            "source": null,
+            "value": "bm-ella"
+          }
+        ],
+        "label": "Ella Fitzgerald — Blue Moon",
         "likelihood": "low"
       },
       {

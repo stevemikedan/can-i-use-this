@@ -101,7 +101,11 @@ def _search_and_gate(query: AssetQuery, title: str, artist: Optional[str], em: E
         for c in cands:
             by_artist[c["artist"]].append(c)
         if len(by_artist) > 1:
-            rows = sorted(by_artist.items(), key=lambda kv: min((c["date"] or "9999") for c in kv[1]))
+            # Most-issued first: the artist with the most recording entities is
+            # almost always the one the user means (and the composition
+            # shortcut resolves the work through the first candidate).
+            rows = sorted(by_artist.items(),
+                          key=lambda kv: (-len(kv[1]), min((c["date"] or "9999") for c in kv[1])))
             candidates = []
             for a, cs in rows[:MAX_CANDIDATES]:
                 earliest = min((c["date"] for c in cs if c["date"]), default=None)

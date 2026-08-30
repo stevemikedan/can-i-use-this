@@ -15,6 +15,36 @@
     "resolution_confidence": "low",
     "alternate_candidates": [
       {
+        "label": "Dave Brubeck — Take Five",
+        "disambiguator": "earliest release on file 1990; 7 recording entities",
+        "identifiers": [
+          {
+            "scheme": "musicbrainz_recording",
+            "value": "e285867e-5969-4807-9023-86535a806081",
+            "layer_id": "sound_recording",
+            "confidence": "low",
+            "source": null,
+            "is_primary": false
+          }
+        ],
+        "likelihood": "low"
+      },
+      {
+        "label": "The Dave Brubeck Quartet — Take Five",
+        "disambiguator": "earliest release on file 2001-02-27; 2 recording entities",
+        "identifiers": [
+          {
+            "scheme": "musicbrainz_recording",
+            "value": "3d87b15d-6680-4957-a6a5-2bbd13acf7bb",
+            "layer_id": "sound_recording",
+            "confidence": "low",
+            "source": null,
+            "is_primary": false
+          }
+        ],
+        "likelihood": "low"
+      },
+      {
         "label": "Davy Graham — Take Five",
         "disambiguator": "earliest release on file 1963; 1 recording entity",
         "identifiers": [
@@ -75,21 +105,6 @@
         "likelihood": "low"
       },
       {
-        "label": "Dave Brubeck — Take Five",
-        "disambiguator": "earliest release on file 1990; 7 recording entities",
-        "identifiers": [
-          {
-            "scheme": "musicbrainz_recording",
-            "value": "e285867e-5969-4807-9023-86535a806081",
-            "layer_id": "sound_recording",
-            "confidence": "low",
-            "source": null,
-            "is_primary": false
-          }
-        ],
-        "likelihood": "low"
-      },
-      {
         "label": "Helge Schneider — Take Five",
         "disambiguator": "earliest release on file 1992; 1 recording entity",
         "identifiers": [
@@ -118,21 +133,6 @@
           }
         ],
         "likelihood": "low"
-      },
-      {
-        "label": "George Benson — Take Five",
-        "disambiguator": "earliest release on file 1996; 1 recording entity",
-        "identifiers": [
-          {
-            "scheme": "musicbrainz_recording",
-            "value": "08584553-2ec3-4f20-9679-a1f08fc3e4d8",
-            "layer_id": "sound_recording",
-            "confidence": "low",
-            "source": null,
-            "is_primary": false
-          }
-        ],
-        "likelihood": "low"
       }
     ]
   },
@@ -148,7 +148,7 @@
   "handoff_links": [],
   "boundary_note": null,
   "disclaimer": "This is research, not legal advice. Verify before relying on it for anything consequential.",
-  "generated_at": "2026-08-29T21:58:01.346000Z",
+  "generated_at": "2026-08-30T21:23:33.050902Z",
   "cache_key": null,
   "served_from_cache": false,
   "permalink": null
