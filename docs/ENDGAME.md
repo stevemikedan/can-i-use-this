@@ -28,7 +28,15 @@ Built and tested (`python -m pytest`, all green):
   the deploy checklist baked in (re-runnable). Local smoke passed; the Cloud
   Run run is the user's `gcloud` step.
 
-Not built: the frontend, MLC.
+- **The frontend** (`web/`, Aug 30 — a day ahead of schedule): Entry,
+  Progress (the accession log over the live SSE stream), Result,
+  Disambiguation, and minimal not-found / boundary / error states, wired end
+  to end. Tokens verbatim from `design-system.md`; verified against the live
+  local API and at 380px. Control toggles re-query (~1 s warm) rather than
+  duplicating roll-up logic client-side; reader answers are cached so Tier 3
+  toggles stay warm. The Dockerfile builds the frontend in a node stage.
+
+Not built: MLC.
 
 ### The reader against real evidence — Aug 29
 

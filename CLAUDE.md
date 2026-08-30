@@ -161,4 +161,5 @@ deploy/deploy.sh                                   # Cloud Run; re-runnable; the
 - `spike/` — verified MusicBrainz work↔recording linkage and Wikidata death years; its findings became rules 9 and 10 above.
 - Design — Entry, Progress, Result complete. Disambiguation and error/boundary states not yet designed; specify from `docs/design-reference.md`.
 - `api/` — FastAPI + SSE over the graph; `/api/health` proves the cache backend with a real round-trip. `deploy/deploy.sh` is the Cloud Run deploy: Secret Manager for the Parallel key, a runtime service account with datastore.user / aiplatform.user / secretAccessor (there is no ADC on Cloud Run), `CACHE_BACKEND=firestore`, `--min-instances 1`.
-- Not yet built: `web/`, MLC integration. Schedule and gates: `docs/ENDGAME.md`.
+- `web/` — React + Vite + Tailwind, tokens from `docs/design-system.md`. Entry → Progress (SSE accession log) → Result / Disambiguation, plus minimal terminal states. Dev fixtures: `/?fixture=<name>`; 380px harness at `/narrow.html` (drop at freeze). Control toggles re-query the API — no rights logic in TypeScript.
+- Not yet built: MLC integration. Schedule and gates: `docs/ENDGAME.md`.
