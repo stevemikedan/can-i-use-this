@@ -72,6 +72,29 @@ def test_filename_source_name_is_rejected():
     assert ok.citations[0].source_name.startswith("Catalog")
 
 
+def test_reader_answers_are_cached(monkeypatch):
+    import agent.gemini_reader as gr
+    from sources.cache import MemoryCache, set_default
+    set_default(MemoryCache())
+    calls = []
+    raw = ('{"status": "found", "renewal_filed": true, "confidence": "high", "reasoning": "r", '
+           '"citations": [{"url": "https://archive.org/x", "source_name": "CCE 1962", '
+           '"source_class": "primary_record", "excerpt": "e", "supports": "s"}]}')
+    monkeypatch.setattr(gr, "_run_agent_sync", lambda agent, prompt: (calls.append(1), raw)[1])
+    try:
+        r = gr.GeminiReader(use_search_tool=False)
+        ev = None
+        a1 = r.read_renewal(title="Blue Moon", writers=["Rodgers"], year=1934, evidence=ev)
+        a2 = r.read_renewal(title="Blue Moon", writers=["Rodgers"], year=1934, evidence=ev)
+        assert len(calls) == 1                      # the second read came from the cache
+        assert a1 == a2 and a1.renewal_filed is True
+        r2 = gr.GeminiReader(model="gemini-3.0-flash", use_search_tool=False)
+        r2.read_renewal(title="Blue Moon", writers=["Rodgers"], year=1934, evidence=ev)
+        assert len(calls) == 2                      # a different model is a different key
+    finally:
+        set_default(None)
+
+
 def test_source_class_reaches_the_pipeline_source():
     primary = renewal_to_fact(found("high", [cite("primary_record")]).to_answer())
     notice = renewal_to_fact(found("high", [cite("rightsholder_notice", **NOTICE)]).to_answer())

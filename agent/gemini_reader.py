@@ -32,8 +32,11 @@ from google.adk.runners import InMemoryRunner
 from google.genai import types
 from pydantic import BaseModel, Field, model_validator
 
+import hashlib
+
 from research.music import renewal_record_system
 from research.parallel_client import SearchOutcome
+from sources.cache import get_cache
 from rules import CURRENT_YEAR
 
 from .reader_schema import (
@@ -307,7 +310,15 @@ class GeminiReader:
 
     # --- one agent run --------------------------------------------------------
 
+    READ_MAX_AGE_S = 7 * 86400   # same freshness policy as the searches the evidence came from
+
     def _read(self, prompt: str, instruction: str, flat_model, label: str):
+        cache = get_cache()
+        key = "reader:" + hashlib.sha1(json.dumps([label, self.model, instruction, prompt]).encode()).hexdigest()
+        entry = cache.get(key, max_age_s=self.READ_MAX_AGE_S)
+        if entry is not None:
+            self.last_raw = entry.value.get("raw")
+            return self._validate(flat_model, self.last_raw)
         agent = LlmAgent(
             name=f"reader_{label}",
             model=self.model,
@@ -324,6 +335,12 @@ class GeminiReader:
             self.last_raw = f"<error: {type(e).__name__}: {e}>"
             return None
         self.last_raw = raw
+        if raw and raw.strip():
+            cache.set(key, {"raw": raw})
+        return self._validate(flat_model, raw)
+
+    @staticmethod
+    def _validate(flat_model, raw: Optional[str]):
         if not raw or not raw.strip():
             return None
         try:

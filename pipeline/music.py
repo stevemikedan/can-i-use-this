@@ -407,7 +407,7 @@ def _lead(fact: Optional[ResearchedFact], says: str) -> tuple[str, list[HandoffL
     if fact is None:
         return "", []
     srcs = fact.sources[:3]
-    where = "; ".join(f"{s.name} ({s.url})" for s in srcs)
+    where = "; ".join(dict.fromkeys(s.name for s in srcs))
     text = (f" Lead, low confidence: {where} states {says}. That is not an official record — "
             f"verify it against one before relying on it.")
     links = [HandoffLink(source_name=s.name, url=s.url, tier=LinkTier.DEEP_LINK, purpose="resolve",

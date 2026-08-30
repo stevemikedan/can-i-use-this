@@ -1,0 +1,717 @@
+{
+  "query": {
+    "raw_input": "Blue Moon — Ella Fitzgerald",
+    "intent": "film_tv",
+    "jurisdiction": "US",
+    "asset_type_hint": "music",
+    "disambiguation_choice": null
+  },
+  "entity": {
+    "canonical_title": "Blue Moon",
+    "asset_type": "music",
+    "creators": [
+      {
+        "value": "Richard Rodgers",
+        "confidence": "high",
+        "sources": [
+          {
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620?inc=artist-rels%2Burl-rels&fmt=json",
+            "method": "direct_api",
+            "retrieved_at": "2026-08-29T19:47:55.246305Z",
+            "excerpt": null,
+            "authoritative": false
+          },
+          {
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/artist/346448f5-25a0-4f78-bbd6-acc0205f7513?inc=url-rels&fmt=json",
+            "method": "direct_api",
+            "retrieved_at": "2026-08-29T19:47:56.404397Z",
+            "excerpt": "artist linked to Wikidata Q269094",
+            "authoritative": false
+          },
+          {
+            "name": "Wikidata",
+            "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094",
+            "method": "direct_api",
+            "retrieved_at": "2026-08-29T19:47:57.874728Z",
+            "excerpt": "P570 = 1979",
+            "authoritative": false
+          }
+        ],
+        "reasoning": null,
+        "conflicting_values": []
+      },
+      {
+        "value": "Lorenz Hart",
+        "confidence": "high",
+        "sources": [
+          {
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620?inc=artist-rels%2Burl-rels&fmt=json",
+            "method": "direct_api",
+            "retrieved_at": "2026-08-29T19:47:55.246305Z",
+            "excerpt": null,
+            "authoritative": false
+          },
+          {
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/artist/3fb75d97-5dfd-4e72-9aee-1904aa4268f4?inc=url-rels&fmt=json",
+            "method": "direct_api",
+            "retrieved_at": "2026-08-29T19:47:57.492205Z",
+            "excerpt": "artist linked to Wikidata Q725828",
+            "authoritative": false
+          },
+          {
+            "name": "Wikidata",
+            "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q725828",
+            "method": "direct_api",
+            "retrieved_at": "2026-08-29T19:47:57.879956Z",
+            "excerpt": "P570 = 1943",
+            "authoritative": false
+          }
+        ],
+        "reasoning": null,
+        "conflicting_values": []
+      }
+    ],
+    "year": {
+      "value": 1934,
+      "confidence": "high",
+      "sources": [
+        {
+          "name": "Wikidata",
+          "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q804574",
+          "method": "direct_api",
+          "retrieved_at": "2026-08-29T19:47:57.634781Z",
+          "excerpt": "P577_publication = 1934",
+          "authoritative": false
+        },
+        {
+          "name": "MusicBrainz",
+          "url": "https://musicbrainz.org/ws/2/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620?inc=artist-rels%2Burl-rels&fmt=json",
+          "method": "direct_api",
+          "retrieved_at": "2026-08-29T19:47:55.246305Z",
+          "excerpt": null,
+          "authoritative": false
+        }
+      ],
+      "reasoning": "Wikidata P577_publication corroborated by MusicBrainz composer-relation date",
+      "conflicting_values": []
+    },
+    "layers": [
+      {
+        "layer_id": "composition",
+        "kind": "composition",
+        "label": "Composition (1934)",
+        "identifiers": [
+          {
+            "scheme": "musicbrainz_work",
+            "value": "3c339d3d-c76d-3eb5-b3bc-98c8c2d18620",
+            "layer_id": "composition",
+            "confidence": "medium",
+            "source": null,
+            "is_primary": true
+          },
+          {
+            "scheme": "iswc",
+            "value": "T-915.741.665-4",
+            "layer_id": "composition",
+            "confidence": "medium",
+            "source": null,
+            "is_primary": false
+          },
+          {
+            "scheme": "iswc",
+            "value": "T-070.011.746-9",
+            "layer_id": "composition",
+            "confidence": "medium",
+            "source": null,
+            "is_primary": false
+          },
+          {
+            "scheme": "wikidata",
+            "value": "Q804574",
+            "layer_id": "composition",
+            "confidence": "medium",
+            "source": null,
+            "is_primary": false
+          }
+        ],
+        "holders": [
+          {
+            "name": {
+              "value": "Richard Rodgers",
+              "confidence": "high",
+              "sources": [
+                {
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620?inc=artist-rels%2Burl-rels&fmt=json",
+                  "method": "direct_api",
+                  "retrieved_at": "2026-08-29T19:47:55.246305Z",
+                  "excerpt": null,
+                  "authoritative": false
+                },
+                {
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/artist/346448f5-25a0-4f78-bbd6-acc0205f7513?inc=url-rels&fmt=json",
+                  "method": "direct_api",
+                  "retrieved_at": "2026-08-29T19:47:56.404397Z",
+                  "excerpt": "artist linked to Wikidata Q269094",
+                  "authoritative": false
+                },
+                {
+                  "name": "Wikidata",
+                  "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094",
+                  "method": "direct_api",
+                  "retrieved_at": "2026-08-29T19:47:57.874728Z",
+                  "excerpt": "P570 = 1979",
+                  "authoritative": false
+                }
+              ],
+              "reasoning": "credited by MB+WD",
+              "conflicting_values": []
+            },
+            "role": "author",
+            "is_administrator": false,
+            "share_percent": null,
+            "territory": null,
+            "contact_path": null,
+            "enforcement_posture": "unknown",
+            "enforcement_evidence": []
+          },
+          {
+            "name": {
+              "value": "Lorenz Hart",
+              "confidence": "high",
+              "sources": [
+                {
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620?inc=artist-rels%2Burl-rels&fmt=json",
+                  "method": "direct_api",
+                  "retrieved_at": "2026-08-29T19:47:55.246305Z",
+                  "excerpt": null,
+                  "authoritative": false
+                },
+                {
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/artist/3fb75d97-5dfd-4e72-9aee-1904aa4268f4?inc=url-rels&fmt=json",
+                  "method": "direct_api",
+                  "retrieved_at": "2026-08-29T19:47:57.492205Z",
+                  "excerpt": "artist linked to Wikidata Q725828",
+                  "authoritative": false
+                },
+                {
+                  "name": "Wikidata",
+                  "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q725828",
+                  "method": "direct_api",
+                  "retrieved_at": "2026-08-29T19:47:57.879956Z",
+                  "excerpt": "P570 = 1943",
+                  "authoritative": false
+                }
+              ],
+              "reasoning": "credited by MB+WD",
+              "conflicting_values": []
+            },
+            "role": "author",
+            "is_administrator": false,
+            "share_percent": null,
+            "territory": null,
+            "contact_path": null,
+            "enforcement_posture": "unknown",
+            "enforcement_evidence": []
+          }
+        ],
+        "term_facts": {
+          "author_death_year": {
+            "value": 1979,
+            "confidence": "high",
+            "sources": [
+              {
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620?inc=artist-rels%2Burl-rels&fmt=json",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:55.246305Z",
+                "excerpt": null,
+                "authoritative": false
+              },
+              {
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/346448f5-25a0-4f78-bbd6-acc0205f7513?inc=url-rels&fmt=json",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:56.404397Z",
+                "excerpt": "artist linked to Wikidata Q269094",
+                "authoritative": false
+              },
+              {
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:57.874728Z",
+                "excerpt": "P570 = 1979",
+                "authoritative": false
+              },
+              {
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620?inc=artist-rels%2Burl-rels&fmt=json",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:55.246305Z",
+                "excerpt": null,
+                "authoritative": false
+              },
+              {
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/3fb75d97-5dfd-4e72-9aee-1904aa4268f4?inc=url-rels&fmt=json",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:57.492205Z",
+                "excerpt": "artist linked to Wikidata Q725828",
+                "authoritative": false
+              },
+              {
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q725828",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:57.879956Z",
+                "excerpt": "P570 = 1943",
+                "authoritative": false
+              }
+            ],
+            "reasoning": "Last surviving author: Richard Rodgers d. 1979, Lorenz Hart d. 1943",
+            "conflicting_values": []
+          },
+          "first_publication_year": {
+            "value": 1934,
+            "confidence": "high",
+            "sources": [
+              {
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q804574",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:57.634781Z",
+                "excerpt": "P577_publication = 1934",
+                "authoritative": false
+              },
+              {
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620?inc=artist-rels%2Burl-rels&fmt=json",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:55.246305Z",
+                "excerpt": null,
+                "authoritative": false
+              }
+            ],
+            "reasoning": "Wikidata P577_publication corroborated by MusicBrainz composer-relation date",
+            "conflicting_values": []
+          },
+          "first_publication_country": null,
+          "creation_year": null,
+          "copyright_notice_present": null,
+          "renewal_filed": {
+            "value": true,
+            "confidence": "medium",
+            "sources": [
+              {
+                "name": "Page from a published book (publisher preview)",
+                "url": "https://api.pageplace.de/preview/DT0400.9780199763474_A23609522/preview-9780199763474_A23609522.pdf",
+                "method": "parallel_search",
+                "retrieved_at": "2026-08-29T20:05:37.643671Z",
+                "excerpt": "Lorenz Hart and Richard Rodgers: \"Blue Moon,\" copyright © 1934, renewed 1961 Metro-\n\nGoldwyn-Mayer Inc. Rights throughout the world controlled by Robbins Music\n\nCorporation.",
+                "authoritative": false
+              }
+            ],
+            "reasoning": "A copyright notice within a published work explicitly states that 'Blue Moon' by Lorenz Hart and Richard Rodgers, copyrighted in 1934, was renewed in 1961, which falls within the 28th year renewal window (1961-1962).",
+            "conflicting_values": []
+          },
+          "is_work_for_hire": null,
+          "is_anonymous_or_pseudonymous": null,
+          "is_derivative": null,
+          "underlying_work_ref": null,
+          "recording_first_published_year": null,
+          "recording_fixed_before_feb_1972": null,
+          "recording_date_basis": null,
+          "writer_list_corroborated": true
+        },
+        "clearance": {
+          "party_count": null,
+          "unclaimed_share_percent": null,
+          "is_one_stop": null,
+          "difficulty": "moderate",
+          "difficulty_reasoning": null
+        },
+        "claimed_statuses": [],
+        "existing_license": null
+      },
+      {
+        "layer_id": "sound_recording",
+        "kind": "sound_recording",
+        "label": "Sound recording (1956)",
+        "identifiers": [
+          {
+            "scheme": "musicbrainz_recording",
+            "value": "eea461ee-dce6-427b-9740-d0363903f7d4",
+            "layer_id": "sound_recording",
+            "confidence": "medium",
+            "source": {
+              "name": "MusicBrainz",
+              "url": "https://musicbrainz.org/recording/eea461ee-dce6-427b-9740-d0363903f7d4",
+              "method": "direct_api",
+              "retrieved_at": "2026-08-29T19:47:54.320544Z",
+              "excerpt": "performance relation dated 1956-08-29; earliest release on file 1956",
+              "authoritative": false
+            },
+            "is_primary": true
+          }
+        ],
+        "holders": [],
+        "term_facts": {
+          "author_death_year": null,
+          "first_publication_year": null,
+          "first_publication_country": null,
+          "creation_year": null,
+          "copyright_notice_present": null,
+          "renewal_filed": null,
+          "is_work_for_hire": null,
+          "is_anonymous_or_pseudonymous": null,
+          "is_derivative": null,
+          "underlying_work_ref": null,
+          "recording_first_published_year": {
+            "value": 1956,
+            "confidence": "high",
+            "sources": [
+              {
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/recording/eea461ee-dce6-427b-9740-d0363903f7d4",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:54.320544Z",
+                "excerpt": "performance relation dated 1956-08-29; earliest release on file 1956",
+                "authoritative": false
+              }
+            ],
+            "reasoning": "Dated performance relation in MusicBrainz; earliest release on file is contemporaneous; other dated sessions by this artist: 1961; 27 undated recording entities not used",
+            "conflicting_values": []
+          },
+          "recording_fixed_before_feb_1972": null,
+          "recording_date_basis": "dated_performance",
+          "writer_list_corroborated": false
+        },
+        "clearance": {
+          "party_count": null,
+          "unclaimed_share_percent": null,
+          "is_one_stop": null,
+          "difficulty": "moderate",
+          "difficulty_reasoning": null
+        },
+        "claimed_statuses": [],
+        "existing_license": null
+      }
+    ],
+    "resolution_confidence": "medium",
+    "alternate_candidates": []
+  },
+  "stop_for_disambiguation": false,
+  "overall_verdict": "license_required",
+  "overall_headline": "License required: the composition is protected in the US until 1 January 2030. The sound recording is also protected.",
+  "overall_confidence": "medium",
+  "layer_verdicts": [
+    {
+      "layer_id": "composition",
+      "layer_label": "Composition (1934)",
+      "verdict": "license_required",
+      "is_required": true,
+      "headline": "Protected in the US until 1 January 2030",
+      "reasoning": "Published 1934 in the US and renewed. Protected until 1 January 2030.",
+      "determination": {
+        "layer_id": "composition",
+        "jurisdiction": "US",
+        "status": "protected",
+        "expiry_year": 2030,
+        "rule_id": "us_renewal_filed",
+        "rule_explanation": "Published 1934 in the US and renewed. Protected until 1 January 2030.",
+        "confidence": "medium",
+        "depends_on_facts": [
+          "first_publication_year",
+          "renewal_filed"
+        ],
+        "blocked_by": []
+      },
+      "holders": [
+        {
+          "name": {
+            "value": "Richard Rodgers",
+            "confidence": "high",
+            "sources": [
+              {
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620?inc=artist-rels%2Burl-rels&fmt=json",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:55.246305Z",
+                "excerpt": null,
+                "authoritative": false
+              },
+              {
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/346448f5-25a0-4f78-bbd6-acc0205f7513?inc=url-rels&fmt=json",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:56.404397Z",
+                "excerpt": "artist linked to Wikidata Q269094",
+                "authoritative": false
+              },
+              {
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q269094",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:57.874728Z",
+                "excerpt": "P570 = 1979",
+                "authoritative": false
+              }
+            ],
+            "reasoning": "credited by MB+WD",
+            "conflicting_values": []
+          },
+          "role": "author",
+          "is_administrator": false,
+          "share_percent": null,
+          "territory": null,
+          "contact_path": null,
+          "enforcement_posture": "unknown",
+          "enforcement_evidence": []
+        },
+        {
+          "name": {
+            "value": "Lorenz Hart",
+            "confidence": "high",
+            "sources": [
+              {
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620?inc=artist-rels%2Burl-rels&fmt=json",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:55.246305Z",
+                "excerpt": null,
+                "authoritative": false
+              },
+              {
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/3fb75d97-5dfd-4e72-9aee-1904aa4268f4?inc=url-rels&fmt=json",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:57.492205Z",
+                "excerpt": "artist linked to Wikidata Q725828",
+                "authoritative": false
+              },
+              {
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q725828",
+                "method": "direct_api",
+                "retrieved_at": "2026-08-29T19:47:57.879956Z",
+                "excerpt": "P570 = 1943",
+                "authoritative": false
+              }
+            ],
+            "reasoning": "credited by MB+WD",
+            "conflicting_values": []
+          },
+          "role": "author",
+          "is_administrator": false,
+          "share_percent": null,
+          "territory": null,
+          "contact_path": null,
+          "enforcement_posture": "unknown",
+          "enforcement_evidence": []
+        }
+      ],
+      "clearance": {
+        "party_count": null,
+        "unclaimed_share_percent": null,
+        "is_one_stop": null,
+        "difficulty": "moderate",
+        "difficulty_reasoning": null
+      },
+      "licensing_path": "Sync license from the publisher(s) / administrator — find them via MLC, ASCAP or BMI (handoff links)",
+      "cost_band": "$500–$5,000 sync fee for an indie film; more for major releases",
+      "intent_note": null
+    },
+    {
+      "layer_id": "sound_recording",
+      "layer_label": "Sound recording (1956)",
+      "verdict": "license_required",
+      "is_required": true,
+      "headline": "Protected in the US until 1 January 2067",
+      "reasoning": "Published 1956. Under the CLASSICS Act (95-year term plus 15 additional years), protected until 1 January 2067.",
+      "determination": {
+        "layer_id": "sound_recording",
+        "jurisdiction": "US",
+        "status": "protected",
+        "expiry_year": 2067,
+        "rule_id": "us_sr_mma_1947_1956",
+        "rule_explanation": "Published 1956. Under the CLASSICS Act (95-year term plus 15 additional years), protected until 1 January 2067.",
+        "confidence": "high",
+        "depends_on_facts": [
+          "recording_first_published_year",
+          "recording_date_basis"
+        ],
+        "blocked_by": []
+      },
+      "holders": [],
+      "clearance": {
+        "party_count": null,
+        "unclaimed_share_percent": null,
+        "is_one_stop": null,
+        "difficulty": "moderate",
+        "difficulty_reasoning": null
+      },
+      "licensing_path": "Master use license from the label or current rights holder of this recording",
+      "cost_band": "$500–$5,000 master use fee for an indie film; often matched to the sync fee",
+      "intent_note": null
+    }
+  ],
+  "all_determinations": [
+    {
+      "layer_id": "composition",
+      "jurisdiction": "US",
+      "status": "protected",
+      "expiry_year": 2030,
+      "rule_id": "us_renewal_filed",
+      "rule_explanation": "Published 1934 in the US and renewed. Protected until 1 January 2030.",
+      "confidence": "medium",
+      "depends_on_facts": [
+        "first_publication_year",
+        "renewal_filed"
+      ],
+      "blocked_by": []
+    },
+    {
+      "layer_id": "composition",
+      "jurisdiction": "UK",
+      "status": "protected",
+      "expiry_year": 2050,
+      "rule_id": "uk_life_plus_70",
+      "rule_explanation": "Last surviving author died 1979. Protected until 1 January 2050.",
+      "confidence": "high",
+      "depends_on_facts": [
+        "author_death_year",
+        "writer_list_corroborated"
+      ],
+      "blocked_by": []
+    },
+    {
+      "layer_id": "composition",
+      "jurisdiction": "EU",
+      "status": "protected",
+      "expiry_year": 2050,
+      "rule_id": "eu_life_plus_70",
+      "rule_explanation": "Last surviving author died 1979. Protected until 1 January 2050.",
+      "confidence": "high",
+      "depends_on_facts": [
+        "author_death_year",
+        "writer_list_corroborated"
+      ],
+      "blocked_by": []
+    },
+    {
+      "layer_id": "sound_recording",
+      "jurisdiction": "US",
+      "status": "protected",
+      "expiry_year": 2067,
+      "rule_id": "us_sr_mma_1947_1956",
+      "rule_explanation": "Published 1956. Under the CLASSICS Act (95-year term plus 15 additional years), protected until 1 January 2067.",
+      "confidence": "high",
+      "depends_on_facts": [
+        "recording_first_published_year",
+        "recording_date_basis"
+      ],
+      "blocked_by": []
+    },
+    {
+      "layer_id": "sound_recording",
+      "jurisdiction": "UK",
+      "status": "public_domain",
+      "expiry_year": 2007,
+      "rule_id": "uk_sr_pre_1963",
+      "rule_explanation": "Published 1956. The 50-year term expired 1 January 2007, before the 2013 extension to 70 years, which did not revive expired recordings.",
+      "confidence": "high",
+      "depends_on_facts": [
+        "recording_first_published_year",
+        "recording_date_basis"
+      ],
+      "blocked_by": []
+    },
+    {
+      "layer_id": "sound_recording",
+      "jurisdiction": "EU",
+      "status": "public_domain",
+      "expiry_year": 2007,
+      "rule_id": "eu_sr_pre_1963",
+      "rule_explanation": "Published 1956. The 50-year term expired 1 January 2007, before the 2013 extension to 70 years, which did not revive expired recordings.",
+      "confidence": "high",
+      "depends_on_facts": [
+        "recording_first_published_year",
+        "recording_date_basis"
+      ],
+      "blocked_by": []
+    }
+  ],
+  "disagreements": [],
+  "unresolved": [],
+  "alternatives": [],
+  "handoff_links": [
+    {
+      "source_name": "MusicBrainz recording",
+      "url": "https://musicbrainz.org/recording/eea461ee-dce6-427b-9740-d0363903f7d4",
+      "tier": "deep_link",
+      "purpose": "verify",
+      "description": "The recording entity this determination is based on",
+      "paste_string": null,
+      "navigation_hint": null
+    },
+    {
+      "source_name": "MusicBrainz work",
+      "url": "https://musicbrainz.org/work/3c339d3d-c76d-3eb5-b3bc-98c8c2d18620",
+      "tier": "deep_link",
+      "purpose": "verify",
+      "description": "The composition (work) entity, with writer credits and ISWCs",
+      "paste_string": null,
+      "navigation_hint": null
+    },
+    {
+      "source_name": "Wikidata",
+      "url": "https://www.wikidata.org/wiki/Q804574",
+      "tier": "deep_link",
+      "purpose": "verify",
+      "description": "Wikidata item for the work (publication date, composer, lyricist)",
+      "paste_string": null,
+      "navigation_hint": null
+    },
+    {
+      "source_name": "MLC public search",
+      "url": "https://portal.themlc.com/search?query=Blue+Moon",
+      "tier": "prefilled_search",
+      "purpose": "license",
+      "description": "Mechanical Licensing Collective — publishers, administrators and shares for \"Blue Moon\"",
+      "paste_string": null,
+      "navigation_hint": null
+    },
+    {
+      "source_name": "ASCAP repertory",
+      "url": "https://www.ascap.com/repertory",
+      "tier": "guided_manual",
+      "purpose": "license",
+      "description": "ASCAP ACE repertory — writer and publisher credits",
+      "paste_string": "Blue Moon",
+      "navigation_hint": "Search by title; paste the string below"
+    },
+    {
+      "source_name": "BMI repertoire",
+      "url": "https://repertoire.bmi.com/",
+      "tier": "guided_manual",
+      "purpose": "license",
+      "description": "BMI repertoire — writer and publisher credits",
+      "paste_string": "Blue Moon",
+      "navigation_hint": "Search by title; paste the string below"
+    }
+  ],
+  "boundary_note": null,
+  "disclaimer": "This is research, not legal advice. Verify before relying on it for anything consequential.",
+  "generated_at": "2026-08-29T21:56:41.989652Z",
+  "cache_key": "music:3c339d3d-c76d-3eb5-b3bc-98c8c2d18620:eea461ee-dce6-427b-9740-d0363903f7d4",
+  "served_from_cache": false,
+  "permalink": null
+}

@@ -14,5 +14,5 @@ __pycache__
 spike/cache
 docs/design
 web/node_modules
-web/src
+web/dist
 deploy

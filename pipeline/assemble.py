@@ -103,7 +103,8 @@ def overall_headline(verdict: Verdict, blocking: Optional[LayerVerdict], lvs: li
     req = [lv for lv in lvs if lv.is_required]
     if verdict is Verdict.CLEAR:
         names = " and ".join(lv.layer_label.split(" (")[0].lower() for lv in req)
-        return f"Clear: the {names} are in the public domain in the {j.value}."
+        verb = "are" if len(req) > 1 else "is"
+        return f"Clear: the {names} {verb} in the public domain in the {j.value}."
     if blocking is None:
         return "No layer applies to this purpose."
     b = blocking.layer_label.split(" (")[0].lower()
