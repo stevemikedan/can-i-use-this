@@ -1,45 +1,79 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Intent, Jurisdiction, QueryParams, RightsResponse } from './types'
-import { runQuery } from './lib/api'
+import type { PipelineEvent, QueryParams, RightsResponse } from './types'
+import { runQuery, streamQuery } from './lib/api'
 import { splitQuery } from './lib/format'
+import Entry from './screens/Entry'
+import Progress from './screens/Progress'
 import Result from './screens/Result'
+import Disambiguation from './screens/Disambiguation'
+import { Boundary, ErrorScreen, NotFound } from './screens/Status'
 
 // Development fixtures: real RightsResponses captured from the pipeline
-// (web/src/dev/*.json). ?fixture=<name> renders one without the API.
+// (web/src/dev/*.json). ?fixture=<name> renders one without running a query.
 const FIXTURES = import.meta.glob<RightsResponse>('./dev/*.json', { import: 'default' })
 const fixtureNames = Object.keys(FIXTURES).map((p) => p.replace('./dev/', '').replace('.json', '')).sort()
 
-type Screen =
-  | { kind: 'entry' }
-  | { kind: 'result'; resp: RightsResponse; params: QueryParams }
+type Screen = 'entry' | 'progress' | 'result' | 'disambiguation' | 'notfound' | 'boundary' | 'error'
+
+const DEFAULT_PARAMS: QueryParams = { title: '', intent: 'film_tv', jurisdiction: 'US' }
+
+function routeFor(resp: RightsResponse): Screen {
+  if (resp.stop_for_disambiguation) return 'disambiguation'
+  if (resp.boundary_note) return 'boundary'
+  if (resp.entity.layers.length === 0) return 'notfound'
+  return 'result'
+}
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>({ kind: 'entry' })
-  const [busy, setBusy] = useState(false)
+  const [screen, setScreen] = useState<Screen>('entry')
+  const [params, setParams] = useState<QueryParams>(DEFAULT_PARAMS)
+  const [resp, setResp] = useState<RightsResponse | null>(null)
+  const [events, setEvents] = useState<PipelineEvent[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)          // Result control toggles only
+  const stopStream = useRef<(() => void) | null>(null)
   const abort = useRef<AbortController | null>(null)
 
   const fixtureParam = new URLSearchParams(window.location.search).get('fixture')
-
   useEffect(() => {
     if (!fixtureParam) return
     const loader = FIXTURES[`./dev/${fixtureParam}.json`]
     if (!loader) return
-    loader().then((resp) => {
-      const { title, artist } = splitQuery(resp.query.raw_input)
-      setScreen({ kind: 'result', resp, params: { title, artist: artist ?? undefined, intent: resp.query.intent, jurisdiction: resp.query.jurisdiction } })
+    loader().then((r) => {
+      const { title, artist } = splitQuery(r.query.raw_input)
+      setParams({ title, artist: artist ?? undefined, intent: r.query.intent, jurisdiction: r.query.jurisdiction })
+      setResp(r)
+      setScreen(routeFor(r))
     })
   }, [fixtureParam])
 
-  const run = useCallback(async (params: QueryParams) => {
+  /** Full run with the streamed progress screen. */
+  const research = useCallback((p: QueryParams) => {
+    stopStream.current?.()
+    setParams(p)
+    setEvents([])
+    setError(null)
+    setScreen('progress')
+    stopStream.current = streamQuery(p, {
+      onProgress: (ev) => setEvents((es) => [...es, ev]),
+      onResponse: (r) => { setResp(r); setScreen(routeFor(r)) },
+      onError: (message) => { setError(message); setScreen('error') },
+    })
+  }, [])
+
+  /** Re-run for a control toggle on Result — no progress screen, ~1 s warm. */
+  const requery = useCallback(async (p: QueryParams) => {
     abort.current?.abort()
     const ac = new AbortController()
     abort.current = ac
     setBusy(true)
     setError(null)
     try {
-      const resp = await runQuery(params, ac.signal)
-      if (!ac.signal.aborted) setScreen({ kind: 'result', resp, params })
+      const r = await runQuery(p, ac.signal)
+      if (ac.signal.aborted) return
+      setParams(p)
+      setResp(r)
+      setScreen(routeFor(r))
     } catch (e) {
       if (!ac.signal.aborted) setError(e instanceof Error ? e.message : String(e))
     } finally {
@@ -47,64 +81,61 @@ export default function App() {
     }
   }, [])
 
+  const toEntry = useCallback(() => {
+    stopStream.current?.()
+    abort.current?.abort()
+    setBusy(false)
+    setError(null)
+    setScreen('entry')
+    if (fixtureParam) window.history.replaceState(null, '', window.location.pathname)
+  }, [fixtureParam])
+
   const devBar = fixtureParam && (
     <div className="max-w-[920px] mx-auto px-6 pt-3 flex gap-x-3 gap-y-1 items-baseline flex-wrap text-meta">
       <span className="eyebrow text-ink-70">Dev — fixture</span>
       {fixtureNames.map((n) => (
         <a key={n} href={`?fixture=${n}`} className={`font-mono ${n === fixtureParam ? 'text-ink font-semibold no-underline' : ''}`}>{n}</a>
       ))}
-      {error && <span className="text-ink-70">— {error}</span>}
     </div>
   )
 
-  if (screen.kind === 'result') {
-    const p = screen.params
-    return (
-      <>
-        {devBar}
-        <Result
-          resp={screen.resp}
-          intent={busy ? pendingIntent.current ?? p.intent : p.intent}
-          jurisdiction={busy ? pendingJur.current ?? p.jurisdiction : p.jurisdiction}
-          busy={busy}
-          onIntent={(intent: Intent) => { pendingIntent.current = intent; pendingJur.current = p.jurisdiction; run({ ...p, intent }) }}
-          onJurisdiction={(jurisdiction: Jurisdiction) => { pendingJur.current = jurisdiction; pendingIntent.current = p.intent; run({ ...p, jurisdiction }) }}
-          onNewInquiry={() => { abort.current?.abort(); setBusy(false); setScreen({ kind: 'entry' }); window.history.replaceState(null, '', '/') }}
-        />
-        {error && <div className="max-w-[920px] mx-auto px-6 pb-8 text-body text-ink-70">Could not re-run the inquiry: {error}</div>}
-      </>
-    )
-  }
+  const body = (() => {
+    switch (screen) {
+      case 'progress':
+        return <Progress params={params} events={events} />
+      case 'result':
+        return resp && (
+          <>
+            <Result resp={resp} intent={params.intent} jurisdiction={params.jurisdiction} busy={busy}
+              onIntent={(intent) => requery({ ...params, intent })}
+              onJurisdiction={(jurisdiction) => requery({ ...params, jurisdiction })}
+              onNewInquiry={toEntry} />
+            {error && <div className="max-w-[920px] mx-auto px-6 pb-8 text-body text-ink-70">Could not re-run the inquiry: {error}</div>}
+          </>
+        )
+      case 'disambiguation':
+        return resp && (
+          <Disambiguation resp={resp} params={params}
+            onPick={(artist) => research({ ...params, artist })}
+            onComposition={(artist) => research({ ...params, artist, intent: 'rerecord' })}
+            onRefine={toEntry} />
+        )
+      case 'notfound':
+        return resp && <NotFound resp={resp} params={params} onRefine={toEntry} onRetry={() => research(params)} />
+      case 'boundary':
+        return resp?.boundary_note && <Boundary note={resp.boundary_note} params={params} onNew={toEntry} />
+      case 'error':
+        return <ErrorScreen message={error ?? 'Unknown failure.'} eventsSeen={events.length} params={params}
+          onRetry={() => research(params)} onNew={toEntry} />
+      default:
+        return <Entry busy={false} error={null} initial={params.title ? params : undefined} onSubmit={research} />
+    }
+  })()
 
-  // Temporary entry form until the Entry screen is built.
   return (
     <>
       {devBar}
-      <TempEntry busy={busy} error={error} onSubmit={run} />
+      {body}
     </>
-  )
-}
-
-const pendingIntent = { current: null as Intent | null }
-const pendingJur = { current: null as Jurisdiction | null }
-
-function TempEntry({ busy, error, onSubmit }: { busy: boolean; error: string | null; onSubmit: (p: QueryParams) => void }) {
-  const [title, setTitle] = useState('West End Blues')
-  const [artist, setArtist] = useState('Louis Armstrong')
-  return (
-    <div className="max-w-[920px] mx-auto px-6 py-14 flex flex-col gap-4">
-      <div className="eyebrow">Subject of inquiry (temporary form)</div>
-      <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" aria-label="Title"
-        className="bg-transparent border-0 border-b-[3px] border-ink py-2 text-headline font-bold outline-none focus:border-blue" />
-      <input value={artist} onChange={(e) => setArtist(e.target.value)} placeholder="Artist" aria-label="Artist"
-        className="bg-transparent border-0 border-b-[3px] border-ink py-2 text-title font-bold outline-none focus:border-blue" />
-      <div className="flex gap-4 items-baseline">
-        <button type="button" className="btn-primary" disabled={busy} onClick={() => onSubmit({ title, artist: artist || undefined, intent: 'film_tv', jurisdiction: 'US' })}>
-          {busy ? 'Researching…' : 'Begin research'}
-        </button>
-        {fixtureNames.length > 0 && <a href={`?fixture=${fixtureNames[0]}`} className="text-body">or open a fixture</a>}
-      </div>
-      {error && <div className="text-body text-ink-70">{error}</div>}
-    </div>
   )
 }
