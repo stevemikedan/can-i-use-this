@@ -58,8 +58,8 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
             Methodology<span className="text-blue-on-ink">.</span>
           </h1>
           <p className="m-0 mt-5 text-headline font-medium leading-[1.3] max-w-[42ch] text-pretty text-paper">
-            Every verdict is built from public records, carries its sources, and says out loud what could not
-            be determined.
+            This is a register of rights research: every verdict is built from public records, carries its
+            sources, and says out loud what could not be determined.
           </p>
         </div>
       </Band>
@@ -71,22 +71,22 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
             <P>
               A song is two separately-owned works: the <span className="font-semibold">composition</span>, owned
               by its writers and publishers, and each <span className="font-semibold">sound
-              recording</span> of it, owned by whoever owns that master. They age under different rules, so they
-              get different answers, and the verdict rolls up from the layers your use actually requires.
+              recording</span> of it, owned by whoever owns that master. Their copyrights run and expire under different rules, so
+              they get different answers, and the verdict rolls up from the layers your use actually requires.
             </P>
             <div className="border-l-2 border-ink-20 pl-4 flex flex-col gap-1">
               <Eyebrow tracking={12} className="text-ink-70">Worked example</Eyebrow>
               <div className="font-mono font-medium text-body">West End Blues — Louis Armstrong (1928)</div>
               <P muted>
                 The composition was published in 1928, so its US copyright expired on 1 January 2024. The song
-                is public domain. The famous OKeh recording of it is protected until 2029 under the CLASSICS
+                is public domain. The 1928 OKeh recording of it is protected until 2029 under the CLASSICS
                 Act. For a documentary the answer is therefore <span className="font-semibold text-violet">license
                 required</span>: the song is free, the master is not. Re-record it yourself and the master stops
                 mattering. The same search, a different verdict.
               </P>
             </div>
             <P muted>
-              The answer also varies by territory (US, UK, EU age works differently) and by purpose (a
+              The answer also varies by territory (the US, UK and EU set different terms) and by purpose (a
               distributed film and a re-recording need different layers), which is why both are controls on
               every record.
             </P>
