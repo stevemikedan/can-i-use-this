@@ -50,6 +50,11 @@ RECORDINGS = [
     rec("bm-marcels-1961", "Blue Moon", "The Marcels", "1961-01", BM_WORK),
     rec("bm-ella", "Blue Moon", "Ella Fitzgerald", "1961", BM_WORK, "1961"),
     rec("bm-bennett", "Blue Moon", "Tony Bennett", "1999", BM_WORK),
+    # "Later Take": studio original released 1999-06, undated; a 2001 live take
+    # carries the only dated performance relation. The selection guard must
+    # fall to the release-date path, not crown the live take the original.
+    rec("lt-studio", "Later Take", "The Guards", "1999-06", "w-latertake"),
+    rec("lt-live", "Later Take", "The Guards", "2001-11", "w-latertake", "2001-06-15"),
 ]
 
 WORKS = {
@@ -162,6 +167,9 @@ class FakeParallel:
 
 
 # --- the five acceptance cases --------------------------------------------------
+
+WORKS["w-latertake"] = {"id": "w-latertake", "title": "Later Take", "score": 100, "iswcs": [], "relations": []}
+
 
 CASES = {
     "blocked": {"raw_input": "West End Blues — Louis Armstrong", "jurisdiction": "US", "intent": "film_tv"},

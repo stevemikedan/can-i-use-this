@@ -227,6 +227,22 @@ def _select_recording(title: str, cands: list[dict], artist: Optional[str], em: 
     dated = sorted(k for k in sessions if k)
     undated = len(sessions.get(None, []))
 
+    # Guard: a dated relation only marks the ORIGINAL if nothing was released
+    # before it. MusicBrainz often dates a later take (a live version, a
+    # re-recording) while the studio original carries only a release date —
+    # Aliens Exist's 1999 album track is undated, a 2001 take is dated. If an
+    # artist-matched candidate was released before the earliest dated session,
+    # the session cannot be the original's: fall to the release-date path,
+    # which sends the true first release to Tier 3 research.
+    guard_note = None
+    if dated:
+        session_year = int(dated[0][:4])
+        min_release = min((int(r["date"][:4]) for r in mine if r["date"]), default=None)
+        if min_release is not None and min_release < session_year:
+            guard_note = (f"a dated {dated[0]} session exists but a release from {min_release} predates it — "
+                          f"the dated relation belongs to a later take, not the original")
+            dated = []
+
     if dated:
         # The earliest dated session is the original; everything later is a
         # live take, compilation or reissue. Ties break on release date, then
@@ -247,7 +263,7 @@ def _select_recording(title: str, cands: list[dict], artist: Optional[str], em: 
         year = int(pick["date"][:4]) if pick["date"] else None
         basis = RecordingDateBasis.FIRST_RELEASE_DATE if year else RecordingDateBasis.UNKNOWN
         rec_conf, resolution = Confidence.LOW, Confidence.LOW
-        excerpt = f"no dated session; earliest release on file {pick['date']}"
+        excerpt = guard_note or f"no dated session; earliest release on file {pick['date']}"
     source = Source(name="MusicBrainz", url=f"https://musicbrainz.org/recording/{pick['mbid']}",
                     method=ResearchMethod.DIRECT_API, retrieved_at=src_at, excerpt=excerpt[:200])
     return Selection(pick, pick["work"], year, basis, rec_conf, resolution, dated, undated, complete, works, source)

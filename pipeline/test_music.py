@@ -332,3 +332,21 @@ def test_derivative_signal_not_raised_for_ordinary_works(cache, transport, sleep
     resp, _ = run_music(AssetQuery(raw_input="West End Blues — Louis Armstrong", intent=Intent.FILM_TV,
                                    jurisdiction=Jurisdiction.US, asset_type_hint=AssetType.MUSIC))
     assert not any(u.question_id == "composition:derivative" for u in resp.unresolved)
+
+
+def test_dated_later_take_does_not_outrank_an_earlier_release(cache, transport, sleeps, fake_parallel):
+    """Only a 2001 live take is dated; the studio original was released 1999.
+    The guard falls to the release-date path instead of crowning the live take."""
+    from pipeline.mockworld import handler
+    from pipeline.music import run_music
+    from schemas import AssetQuery, AssetType, Intent, Jurisdiction, RecordingDateBasis
+    transport(handler)
+    resp, _ = run_music(AssetQuery(raw_input="Later Take — The Guards", intent=Intent.FILM_TV,
+                                   jurisdiction=Jurisdiction.US, asset_type_hint=AssetType.MUSIC))
+    rec = next(l for l in resp.entity.layers if l.layer_id == "sound_recording")
+    tf = rec.term_facts
+    assert tf.recording_date_basis is RecordingDateBasis.FIRST_RELEASE_DATE
+    assert tf.recording_first_published_year.value == 1999
+    assert "belongs to a later take" in tf.recording_first_published_year.sources[0].excerpt
+    # the release-date path keeps its honesty: question open, Tier 3 asked
+    assert any(u.question_id == "sound_recording:first_publication" for u in resp.unresolved)
