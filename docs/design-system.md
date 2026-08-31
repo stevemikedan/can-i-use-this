@@ -76,6 +76,7 @@ Six colors plus one control color for the band, and six derived tints. Nothing e
 | `rgba(250,250,244,0.25)` | `PAPER_25` | Chip borders on the band; the empty confidence tick on the band |
 | `rgba(34,68,170,0.18)` | `BLUE_18` | `::selection` only |
 | `rgba(34,68,170,0.05)` | `BLUE_05` | Hover wash on list rows that are links (examples, candidates) |
+| `rgba(22,35,58,0.04)` | `INK_04` | Ground behind the Entry input, so the field reads as typeable without becoming a bordered box (sanctioned 31 Aug) |
 
 Buttons on the band hover with `filter: brightness(1.12)` — no extra color.
 
@@ -232,7 +233,7 @@ Each component names the design file it comes from and the data it binds to.
 | `ShortcutBox` | `1px dashed INK_20`, radius 6, padding `20px 22px`; `NOT USING A SPECIFIC RECORDING?` + prose + `Research the composition only →` | sets `Intent.RERECORD` and re-runs |
 | `EscapeHatch` | `2px dashed INK_20` top; `None of these is it?` + `Refine the inquiry — add an artist, year, or label →` | back to Entry with the query kept |
 
-**Not in the design files** — build minimal, from `docs/design-reference.md` §3: Boundary (unsupported asset type), Not found, Error. Use the band with a 64/900 word, a 28 explanation, and a single `TextToggle`/link back; no new tokens.
+**Not in the design files** — build minimal, from `docs/design-reference.md` §3: Boundary (unsupported asset type), Not found (with "did you mean" rows from real index hits), Error, and About (`/about`: the layer model with the West End Blues example, the three tiers, confidence levels, known limits, the full disclaimer — reached by a quiet masthead link). Use the band with a 64/900 word, a 28 explanation, and links back; no new tokens.
 
 ---
 

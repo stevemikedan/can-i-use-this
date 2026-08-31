@@ -33,6 +33,8 @@
   --color-paper-25: rgb(250 250 244 / 0.25);
   --color-blue-18: rgb(34 68 170 / 0.18);
   --color-blue-05: rgb(34 68 170 / 0.05);
+  /* sanctioned 31 Aug: ground behind the Entry input so it reads as a field */
+  --color-ink-04: rgb(22 35 58 / 0.04);
 
   --radius-6: 6px;
 

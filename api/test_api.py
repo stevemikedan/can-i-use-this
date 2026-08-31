@@ -72,3 +72,11 @@ def test_bad_input_is_a_422(client):
     assert client.post("/api/query", json={"title": ""}).status_code == 422
     assert client.get("/api/query/stream", params={"title": "x", "jurisdiction": "MARS"}).status_code == 422
     assert client.post("/api/query", json={"title": "x", "jurisdiction": "other"}).status_code == 422
+
+
+def test_spa_fallback_serves_client_routes(client):
+    """/about is a client-side route: it must get index.html, not a 404; real files still serve as themselves."""
+    r = client.get("/about")
+    assert r.status_code == 200 and "<div id=\"root\"" in r.text
+    assert client.get("/").status_code == 200
+    assert client.get("/api/health").status_code == 200      # API routes win over the fallback

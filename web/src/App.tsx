@@ -6,6 +6,7 @@ import Entry from './screens/Entry'
 import Progress from './screens/Progress'
 import Result from './screens/Result'
 import Disambiguation from './screens/Disambiguation'
+import About from './screens/About'
 import { Boundary, ErrorScreen, NotFound } from './screens/Status'
 
 // Development fixtures: real RightsResponses captured from the pipeline
@@ -13,7 +14,7 @@ import { Boundary, ErrorScreen, NotFound } from './screens/Status'
 const FIXTURES = import.meta.glob<RightsResponse>('./dev/*.json', { import: 'default' })
 const fixtureNames = Object.keys(FIXTURES).map((p) => p.replace('./dev/', '').replace('.json', '')).sort()
 
-type Screen = 'entry' | 'progress' | 'result' | 'disambiguation' | 'notfound' | 'boundary' | 'error'
+type Screen = 'entry' | 'progress' | 'result' | 'disambiguation' | 'notfound' | 'boundary' | 'error' | 'about'
 
 const DEFAULT_PARAMS: QueryParams = { title: '', intent: 'film_tv', jurisdiction: 'US' }
 
@@ -28,7 +29,7 @@ function routeFor(resp: RightsResponse): Screen {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>('entry')
+  const [screen, setScreen] = useState<Screen>(window.location.pathname === '/about' ? 'about' : 'entry')
   const [params, setParams] = useState<QueryParams>(DEFAULT_PARAMS)
   const [resp, setResp] = useState<RightsResponse | null>(null)
   const [events, setEvents] = useState<PipelineEvent[]>([])
@@ -95,8 +96,13 @@ export default function App() {
     setBusy(false)
     setError(null)
     setScreen('entry')
-    if (fixtureParam) window.history.replaceState(null, '', window.location.pathname)
-  }, [fixtureParam])
+    window.history.replaceState(null, '', '/')
+  }, [])
+
+  const toAbout = useCallback(() => {
+    setScreen('about')
+    window.history.replaceState(null, '', '/about')
+  }, [])
 
   const devBar = fixtureParam && (
     <div className="max-w-[920px] mx-auto px-6 pt-3 flex gap-x-3 gap-y-1 items-baseline flex-wrap text-meta">
@@ -136,8 +142,10 @@ export default function App() {
       case 'error':
         return <ErrorScreen message={error ?? 'Unknown failure.'} eventsSeen={events.length} params={params}
           onRetry={() => research(params)} onNew={toEntry} />
+      case 'about':
+        return <About onNewInquiry={toEntry} />
       default:
-        return <Entry busy={false} error={null} initial={params.title ? params : undefined} onSubmit={research} />
+        return <Entry busy={false} error={null} initial={params.title ? params : undefined} onSubmit={research} onAbout={toAbout} />
     }
   })()
 

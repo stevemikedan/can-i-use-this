@@ -2,7 +2,7 @@
 // The examples are pre-warmed records: they hit the warm cache and return in
 // about a second, and the first one exposes the layer split — the idea the
 // product turns on.
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Intent, Jurisdiction, QueryParams } from '../types'
 import { Band, Controls, Doc, Eyebrow, SectionHead } from '../components/ui'
 
@@ -29,11 +29,13 @@ const EXAMPLES: { title: string; artist: string; meta: string; stamp: string; co
   },
 ]
 
-export default function Entry({ busy, error, initial, onSubmit }:
-  { busy: boolean; error: string | null; initial?: Partial<QueryParams>; onSubmit: (p: QueryParams) => void }) {
+export default function Entry({ busy, error, initial, onSubmit, onAbout }:
+  { busy: boolean; error: string | null; initial?: Partial<QueryParams>; onSubmit: (p: QueryParams) => void; onAbout: () => void }) {
   const [raw, setRaw] = useState(initial?.title ? `${initial.title}${initial.artist ? ` — ${initial.artist}` : ''}` : '')
   const [intent, setIntent] = useState<Intent>(initial?.intent ?? 'film_tv')
   const [jurisdiction, setJurisdiction] = useState<Jurisdiction>(initial?.jurisdiction ?? 'US')
+  const inputRef = useRef<HTMLInputElement>(null)
+  useEffect(() => { inputRef.current?.focus() }, [])
 
   const submit = (title: string, artist?: string) => {
     if (!title.trim()) return
@@ -50,7 +52,15 @@ export default function Entry({ busy, error, initial, onSubmit }:
   return (
     <>
       <Band label="Research record — New inquiry" padding="pt-7 pb-12"
-        context={<Eyebrow tracking={12} className="text-paper-72">Music — compositions & recordings</Eyebrow>}>
+        context={
+          <div className="flex gap-5 items-baseline flex-wrap">
+            <Eyebrow tracking={12} className="text-paper-72">Music — compositions & recordings</Eyebrow>
+            <button type="button" onClick={onAbout}
+              className="bg-transparent border-none p-0 cursor-pointer text-meta font-semibold tracking-[0.08em] uppercase text-blue-on-ink underline decoration-[1.5px] underline-offset-[3px] hover:text-paper">
+              How it works
+            </button>
+          </div>
+        }>
         <div className="flex flex-col gap-5 -mt-4">
           <h1 className="m-0 font-black text-verdict leading-none tracking-[-0.01em] uppercase max-[560px]:text-stat">
             Can I use this?<span className="text-blue-on-ink">_</span>
@@ -65,13 +75,18 @@ export default function Entry({ busy, error, initial, onSubmit }:
         <section className="mt-14">
           <Eyebrow className="mb-[14px]">Subject of inquiry</Eyebrow>
           <input
+            ref={inputRef}
+            autoFocus
             value={raw}
             onChange={(e) => setRaw(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') submitRaw() }}
-            placeholder="Title — artist, e.g. Mack the Knife — Bobby Darin"
+            placeholder="Type a song title to open an inquiry"
             aria-label="Subject of inquiry"
-            className="w-full box-border bg-transparent border-0 border-b-[3px] border-ink pt-[10px] pb-[18px] text-stat max-[560px]:text-headline font-bold text-ink outline-none focus:border-blue placeholder:font-medium placeholder:text-title"
+            className="w-full box-border bg-ink-04 rounded-t-6 border-0 border-b-[3px] border-ink px-3 pt-3 pb-4 text-stat max-[560px]:text-headline font-bold text-ink outline-none focus:border-blue placeholder:font-medium placeholder:text-title"
           />
+          <div className="mt-2 font-mono font-medium text-meta text-ink-70">
+            title — artist works best · “Aliens Exist — blink-182” · title alone lists who recorded it
+          </div>
           <div className="mt-8">
             <Controls intent={intent} jurisdiction={jurisdiction} onIntent={setIntent} onJurisdiction={setJurisdiction} />
           </div>

@@ -35,8 +35,7 @@ from typing import AsyncIterator, Optional
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from agent.reader import default_reader
@@ -169,11 +168,15 @@ async def _stream(q: AssetQuery) -> AsyncIterator[str]:
 
 
 # --- the frontend, once built ------------------------------------------------------
+# Not a flat mount: client-side routes (/about) must fall back to index.html,
+# while real files (assets, narrow.html) are served as themselves.
 
-if os.path.isdir(WEB_DIST):
-    app.mount("/", StaticFiles(directory=WEB_DIST, html=True), name="web")
-else:
-    @app.get("/")
-    async def root() -> JSONResponse:
-        return JSONResponse({"service": "can-i-use-this", "api": ["/api/health", "POST /api/query", "GET /api/query/stream"],
-                             "docs": "/docs"})
+@app.get("/{rest:path}", include_in_schema=False)
+async def spa(rest: str):
+    if os.path.isdir(WEB_DIST):
+        candidate = os.path.normpath(os.path.join(WEB_DIST, rest))
+        if rest and candidate.startswith(os.path.normpath(WEB_DIST)) and os.path.isfile(candidate):
+            return FileResponse(candidate)
+        return FileResponse(os.path.join(WEB_DIST, "index.html"))
+    return JSONResponse({"service": "can-i-use-this", "api": ["/api/health", "POST /api/query", "GET /api/query/stream"],
+                         "docs": "/docs"})
