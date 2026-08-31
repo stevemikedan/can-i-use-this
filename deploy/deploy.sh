@@ -96,6 +96,7 @@ step "5/6 Deploy — gcloud run deploy --source ."
 gcloud run deploy "$SERVICE" \
   --source . \
   --region "$REGION" \
+  --network default --subnet default --vpc-egress all-traffic \
   --service-account "$SA_EMAIL" \
   --set-secrets "PARALLEL_API_KEY=${SECRET}:latest" \
   --set-env-vars "CACHE_BACKEND=firestore,GOOGLE_CLOUD_PROJECT=${PROJECT},GOOGLE_CLOUD_LOCATION=${REGION},GOOGLE_GENAI_USE_VERTEXAI=1" \
