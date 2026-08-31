@@ -52,15 +52,7 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
   return (
     <>
       <Band label="Research record — New inquiry" padding="pt-7 pb-12"
-        context={
-          <div className="flex gap-5 items-baseline flex-wrap">
-            <Eyebrow tracking={12} className="text-paper-72">Music — compositions & recordings</Eyebrow>
-            <button type="button" onClick={onAbout}
-              className="bg-transparent border-none p-0 cursor-pointer text-meta font-semibold tracking-[0.08em] uppercase text-blue-on-ink underline decoration-[1.5px] underline-offset-[3px] hover:text-paper">
-              How it works
-            </button>
-          </div>
-        }>
+        context={<Eyebrow tracking={12} className="text-paper-72">Music — compositions & recordings</Eyebrow>}>
         <div className="flex flex-col gap-5 -mt-4">
           <h1 className="m-0 font-black text-verdict leading-none tracking-[-0.01em] uppercase max-[560px]:text-stat">
             Can I use this?<span className="text-blue-on-ink">_</span>
@@ -131,6 +123,7 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
             Music only: compositions and sound recordings, researched separately. Books, film, images, fonts and
             trademarks are recognized but not researched — the record says so honestly instead of guessing.
             Territories: US, UK, EU. This is research, not legal advice.
+            {' '}<a href="/about" onClick={(e) => { e.preventDefault(); onAbout() }}>How the register works, and its limits →</a>
           </p>
         </section>
       </Doc>

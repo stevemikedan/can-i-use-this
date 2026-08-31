@@ -120,6 +120,12 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               Other territories are not modelled.
             </P>
             <P>
+              <span className="font-semibold">Publisher and share data is thinner than the rest.</span> Ownership
+              splits, administrators and one-stop status live in the MLC&rsquo;s public database; API access is
+              pending, so the composition layer currently falls back to web research and the public repertory
+              links for holder information — which is why the clearance panel is leaner than the evidence trail.
+            </P>
+            <P>
               <span className="font-semibold">Coverage follows the sources.</span> A recording MusicBrainz has
               not dated, or a work Wikidata has not described, ends in an open question, not an answer. Music
               only: books, film, images, fonts and trademarks are recognized and declined honestly.

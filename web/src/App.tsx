@@ -10,6 +10,8 @@ import About from './screens/About'
 import Cues, { type CueRow } from './screens/Cues'
 import { Boundary, ErrorScreen, NotFound } from './screens/Status'
 import { paramsFromUrl, permalinkFor } from './lib/export'
+import { setNavHandler } from './lib/nav'
+import { Footer } from './components/ui'
 
 // Development fixtures: real RightsResponses captured from the pipeline
 // (web/src/dev/*.json). ?fixture=<name> renders one without running a query.
@@ -116,6 +118,14 @@ export default function App() {
     window.history.replaceState(null, '', '/cues')
   }, [])
 
+  useEffect(() => {
+    setNavHandler((t) => {
+      if (t === 'entry') toEntry()
+      else if (t === 'cues') toCues()
+      else toAbout()
+    })
+  }, [toEntry, toCues, toAbout])
+
   // A shared permalink (/?q=...) re-opens the record by re-running the query.
   useEffect(() => {
     if (fixtureParam) return
@@ -177,6 +187,7 @@ export default function App() {
     <>
       {devBar}
       {body}
+      <Footer />
     </>
   )
 }

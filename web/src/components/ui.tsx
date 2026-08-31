@@ -2,6 +2,7 @@
 import type { ReactNode } from 'react'
 import type { Confidence, Intent, Jurisdiction, Verdict } from '../types'
 import { INTENT_OPTIONS, JURISDICTIONS, TICKS, VERDICT_COLOR, VERDICT_UNDERLINE, VERDICT_WORD, confidenceLabel } from '../lib/format'
+import { nav } from '../lib/nav'
 
 export function Eyebrow({ children, className = '', tracking = 14 }: { children: ReactNode; className?: string; tracking?: 12 | 14 }) {
   return <div className={`${tracking === 12 ? 'eyebrow-12' : 'eyebrow'} ${className}`}>{children}</div>
@@ -89,7 +90,18 @@ export function Controls({ intent, jurisdiction, onIntent, onJurisdiction, onInk
   )
 }
 
-/** The INK band. Children supply the screen-specific content. */
+function MastLink({ to, children }: { to: 'cues' | 'about'; children: ReactNode }) {
+  return (
+    <a href={`/${to}`} onClick={(e) => { e.preventDefault(); nav(to) }}
+      className="no-print font-mono font-medium text-meta tracking-[0.08em] uppercase text-blue-on-ink underline decoration-[1.5px] underline-offset-[3px] hover:text-paper">
+      {children}
+    </a>
+  )
+}
+
+/** The INK band. Children supply the screen-specific content; the masthead
+    carries the register's two standing links on every screen — a document
+    header, not website chrome. */
 export function Band({ label, context, children, padding = 'pt-7 pb-12' }:
   { label: string; context?: ReactNode; children: ReactNode; padding?: string }) {
   return (
@@ -97,11 +109,38 @@ export function Band({ label, context, children, padding = 'pt-7 pb-12' }:
       <div className={`max-w-[920px] mx-auto px-4 max-[560px]:pt-6 max-[560px]:pb-9 sm:px-6 ${padding} flex flex-col gap-9`}>
         <div className="flex items-baseline justify-between gap-4 flex-wrap">
           <Eyebrow tracking={12}>{label}</Eyebrow>
-          {context}
+          <div className="flex gap-5 items-baseline flex-wrap">
+            {context}
+            <MastLink to="cues">Cue sheet</MastLink>
+            <MastLink to="about">About</MastLink>
+          </div>
         </div>
         {children}
       </div>
     </div>
+  )
+}
+
+/** Site footer: sources named, repo linked, the disclaimer everywhere. META with a top rule. */
+export function Footer() {
+  const src = (name: string, href: string) => (
+    <a key={name} href={href} target="_blank" rel="noopener" className="text-ink-70 hover:text-ink">{name}</a>
+  )
+  return (
+    <footer className="no-print max-w-[920px] mx-auto px-4 sm:px-6 pb-10">
+      <div className="border-t border-ink-20 pt-4 flex flex-col gap-2 text-meta font-medium leading-[1.7] text-ink-70">
+        <div className="flex gap-x-4 gap-y-1 items-baseline flex-wrap">
+          <span className="eyebrow-12 tracking-[0.1em]">Sources</span>
+          {src('MusicBrainz', 'https://musicbrainz.org/')}
+          {src('Wikidata', 'https://www.wikidata.org/')}
+          {src('The MLC', 'https://portal.themlc.com/')}
+          {src('US Copyright Office', 'https://www.copyright.gov/')}
+          <span className="eyebrow-12 tracking-[0.1em] ml-2">Code</span>
+          {src('github.com/stevemikedan/can-i-use-this', 'https://github.com/stevemikedan/can-i-use-this')}
+        </div>
+        <div className="max-w-[78ch]">This is research, not legal advice. Verify before relying on it for anything consequential.</div>
+      </div>
+    </footer>
   )
 }
 
