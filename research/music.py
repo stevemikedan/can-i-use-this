@@ -68,7 +68,8 @@ def _links(outcome: SearchOutcome, purpose: str, description: str, limit: int = 
     return links
 
 
-def search_renewal(title: str, writers: list[str], pub_year: int) -> tuple[SearchOutcome, list[HandoffLink]]:
+def search_renewal(title: str, writers: list[str], pub_year: int,
+                   announce=None) -> tuple[SearchOutcome, list[HandoffLink]]:
     y28 = pub_year + 27
     who = ", ".join(writers) if writers else "unknown writers"
     objective = (
@@ -93,13 +94,16 @@ def search_renewal(title: str, writers: list[str], pub_year: int) -> tuple[Searc
             f'scanned Catalog of Copyright Entries.'
         )
         queries[2] = f'"{title}" renewal registration RE copyright.gov'
+    if announce:
+        announce(queries)
     out = search(objective, queries)
     links = _links(out, "resolve",
                    f"Search hit for the {y28}-{y28 + 1} renewal of \"{title}\"")
     return out, links
 
 
-def search_recording_date(title: str, artist: str, year_on_file: Optional[str]) -> tuple[SearchOutcome, list[HandoffLink]]:
+def search_recording_date(title: str, artist: str, year_on_file: Optional[str],
+                          announce=None) -> tuple[SearchOutcome, list[HandoffLink]]:
     objective = (
         f'Find the original first release (publication) year of the sound recording '
         f'"{title}" performed by {artist}: original record label, catalog number, '
@@ -113,9 +117,37 @@ def search_recording_date(title: str, artist: str, year_on_file: Optional[str]) 
         f'"{title}" {artist} 78 rpm catalog number',
         f'DAHR "{title}" {artist}',
     ]
+    if announce:
+        announce(queries)
     out = search(objective, queries)
     links = _links(out, "resolve",
                    f"Search hit for the original release of \"{title}\" by {artist}")
+    return out, links
+
+
+def search_writers(title: str, year: Optional[int], candidates: list[str],
+                   announce=None) -> tuple[SearchOutcome, list[HandoffLink]]:
+    """
+    Parallel SEARCH for writer credits (primary request path). Runs when the
+    writer list could not be corroborated against Wikidata: ASCAP/BMI
+    repertories, Catalog of Copyright Entries registrations, sheet-music
+    credits. The reader may then corroborate individual candidates — never
+    conclude the list is complete.
+    """
+    who = "; ".join(candidates) if candidates else "unknown"
+    objective = (
+        f'Confirm the credited writers (composer and lyricist) of the musical composition '
+        f'"{title}"{f" ({year})" if year else ""}. Candidate writers from MusicBrainz: {who}. '
+        f'Prefer ASCAP or BMI repertory entries, Catalog of Copyright Entries registrations, '
+        f'and published sheet music credits that name the writers.'
+    )
+    queries = [f'"{title}" composer lyricist credits']
+    queries += [f'"{title}" {c}' for c in candidates[:2]]
+    queries.append(f'"{title}" sheet music' + (f' {year}' if year else ''))
+    if announce:
+        announce(queries)
+    out = search(objective, queries)
+    links = _links(out, "resolve", f'Search hit for the writer credits of "{title}"')
     return out, links
 
 

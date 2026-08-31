@@ -28,7 +28,7 @@ from typing import Optional, Protocol, runtime_checkable
 from research.parallel_client import SearchOutcome
 
 from .reader_schema import (
-    RecordingYearAnswer, RenewalAnswer, Unresolved,
+    RecordingYearAnswer, RenewalAnswer, Unresolved, WritersAnswer,
 )
 
 
@@ -45,6 +45,9 @@ class Reader(Protocol):
     def read_recording_year(self, *, title: str, artist: str, year_on_file: Optional[str],
                             evidence: SearchOutcome) -> RecordingYearAnswer: ...
 
+    def read_writers(self, *, title: str, year: Optional[int], candidates: list[str],
+                     evidence: SearchOutcome) -> WritersAnswer: ...
+
 
 class NullReader:
     """No reading step. Every question stays open — the credential-free baseline."""
@@ -58,6 +61,9 @@ class NullReader:
     def read_recording_year(self, **_) -> RecordingYearAnswer:
         return Unresolved(reason=self._WHY)
 
+    def read_writers(self, **_) -> WritersAnswer:
+        return Unresolved(reason=self._WHY)
+
 
 class FakeReader:
     """
@@ -69,9 +75,11 @@ class FakeReader:
     available = True
 
     def __init__(self, *, renewal: Optional[RenewalAnswer] = None,
-                 recording_year: Optional[RecordingYearAnswer] = None):
+                 recording_year: Optional[RecordingYearAnswer] = None,
+                 writers: Optional[WritersAnswer] = None):
         self._renewal = renewal or Unresolved(reason="fake: no renewal answer configured")
         self._recording_year = recording_year or Unresolved(reason="fake: no recording-year answer configured")
+        self._writers = writers or Unresolved(reason="fake: no writers answer configured")
         self.calls: list[tuple[str, dict]] = []
 
     def read_renewal(self, **kw) -> RenewalAnswer:
@@ -81,6 +89,10 @@ class FakeReader:
     def read_recording_year(self, **kw) -> RecordingYearAnswer:
         self.calls.append(("recording_year", kw))
         return self._recording_year
+
+    def read_writers(self, **kw) -> WritersAnswer:
+        self.calls.append(("writers", kw))
+        return self._writers
 
 
 def default_reader() -> Reader:

@@ -256,3 +256,56 @@ def test_not_found_unknown_title_suggests_nothing_invented(cache, transport, sle
                                    jurisdiction=Jurisdiction.US, asset_type_hint=AssetType.MUSIC))
     assert resp.unresolved[0].question_id == "resolve:not_found"
     assert resp.entity.alternate_candidates == []
+
+
+# --- Search-backed writer corroboration (31 Aug): add or abstain, never conclude complete ---
+
+def _writer_finding(*names):
+    from agent.reader_schema import Citation, WriterCorroboration, WritersFinding
+    def cite(n):
+        return Citation(url="https://www.ascap.com/repertory", source_name="ASCAP ACE repertory",
+                        source_class="primary_record", excerpt=f"{n} credited on this work",
+                        supports="repertory entry names the writer")
+    return WritersFinding(reasoning="repertory entries name the writers",
+                          writers=[WriterCorroboration(name=n, confidence="high", citations=[cite(n)]) for n in names])
+
+
+def test_writer_corroboration_lifts_the_uk_block(cache, transport, sleeps, fake_parallel):
+    """Every candidate corroborated: the union list stands, life+70 runs from Williams (d. 1965)."""
+    from agent.reader import FakeReader
+    from pipeline.mockworld import handler
+    from pipeline.music import run_music
+    from schemas import AssetQuery, AssetType, DeterminationStatus, Intent, Jurisdiction
+    transport(handler)
+    reader = FakeReader(writers=_writer_finding("King Oliver", "Clarence Williams"))
+    resp, em = run_music(AssetQuery(raw_input="West End Blues — Louis Armstrong", intent=Intent.FILM_TV,
+                                    jurisdiction=Jurisdiction.UK, asset_type_hint=AssetType.MUSIC), reader=reader)
+    uk = next(d for d in resp.all_determinations if d.layer_id == "composition" and d.jurisdiction == Jurisdiction.UK)
+    assert uk.status is DeterminationStatus.PROTECTED and uk.expiry_year == 2036   # 1965 + 71
+    assert not any(u.question_id == "composition:writers" for u in resp.unresolved)
+    comp = next(l for l in resp.entity.layers if l.layer_id == "composition")
+    assert comp.term_facts.writer_list_corroborated is True
+    assert comp.term_facts.author_death_year.value == 1965
+    names = {h.name.value for h in comp.holders}
+    assert names == {"King Oliver", "Clarence Williams"}
+    # the mandated integration, legible: one ledger line per search query, then the hit count
+    q_lines = [e for e in em.events if e.message.startswith("Parallel Search — writer credits") and e.detail]
+    assert len(q_lines) >= 3 and any("West End Blues" in e.detail for e in q_lines)
+    assert any("source passages returned" in e.message for e in em.events)
+
+
+def test_partial_corroboration_never_lifts_the_block(cache, transport, sleeps, fake_parallel):
+    """Only Oliver corroborated: Williams stays a candidate, the block and the question stay."""
+    from agent.reader import FakeReader
+    from pipeline.mockworld import handler
+    from pipeline.music import run_music
+    from schemas import AssetQuery, AssetType, DeterminationStatus, Intent, Jurisdiction
+    transport(handler)
+    reader = FakeReader(writers=_writer_finding("King Oliver"))
+    resp, _ = run_music(AssetQuery(raw_input="West End Blues — Louis Armstrong", intent=Intent.FILM_TV,
+                                   jurisdiction=Jurisdiction.UK, asset_type_hint=AssetType.MUSIC), reader=reader)
+    uk = next(d for d in resp.all_determinations if d.layer_id == "composition" and d.jurisdiction == Jurisdiction.UK)
+    assert uk.status is DeterminationStatus.UNDETERMINED
+    qn = next(u for u in resp.unresolved if u.question_id == "composition:writers")
+    assert "Clarence Williams" in qn.why_it_matters
+    assert qn.resolution_links                                  # the search hits ride the question

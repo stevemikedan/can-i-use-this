@@ -113,7 +113,7 @@ export default function Progress({ params, events }: { params: QueryParams; even
                     <div className="flex-[1_1_300px] min-w-[200px]">
                       <div className={`text-body font-semibold ${kind === 'fail' ? 'line-through text-ink-70' : kind === 'stamp' ? 'text-green' : ''}`}>{ev.message}</div>
                       {(ev.detail || ev.error_message) && (
-                        <div className={`text-body leading-[1.5] mt-[2px] ${kind === 'fail' ? 'text-red' : 'text-ink-70'}`}>
+                        <div className={`leading-[1.5] mt-[2px] ${ev.message.startsWith('Parallel Search') && ev.detail ? 'font-mono font-medium text-meta' : 'text-body'} ${kind === 'fail' ? 'text-red' : 'text-ink-70'}`}>
                           {ev.detail}{ev.error_message ? ` ${ev.error_message}` : ''}
                         </div>
                       )}

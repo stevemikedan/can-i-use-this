@@ -100,6 +100,29 @@ class RecordingYearFinding(BaseModel):
     citations: list[Citation] = Field(min_length=1)
 
 
+class WriterCorroboration(BaseModel):
+    """One writer, corroborated by cited evidence. Never a statement about
+    anyone else, and never a statement that the list is complete."""
+
+    name: str = Field(min_length=1)
+    confidence: FoundConfidence
+    citations: list[Citation] = Field(min_length=1)
+
+
+class WritersFinding(BaseModel):
+    """
+    Writers corroborated from evidence. Deliberately has NO completeness
+    field: adding a corroborated writer lengthens a life+70 term (errs toward
+    protected, safe); asserting a list is complete could shorten it (asserts
+    an absence, dangerous). Completeness is unrepresentable here.
+    """
+
+    status: Literal["found"] = "found"
+    kind: Literal["writers"] = "writers"
+    writers: list[WriterCorroboration] = Field(min_length=1)
+    reasoning: str = Field(min_length=1)
+
+
 class Unresolved(BaseModel):
     """
     The evidence did not settle the question. Carries no value and no
@@ -112,6 +135,7 @@ class Unresolved(BaseModel):
 
 
 RenewalAnswer = Annotated[Union[RenewalFinding, Unresolved], Field(discriminator="status")]
+WritersAnswer = Annotated[Union[WritersFinding, Unresolved], Field(discriminator="status")]
 RecordingYearAnswer = Annotated[Union[RecordingYearFinding, Unresolved], Field(discriminator="status")]
 
 

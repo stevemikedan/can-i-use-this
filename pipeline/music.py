@@ -26,7 +26,7 @@ from typing import Any, Callable, Optional
 
 from agent.reader_schema import recording_year_to_fact, renewal_to_fact
 from research import parallel_client as pc
-from research.music import renewal_numbers, renewal_record_system, search_recording_date, search_renewal
+from research.music import renewal_numbers, renewal_record_system, search_recording_date, search_renewal, search_writers
 from rules import CURRENT_YEAR
 from schemas import (
     AssetQuery, AssetType, Candidate, Confidence, HandoffLink, Identifier, LinkTier,
@@ -246,6 +246,92 @@ def _select_recording(title: str, cands: list[dict], artist: Optional[str], em: 
     return Selection(pick, pick["work"], year, basis, rec_conf, resolution, dated, undated, complete, works, source)
 
 
+def _announce_search(em: Emitter, label: str):
+    """Each Parallel Search query becomes its own ledger line, emitted before
+    the search runs — the mandated integration, legible in the demo."""
+    def announce(queries: list[str]) -> None:
+        for q in queries:
+            em.emit(S.RESEARCH, "progress", f"Parallel Search — {label}", detail=q,
+                    partial={"search_query": q})
+    return announce
+
+
+def _search_result_line(em: Emitter, label: str, out) -> None:
+    em.consulted(len(out.hits))
+    if out.ok:
+        em.emit(S.RESEARCH, "progress",
+                f"Parallel Search — {label}: {len(out.hits)} source passages returned",
+                partial={"hits": len(out.hits), "search_id": out.search_id})
+
+
+def _cite_sources(citations, retrieved_at) -> list[Source]:
+    return [Source(name=c.source_name, url=c.url, method=ResearchMethod.PARALLEL_SEARCH,
+                   retrieved_at=retrieved_at, excerpt=c.excerpt[:200],
+                   authoritative=c.source_class == "primary_record") for c in citations]
+
+
+def corroborate_writers(cf: CompositionFacts, em: Emitter, reader, title: str) -> None:
+    """
+    Wikidata could not cross-check the writer list — but writer credits are a
+    researchable question: ASCAP/BMI repertories, Catalog of Copyright Entries
+    registrations, sheet-music credits. Parallel Search gathers the evidence
+    (primary request path); the reader corroborates INDIVIDUAL candidates.
+
+    The asymmetry, again: a corroborated addition lengthens a life+70 term —
+    errs toward protected, safe. A completeness claim could shorten it, so
+    completeness is unrepresentable in the answer schema, no candidate is
+    ever dropped, and the block lifts only when EVERY candidate — each
+    credited writer and each sibling-work extra — is corroborated.
+    """
+    candidates = [w.name for w in cf.writers] + [s.name for s in cf.sibling_extra]
+    if not candidates:
+        return
+    em.emit(S.RESEARCH, "progress",
+            "Writer list uncorroborated — searching repertories and credits (Parallel Search)")
+    out, links = search_writers(title, cf.year, candidates, announce=_announce_search(em, "writer credits"))
+    _search_result_line(em, "writer credits", out)
+    cf.writer_links = links
+    if not out.ok:
+        em.emit(S.RESEARCH, "progress", "Parallel Search unavailable — writer list stays uncorroborated",
+                degraded=True, error_message=out.error)
+    answer = reader.read_writers(title=title, year=cf.year, candidates=candidates, evidence=out)
+    if answer.status != "found":
+        return
+    retrieved = out.retrieved_at or datetime.now(timezone.utc)
+    conf_map = {"high": Confidence.HIGH, "medium": Confidence.MEDIUM, "low": Confidence.LOW}
+    by_fold = {mb._match_norm(w.name): w for w in answer.writers}
+    confs: list[Confidence] = []
+    every_candidate = True
+    for w in cf.writers:
+        hit = by_fold.get(mb._match_norm(w.name))
+        if hit is None:
+            every_candidate = False
+            continue
+        w.sources.extend(_cite_sources(hit.citations, retrieved))
+        w.src += "+search"
+        confs.append(conf_map[hit.confidence])
+    still_extra: list[Writer] = []
+    for s in cf.sibling_extra:
+        hit = by_fold.get(mb._match_norm(s.name))
+        if hit is None:
+            every_candidate = False
+            still_extra.append(s)
+            continue
+        s.sources.extend(_cite_sources(hit.citations, retrieved))
+        s.src += "+search"
+        confs.append(conf_map[hit.confidence])
+        cf.writers.append(s)
+        cf.notes.append(f"{s.name} corroborated as co-writer by searched evidence")
+        em.emit(S.RESEARCH, "progress",
+                f"Writer corroborated from evidence: {s.name} ({hit.confidence} confidence)")
+    cf.sibling_extra = still_extra
+    if every_candidate:
+        cf.corroborated = True
+        cf.writer_conf = min(confs, key=_rank) if confs else Confidence.MEDIUM
+        em.emit(S.RESEARCH, "progress",
+                f"Writer list corroborated from evidence — every candidate confirmed ({len(cf.writers)} writers)")
+
+
 # --- research: composition ----------------------------------------------------
 
 @dataclass
@@ -262,6 +348,7 @@ class CompositionFacts:
     title: str
     notes: list[str]
     sibling_extra: list[Writer] = field(default_factory=list)
+    writer_links: list[HandoffLink] = field(default_factory=list)
 
 
 def _writer_qid(wr: Writer, em: Emitter, notes: list[str]) -> Optional[str]:
@@ -670,6 +757,8 @@ def stage_research_composition(run: MusicRun) -> None:
     """Tier 2 facts for the composition; the renewal window goes to Parallel Search and the reader."""
     sel, em, composition, title, reader = run.sel, run.em, run.composition, run.title, run.reader
     cf = _research_composition(sel, em)
+    if not cf.corroborated:
+        corroborate_writers(cf, em, run.reader, cf.title or title)
     run.cf = cf
     comp_ids = composition.identifiers
     for iswc in cf.iswcs:
@@ -736,6 +825,7 @@ def stage_research_composition(run: MusicRun) -> None:
             question=f'Who are all the credited writers of "{cf.title or title}"?',
             why_it_matters=why, if_yes=if_yes, if_no=if_no,
             affects_layer_ids=[COMPOSITION],
+            resolution_links=cf.writer_links,
             search_terms=[f'"{cf.title or title}" composer lyricist', f'"{cf.title or title}" ISWC']
                          + [f'"{cf.title or title}" {s.name}' for s in cf.sibling_extra],
             estimated_effort="minutes",
@@ -749,8 +839,9 @@ def stage_research_composition(run: MusicRun) -> None:
     if cf.year and cliff <= cf.year <= 1963:
         em.emit(S.RESEARCH, "progress",
                 f"Published {cf.year}: renewal in year 28 decides the US term — searching renewal records (Parallel Search)")
-        out, links = search_renewal(cf.title or title, writer_names, cf.year)
-        em.consulted(len(out.hits))
+        out, links = search_renewal(cf.title or title, writer_names, cf.year,
+                                    announce=_announce_search(em, "renewal records"))
+        _search_result_line(em, "renewal records", out)
         if not out.ok:
             em.emit(S.RESEARCH, "progress", "Parallel Search unavailable — renewal left unresolved",
                     degraded=True, error_message=out.error)
@@ -797,8 +888,9 @@ def stage_research_recording(run: MusicRun) -> None:
             reasoning=why + ("; " + "; ".join(sel_notes) if sel_notes else ""))
     if sel.basis is not RecordingDateBasis.DATED_PERFORMANCE:
         em.emit(S.RESEARCH, "progress", "No dated session on file — searching for the original release (Parallel Search)")
-        out, links = search_recording_date(title, sel.pick["artist"], sel.pick["date"])
-        em.consulted(len(out.hits))
+        out, links = search_recording_date(title, sel.pick["artist"], sel.pick["date"],
+                                           announce=_announce_search(em, "original release"))
+        _search_result_line(em, "original release", out)
         if not out.ok:
             em.emit(S.RESEARCH, "progress", "Parallel Search unavailable — release year left unresolved",
                     degraded=True, error_message=out.error)

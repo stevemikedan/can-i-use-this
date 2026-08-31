@@ -148,3 +148,37 @@ def test_found_year_with_invalid_url_is_discarded_on_conversion():
                               reasoning="Colpix 186", citations=[{**cite(), "url": "not-a-url"}])
     with pytest.raises(pydantic.ValidationError):
         flat.to_answer()      # canonical Citation validates the URL — no fact without a real source
+
+
+# --- the writers answer: corroborate-or-omit, completeness unrepresentable ---
+
+def test_flat_writers_requires_citation_and_caps_confidence():
+    from agent.gemini_reader import _FlatWriters
+    ok = _FlatWriters(status="found", reasoning="repertory", writers=[
+        {"name": "King Oliver", "confidence": "high", "citations": [cite("rightsholder_notice", **NOTICE)]}])
+    assert ok.writers[0].confidence == "medium"                 # capped by source class
+    with pytest.raises(pydantic.ValidationError):
+        _FlatWriters(status="found", reasoning="r", writers=[{"name": "X", "confidence": "high", "citations": []}])
+    with pytest.raises(pydantic.ValidationError):
+        _FlatWriters(status="found", reasoning="r", writers=[])
+    assert "complete" not in _FlatWriters.model_fields          # the assertion of absence cannot be made
+
+
+def test_read_writers_drops_names_outside_the_candidate_list(monkeypatch):
+    import agent.gemini_reader as gr
+    from sources.cache import MemoryCache, set_default
+    set_default(MemoryCache())
+    raw = ('{"status": "found", "reasoning": "r", "writers": ['
+           '{"name": "King Oliver", "confidence": "high", "citations": [{"url": "https://a.org", '
+           '"source_name": "ASCAP ACE repertory", "source_class": "primary_record", "excerpt": "e", "supports": "s"}]},'
+           '{"name": "Invented Person", "confidence": "high", "citations": [{"url": "https://a.org", '
+           '"source_name": "ASCAP ACE repertory", "source_class": "primary_record", "excerpt": "e", "supports": "s"}]}]}')
+    monkeypatch.setattr(gr, "_run_agent_sync", lambda agent, prompt: raw)
+    try:
+        r = gr.GeminiReader(use_search_tool=False)
+        a = r.read_writers(title="West End Blues", year=1928, candidates=["King Oliver"], evidence=None)
+        assert a.status == "found" and [w.name for w in a.writers] == ["King Oliver"]
+        a2 = r.read_writers(title="Other", year=1900, candidates=["Nobody Here"], evidence=None)
+        assert a2.status == "unresolved"                        # everything dropped -> honest unresolved
+    finally:
+        set_default(None)

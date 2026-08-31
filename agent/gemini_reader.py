@@ -41,7 +41,7 @@ from rules import CURRENT_YEAR
 
 from .reader_schema import (
     CONFIDENCE_CEILING, Citation, RecordingYearAnswer, RecordingYearFinding, RenewalAnswer,
-    RenewalFinding, Unresolved, cap_confidence,
+    RenewalFinding, Unresolved, WriterCorroboration, WritersAnswer, WritersFinding, cap_confidence,
 )
 from .tools import parallel_search
 
@@ -191,6 +191,63 @@ def _to_citation(c: _FlatCitation) -> Citation:
                     excerpt=c.excerpt, supports=c.supports)
 
 
+def _fold_name(s: str) -> str:
+    import unicodedata
+    return "".join(c for c in unicodedata.normalize("NFKD", s or "").casefold() if c.isalnum())
+
+
+class _FlatWriter(BaseModel):
+    name: str = Field(description="The writer's name, exactly as given in the candidate list.")
+    confidence: Optional[str] = Field(None, description="high, medium, or low.")
+    citations: list[_FlatCitation] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _rule4(self):
+        if not self.citations:
+            raise ValueError("a corroborated writer requires at least one citation")
+        if self.confidence not in ("high", "medium", "low"):
+            raise ValueError("a corroborated writer requires confidence high/medium/low")
+        self.confidence = _capped(self.confidence, self.citations, "writer")
+        return self
+
+
+class _FlatWriters(BaseModel):
+    """Corroborate individual candidates. There is deliberately no field for
+    'the list is complete' — that assertion is unrepresentable (asymmetry:
+    an added writer errs toward protected; a completeness claim can shorten
+    a term)."""
+
+    status: str = Field(description="'found' if at least one candidate is corroborated, else 'unresolved'.")
+    writers: list[_FlatWriter] = Field(default_factory=list,
+                                       description="Only candidates the evidence corroborates. Omit the rest.")
+    reasoning: Optional[str] = Field(None)
+    reason: Optional[str] = Field(None)
+
+    @model_validator(mode="after")
+    def _rule4(self):
+        if self.status == "found":
+            if not self.writers:
+                raise ValueError("a found answer requires at least one corroborated writer")
+            if not (self.reasoning and self.reasoning.strip()):
+                # The substance lives in the per-writer citations; the prose
+                # field must not be able to torpedo a valid, cited answer.
+                self.reasoning = "Corroborated from the cited passages."
+        elif self.status == "unresolved":
+            if not (self.reason and self.reason.strip()):
+                self.reason = "The searched evidence did not corroborate any of the candidate writers."
+        else:
+            raise ValueError("status must be 'found' or 'unresolved'")
+        return self
+
+    def to_answer(self) -> WritersAnswer:
+        if self.status == "unresolved":
+            return Unresolved(reason=self.reason)
+        return WritersFinding(reasoning=self.reasoning, writers=[
+            WriterCorroboration(name=w.name, confidence=w.confidence,
+                                citations=[_to_citation(c) for c in w.citations])
+            for w in self.writers])
+
+
 COMMON_RULES = """\
 You establish a single fact from evidence. You do not compute copyright terms.
 
@@ -258,6 +315,22 @@ if a passage states the original release; a later reissue date is not it.
 """
 
 
+WRITERS_INSTRUCTION = COMMON_RULES + """
+Question: which of the CANDIDATE writers can you corroborate as credited
+writers (composer / lyricist) of this musical work?
+- Corroborate only names from the candidate list, and only when a passage
+  credits that person on THIS work. Omit any candidate you cannot
+  corroborate — omission is the honest answer, never a negative claim.
+- NEVER conclude that the writer list is complete. Absence of a name from
+  the evidence is not evidence of absence.
+- Source classes here: an ASCAP/BMI/SESAC repertory entry, an MLC entry, or
+  a Catalog of Copyright Entries registration naming the writers is a
+  primary_record; a published sheet-music or songbook credit is a
+  rightsholder_notice; discographies, encyclopedias and articles are
+  secondary.
+"""
+
+
 def _evidence_block(evidence: SearchOutcome) -> str:
     if not evidence or not evidence.hits:
         return "(no evidence was pre-fetched; use parallel_search)"
@@ -307,6 +380,26 @@ class GeminiReader:
         )
         out = self._read(prompt, RECORDING_YEAR_INSTRUCTION, _FlatRecordingYear, "recording_year")
         return out or Unresolved(reason="The reader produced no schema-valid finding.")
+
+    def read_writers(self, *, title, year, candidates, evidence) -> WritersAnswer:
+        prompt = (
+            f'WORK: "{title}"' + (f' ({year})' if year else '') + chr(10)
+            + f'CANDIDATE WRITERS: {"; ".join(candidates)}' + chr(10) + chr(10)
+            + f"EVIDENCE:{chr(10)}{_evidence_block(evidence)}"
+        )
+        out = self._read(prompt, WRITERS_INSTRUCTION, _FlatWriters, "writers")
+        if out is None:
+            return Unresolved(reason="The reader produced no schema-valid finding.")
+        if out.status == "found":
+            allowed = {_fold_name(c) for c in candidates}
+            kept = [w for w in out.writers if _fold_name(w.name) in allowed]
+            dropped = len(out.writers) - len(kept)
+            if dropped:
+                log.warning("read_writers: dropped %d name(s) not in the candidate list", dropped)
+            if not kept:
+                return Unresolved(reason="No candidate writer was corroborated by the evidence.")
+            out = WritersFinding(reasoning=out.reasoning, writers=kept)
+        return out
 
     # --- one agent run --------------------------------------------------------
 

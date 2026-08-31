@@ -535,7 +535,26 @@
       "if_yes": "With Clarence Williams as co-writer the UK/EU term runs to 1 January 2036.",
       "question": "Who are all the credited writers of \"West End Blues\"?",
       "question_id": "composition:writers",
-      "resolution_links": [],
+      "resolution_links": [
+        {
+          "description": "Search hit for the writer credits of \"West End Blues\"",
+          "navigation_hint": null,
+          "paste_string": null,
+          "purpose": "resolve",
+          "source_name": "CCE 1962 renewals",
+          "tier": "deep_link",
+          "url": "https://archive.org/details/cce-1962"
+        },
+        {
+          "description": "Search hit for the writer credits of \"West End Blues\"",
+          "navigation_hint": null,
+          "paste_string": null,
+          "purpose": "resolve",
+          "source_name": "DAHR",
+          "tier": "deep_link",
+          "url": "https://adp.library.ucsb.edu/x"
+        }
+      ],
       "search_terms": [
         "\"West End Blues\" composer lyricist",
         "\"West End Blues\" ISWC",
