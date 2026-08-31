@@ -137,6 +137,7 @@ export function Footer() {
           {src('US Copyright Office', 'https://www.copyright.gov/')}
           <span className="eyebrow-12 tracking-[0.1em] ml-2">Code</span>
           {src('github.com/stevemikedan/can-i-use-this', 'https://github.com/stevemikedan/can-i-use-this')}
+          {src("How it's built", 'https://github.com/stevemikedan/can-i-use-this#readme')}
         </div>
         <div className="max-w-[78ch]">Research, not legal advice. Where the public record is wrong, this is wrong.</div>
       </div>

@@ -1,130 +1,169 @@
 # Can I Use This?
 
-A rights-determination agent for documentary and independent film production. Paste a music cue, say what you're making, and get a cited verdict: whether you can use it, who owns it, roughly what it would cost, and an honest account of what could not be determined.
+A rights-determination agent for documentary and independent film production. Paste a music cue, say what you're making, and get a cited verdict: whether you can use it, who owns it, roughly what it would cost, and an honest account of what could not be determined. Built for the person clearing music for a cut, not for a lawyer — though the record it produces is what you'd hand one.
 
-Built for the Agentic Cinema hackathon, Parallel track.
+**Live:** https://can-i-use-this-ztkzpmtyqq-uc.a.run.app
 
-> This is research, not legal advice. Verify before relying on it for anything consequential.
+Built for the Agentic Cinema hackathon on Devpost, Parallel track.
+
+> Research, not legal advice. Where the public record is wrong, this is wrong. Have a professional confirm before you rely on it.
 
 ## The one idea
 
 One thing you search for is usually several separately-owned works with different answers.
 
 ```
-"West End Blues" — Louis Armstrong
-  ├── composition      King Oliver · published 1928           → public domain since 2024
-  └── sound recording  Hot Five session, 1928-06-28            → protected until 2029 (CLASSICS Act)
-                                                    roll-up  → LICENSE REQUIRED
+"West End Blues" — Louis Armstrong (1928)
+
+              US                                UK / EU
+  composition       public domain since 2024      protected until 2036
+  sound recording   protected until 2029          public domain since 1979
+                    ─────────────────────         ─────────────────────
+  roll-up           LICENSE REQUIRED              LICENSE REQUIRED
 ```
 
-The song is free; the famous recording of it is not — so the answer for a film is *no, not without a master use license*. The reverse happens too: a 1924 recording can be public domain while the song it captures is still protected. Most tools flatten this into one answer and get it wrong. Handling it correctly is the entire product.
+Same song, and both jurisdictions say no — but blocked on *different layers*. In the US the composition is free and the master is not; in the UK and EU the master expired decades ago and the composition runs until 2036, because life+70 follows the last surviving co-writer (Clarence Williams, d. 1965). Most tools flatten this into one answer and get it wrong. Handling it correctly is the entire product.
 
-The verdict is also three-dimensional — `f(layer, jurisdiction, intent)`. The same song gets different answers in the US and the EU, and for a film versus a re-recording (where the original master stops mattering).
+The verdict is three-dimensional — `f(layer, jurisdiction, intent)`. A re-recording needs only the composition, so the same search gives a different answer when the master stops mattering.
 
 ## Architecture
 
+```mermaid
+flowchart TD
+  Q["query · title, artist, intent, jurisdiction"] --> CL[classify]
+  CL --> ID["identify — MusicBrainz"]
+  ID -- "ambiguous title: stop, return candidates" --> DA[disambiguation]
+  ID --> DE["decompose — composition + sound recording, before any research"]
+  DE --> RC["research composition"]
+  DE --> RR["research recording"]
+  subgraph READ ["sources we read — cheapest tier first"]
+    T1["Tier 1 · license URIs, static table"]
+    T2["Tier 2 · MusicBrainz, Wikidata — cached, throttled, fail-soft"]
+    T3["Tier 3 · Parallel Search → Gemini reader: a cited fact, or abstain"]
+  end
+  RC -.-> READ
+  RR -.-> READ
+  RC --> RU["rules engine — deterministic terms, hand-written Python"]
+  RR --> RU
+  RU --> AS["assemble — conservative roll-up, most restrictive layer wins"]
+  AS --> OUT["verdict per layer per jurisdiction · cited evidence · open questions"]
+  OUT -- "handoff links, search prefilled" --> DEST["destinations we link to · the MLC, US Copyright Office, ASCAP/BMI"]
+  DEST -- "you bring the answer back, it re-runs" --> Q
 ```
-classify → identify → decompose → research → rules → compare → assemble
-```
 
-*Architecture diagram: to be added before submission.*
+The stages run as a **Google ADK agent graph** (`agent/workflow.py`) on Vertex AI — sequential agents wrapping plain-Python stage functions, with the two research stages fanned out in parallel. The graph reproduces the pipeline's frozen acceptance fixtures exactly; the pipeline stays canonical and testable without an agent runtime.
 
-**Identify.** MusicBrainz recording search. A title with no artist and several artists in the results **stops for disambiguation** and returns candidates — researching an ambiguous entity produces confidently wrong output, the worst failure mode this product has.
+**Identify stops on ambiguity.** A title with no artist and many artists in the results returns candidates instead of researching — researching an ambiguous entity produces confidently wrong output, the worst failure mode this product has.
 
-**Select the recording.** One composition is often several MusicBrainz work entities (arrangements, "original 1924 version", translations). A single work search finds them all; every recording linked to each is enumerated and the artist's earliest **dated session** is chosen. MusicBrainz's `first-release-date` is the earliest release *on file* — frequently a CD reissue decades after the session — and is never allowed to drive a term.
+**Recording selection ignores `first-release-date`.** One composition is often several MusicBrainz work entities; a single work search enumerates every linked recording and picks the artist's earliest *dated session*. MusicBrainz's first-release-date is the earliest release on file — frequently a CD reissue decades after the session — and is never allowed to drive a term.
 
-**Research, cheapest tier first.**
+## Sources we read, destinations we link to
 
-| Tier | What | Sources |
+The distinction is the architecture. If a fact on a record ever cited one of the destinations as read, that would be a bug.
+
+**Sources we read** — queried at runtime, cheapest tier first; every fact on a record cites one of these:
+
+| Tier | Source | What we take |
 |---|---|---|
-| 1 | Static parsing, no call, no model | RightsStatements.org and Creative Commons URIs |
-| 2 | Direct APIs, cached persistently, throttled, retried with backoff, every call fails soft | MusicBrainz (recordings, works, dated sessions, ISWCs, writer credits) · Wikidata (publication year, composer/lyricist cross-check, death years) · MLC (publishers, administrators, shares) · Open Library, HathiTrust (text) |
-| 3 | Parallel | **Search** on the primary request path for US renewal records (works published 1931–1963) and for the original release of recordings that only have a reissue date · **Task** for structured, cited multi-field research |
+| 1 | RightsStatements.org / Creative Commons URIs | A license mark settles a layer outright. Static table, no call, no model. |
+| 2 | MusicBrainz | Recordings, works, writer credits, dated performances. Cached persistently, throttled, fails soft into Tier 3. |
+| 2 | Wikidata | Publication dates, writer death years, writer-list corroboration. |
+| 3 | Parallel **Search**, read by Gemini | Web evidence for what no API holds: renewal records, original release dates, writer corroboration. On the primary request path — every query it runs is entered in the on-screen ledger. |
 
-**Rules.** A hand-written, unit-tested rules engine (`rules/`) computes every term: the MMA/CLASSICS schedule for US sound recordings, the 95-year US published-work term with its renewal window, life+70 for UK/EU compositions, and 70-years-from-publication for UK/EU recordings. Every determination records which rule fired and why. No model ever computes a copyright term.
+**Destinations we link to** — never queried, because the answers live there and there is no API access. Records link to them with the search already filled in:
 
-**Assemble.** A verdict per layer per jurisdiction; a conservative roll-up over only the layers your intent actually requires, where *unknown* is more restrictive than *protected*; unresolved questions with exact search terms and links to the records that would settle them; and handoff links — deep links, pre-filled searches, or honest "search here, paste this" instructions — to verify, resolve, or license.
+- **The MLC** — publishers, administrators, ownership splits, unclaimed shares. API access requested and pending; until then every record links to the MLC's public search, and the Clearance section shows the path to the parties rather than computed splits.
+- **US Copyright Office** — renewal records. Filings from 1978 on sit in an online catalog closed to web search; earlier ones are scanned catalog pages. Open questions hand over the exact search terms and name the catalog that holds the record.
+- **ASCAP / BMI repertories** — writer and publisher credits, for finding who to license from.
 
-Every asserted value is a `ResearchedFact` carrying its sources and a confidence. Anything that cannot be sourced becomes an `UnresolvedQuestion` rather than a guess. The canonical data model is `schemas.py`.
+## Where the models are, and aren't
+
+**Gemini 2.5 Flash (Vertex AI) is used in exactly one place:** the reading step. Parallel Search gathers candidate passages; the reader turns a passage into a cited fact or abstains. Its output schema makes an unsourced fact unrepresentable, and its confidence is capped by the class of source it cites — primary record → high, rightsholder notice → medium, anything else → low — enforced in a validator, not the prompt. A "not renewed" finding needs a primary record.
+
+**No model ever computes a copyright term.** Copyright terms are arithmetic with known answers — the 95-year term, the renewal window, the MMA/CLASSICS schedule, life+70 from the last surviving author — and a model computing them would be unverifiable. The rules engine (`rules/`) is hand-written, deterministic, unit-tested Python; every determination records which rule fired and why, so a verdict can be audited line by line.
+
+## Confidence, and its asymmetry
+
+Every fact is a `ResearchedFact` with sources and a confidence, or it becomes an `UnresolvedQuestion`. There is no third option.
+
+- **high** — multiple independent authoritative sources agree, or an official record states the fact outright
+- **medium** — a single authoritative source, or a rightsholder's own notice ("© 1934, renewed 1961")
+- **low** — inference, or secondary sources only
+- **none** — asserted by no source; nothing is concluded from it
+
+The asymmetry: **a low-confidence fact may support "protected" but never "public domain."** A wrong "protected" costs a license that wasn't needed; a wrong "public domain" ends in a takedown or a lawsuit. When the rule that fired says public domain and the weakest supporting fact is low, the layer stays undetermined and the evidence is shown as a lead on the open question.
+
+Open questions can be answered. When you settle one — a renewal record found in the Copyright Office catalog, say — the record takes the answer and re-runs. A bare yes/no is an opinion (low); an answer with an attestation (an RE number and date, or what was searched and where) is a finding (medium — the ceiling for anything user-supplied; high is reserved for records the register retrieved and read itself). The fact is marked *asserted by you* wherever it appears.
+
+## Why the provenance rules exist
+
+Three times during the build a source returned a plausible fact that had never actually been established, and each would have become a confident wrong verdict with no visible tell:
+
+- **A reissue date read as a publication date.** MusicBrainz's `first-release-date` for the 1928 Armstrong *West End Blues* session was 1975 — a 42-year error on the one input the CLASSICS calculation depends on.
+- **An incomplete author list silently shortening a term.** MusicBrainz credited *West End Blues* to King Oliver but not Clarence Williams, and life+70 runs from the last surviving author. Oliver died 1938, Williams 1965 — a 27-year error in the direction that gets someone sued.
+- **A name search returning the wrong person.** "Clarence Williams" on Wikidata returned the actor who died in 2021, not the songwriter who died in 1965, and nothing about the result looked wrong.
+
+All three are the same failure: a plausible answer built on a fact that was never actually established. That is why every fact carries sources and confidence, or isn't treated as a fact. Each became a rule — a recording's date must come from a trustworthy basis; a writer list must be corroborated before life+70 is applied, and an uncorroborated list *blocks* the determination rather than shading it; people are resolved through identifier links between databases, never by name. When a rule can't be met the layer is undetermined and the response names the fact that would settle it.
 
 ## Setup and run
 
 ```bash
 pip install -r requirements.txt
 
-python -m pipeline "West End Blues" "Louis Armstrong"
-python -m pipeline "Rhapsody in Blue" "Paul Whiteman" --jurisdiction UK --intent film_tv
-python -m pipeline "Take Five" --json            # no artist → stops with candidates
-python -m pipeline "Blue Moon" "Ella Fitzgerald" --read    # Gemini reads the Parallel evidence (GCP + ADC)
+python -m pipeline "West End Blues" "Louis Armstrong"           # the CLI, no keys needed for cached/Tier 2 paths
+python -m pipeline "Take Five" --json                           # no artist → stops with candidates
+python -m pipeline "Blue Moon" "Ella Fitzgerald" --read         # with the Gemini reader (GCP project + ADC)
 python -m pipeline "West End Blues" "Louis Armstrong" --graph   # through the google-adk graph
 
 python -m pytest                                # rules, sources, research, registry, pipeline, agent, api
-python -m sources.warm "Blue Moon" "The Marcels" # pre-warm the cache and print timings
-python -m agent.live_cases                      # the reader over live Parallel Search, per-case report
+python -m sources.warm "Blue Moon" "The Marcels"  # pre-warm the cache, print timings
 
-python -m uvicorn api.main:app --reload         # the API: /api/health, POST /api/query, GET /api/query/stream (SSE)
-deploy/deploy.sh                                # Cloud Run, re-runnable; carries the deploy checklist
+python -m uvicorn api.main:app --reload         # the API: /api/health · POST /api/query · SSE stream
+cd web && npm install && npm run dev            # the frontend; /api proxies to the uvicorn above
+deploy/deploy.sh                                # Cloud Run, re-runnable; the checklist is in the script
 ```
 
 | Environment variable | Purpose |
 |---|---|
-| `PARALLEL_API_KEY` | Tier 3 research through the `parallel-web` SDK. Without it Tier 3 degrades: questions are still emitted, just without search hits. On Cloud Run it comes from Secret Manager. |
-| `CIUT_READER` | `off` forces the NullReader even when `GOOGLE_CLOUD_PROJECT` is set — the pipeline without the model. |
-| `CACHE_BACKEND` | `sqlite` (default, `.cache/tier2.sqlite`), `firestore`, or `memory` |
-| `CACHE_PATH` / `CACHE_COLLECTION` | SQLite file / Firestore collection |
+| `PARALLEL_API_KEY` | Tier 3 research through the `parallel-web` SDK. Without it Tier 3 degrades: questions are still emitted, just without search evidence. On Cloud Run it comes from Secret Manager. |
 | `GOOGLE_CLOUD_PROJECT` / `GOOGLE_CLOUD_LOCATION` | Vertex AI (the Gemini reading step, via `google-adk`) and Firestore. The reader is credential-gated: without them every Tier 3 question stays open. |
+| `CIUT_READER` | `off` forces the NullReader even with credentials — the pipeline without the model. |
+| `CACHE_BACKEND` | `sqlite` (default, `.cache/tier2.sqlite`), `firestore`, or `memory` |
 
-Runtime AI is limited to Google Cloud AI services and Parallel; everything else is ordinary open infrastructure (httpx, Pydantic, SQLite, FastAPI).
+Runtime AI is limited to Google Cloud AI services and Parallel; everything else is ordinary open infrastructure (httpx, Pydantic, SQLite, FastAPI, React).
+
+## Status
+
+- **The full flow is live**: Entry → streamed research (an accession log — every source consulted entered as it returns, failures struck through, corrected never erased) → the verdict record with layer ledger, cited evidence trail, open questions with answer controls, clearance paths and handoff links → disambiguation when a title is ambiguous.
+- **Cue sheet mode** (`/cues`): paste a list, one verdict row per cue, most restrictive first, with the blocking reason per row. **Export**: CSV, Markdown to clipboard, PDF via the print stylesheet.
+- **Answer and re-run**: the renewal question takes Yes / No / Still unknown with an optional source attestation, and the verdict updates under the confidence policy above.
+- Both reference queries produce the expected cited two-layer verdict — *West End Blues* in ~8 s cold, *Rhapsody in Blue* in ~19 s cold, under a second warm. Over live evidence the reader resolved one of four renewal windows (Blue Moon, medium, from a publisher's notice) and declined the other three honestly.
+- 180+ tests across the rules engine, cache layer, Parallel wrappers, link registry, pipeline, reader schema, graph and API. The ADK graph reproduces the pipeline's frozen acceptance fixtures exactly.
+- Not yet built: MLC integration (access pending). Text/film shares the skeleton and was cut for the submission — see `docs/ENDGAME.md`.
+
+## Known limits
+
+- **The 1931–1963 renewal window.** US works from those years lost protection after 28 years unless renewed, and most of the 20th-century songbook falls inside it. Renewals filed before 1978 exist only as scanned catalog pages; renewals filed from 1978 on are in the Copyright Office's online catalog, which web search excerpts cannot reach. The tool reads the records it can, and otherwise hands over exact search terms and the right catalog — and now takes the answer back. It does not guess. Expect many mid-century compositions to come back *undetermined*.
+- **No database publishes sync licensing contacts or prices.** Sync is negotiated one-off. The tool identifies the parties and the shape of the negotiation, and gives cost bands as ranges, never a point estimate.
+- **US-centric.** The US rules are the most complete; UK and EU cover the composition (life+70) and the recording (70 years from publication). Other territories are not modelled.
+- **MLC access pending.** Ownership splits and unclaimed shares — the data that decides whether a work can be fully cleared at all — live in the MLC's database. Until API access arrives, records link to its public search.
+- **Music only.** Books, film, images, fonts and trademarks are recognized and declined honestly, not researched.
 
 ## Repository
 
 ```
 rules/       deterministic copyright terms + boundary tests
 sources/     Tier 2 clients, persistent cache, fail-soft HTTP
-research/    Tier 3 — Parallel Search and Task
+research/    Tier 3 — Parallel Search and Task wrappers
 registry/    handoff link templates (sources.yaml)
-pipeline/    the plain-Python pipeline and CLI
-agent/       google-adk orchestration wrapping the pipeline
-api/         FastAPI + SSE for the staged progress UI
-web/         React frontend
-spike/       the verification spike, kept for reference
+pipeline/    the plain-Python pipeline, user-answer handling, CLI
+agent/       google-adk graph, the Gemini reader, frozen acceptance fixtures
+api/         FastAPI + SSE on Cloud Run
+web/         React frontend — one continuous ruled document
+spike/       the verification spike whose findings became the provenance rules
 docs/        project definition, compliance notes, design system
-schemas.py   canonical Pydantic models
+schemas.py   canonical Pydantic models — the layer model lives here
 ```
-
-## Status
-
-- Music path runs end to end from the command line. Both reference queries produce the expected cited two-layer verdict — *West End Blues / Louis Armstrong* (composition public domain, recording protected, license required) in about 8 seconds cold and *Rhapsody in Blue / Paul Whiteman* (both layers public domain, clear) in about 19 seconds cold; under a second when cached.
-- **The reading step** — Gemini via Vertex AI, wrapped as a `google-adk` `LlmAgent` — reads Parallel Search evidence into a cited fact or leaves the question open. Its output schema makes an uncited fact unrepresentable; confidence is capped by the class of source cited (primary record / rightsholder notice / secondary). Over live evidence it resolved one of four renewal windows (Blue Moon, medium, from a publisher's notice) and declined the other three honestly — see *Known limitations*.
-- **The `google-adk` graph** (`agent/workflow.py`) runs the pipeline's stages as deterministic agents with the two research stages in parallel, and reproduces the five frozen acceptance fixtures byte-for-byte.
-- 149 tests across the rules engine, the cache layer, the Parallel wrappers, the link registry, the pipeline, the reader schema and the graph.
-- **The API** (`api/`): FastAPI over the graph. `POST /api/query` returns the response; `GET /api/query/stream` streams every pipeline stage as SSE and then the response; `/api/health` probes the cache backend with a real write and read. `deploy/deploy.sh` deploys it to Cloud Run with the Parallel key in Secret Manager, a runtime service account (no ADC on Cloud Run) and the Firestore cache.
-- **The frontend** (`web/`): one continuous ruled document — Entry, the live accession log while research runs (every source consulted, failures struck through, never erased), the verdict record with the layer ledger and cited evidence trail, and disambiguation that stops before researching an ambiguous work. Toggling territory or purpose re-runs the query; no rights logic lives in the browser.
-- Not yet built: MLC integration (publishers, shares, clearance difficulty). Text/film is cut — see `docs/ENDGAME.md`.
-
-## Known limitations
-
-- **The renewal window.** US works published 1931–1963 lost protection after 28 years unless renewed, and most of the 20th-century songbook falls in that window. Renewals filed before 1978 are in scanned catalog pages with no machine-readable database; renewals filed from 1978 on (works published 1951–1963) are in the Copyright Office's online catalog, which web search excerpts cannot reach. The tool searches for evidence, reads it only when a passage actually states the renewal, and otherwise hands the question over with exact search terms and a link to the record system that holds the answer; it does not guess. Expect many mid-century compositions to come back *undetermined* rather than *clear* or *protected* — on the first live run, one of four resolved.
-- **No database publishes sync licensing contacts or prices.** Sync is negotiated one-off. The tool identifies the parties, the administrator, and the shape of the negotiation, and gives cost bands as ranges — never a point estimate.
-- **Determinations are US-centric.** The US rules are the most complete. UK and EU determinations cover the composition (life+70) and the recording (70 years from publication); other jurisdictions are not modelled.
-- **Coverage follows the sources.** A recording MusicBrainz has not dated, or a work Wikidata has not described, ends in an unresolved question rather than an answer. Writer lists that cannot be corroborated cap the UK/EU confidence at LOW.
-- **Music only.** Text and film (work, edition, translation) share the same skeleton and were cut for the submission. Images, fonts, characters, footage and trademarks are recognised and refused with an explanation, not researched.
-
-## Why the provenance rules exist
-
-Three times during the build a source returned a plausible fact that had never actually been established, and each would have become a confident wrong verdict with no visible tell:
-
-- **A reissue date is not a publication date.** MusicBrainz's `first-release-date` for the 1928 Armstrong *West End Blues* was 1975 — a 42-year error on the one fact the recording term depends on.
-- **An incomplete author list understates a life+70 term.** MusicBrainz credited King Oliver alone; co-writer Clarence Williams died in 1965, which moves the EU expiry from 2009 to 2036.
-- **A name search can return the wrong person.** Searching Wikidata for "Clarence Williams" returned the actor (d. 2021), not the pianist (d. 1965).
-
-Each became a rule: a recording's date must come from a trustworthy basis, a writer list must be corroborated before life+70 is applied, and people are resolved through identifier links between databases rather than by name. When a rule can't be met the layer is *undetermined* and the response names the fact that would settle it.
-
-## What we learned from the data
-
-- **MusicBrainz** returned a 1975 reissue date for a 1928 session — a 42-year error on the one fact the CLASSICS calculation depends on. Only the dated performance relation is trustworthy. Popular standards have 600–1,800 linked recording entities, and the service returns 503s on roughly a quarter of first attempts at one request per second; "Tier 2 degrades, never fails" turned out to be necessary rather than cautious.
-- **Wikidata** was clean for every case tested and catches co-writers MusicBrainz omits — which matters because life+70 runs from the *last surviving* author.
-- **Recording selection, not the work link, is the hard problem.** Replacing a ten-call per-recording sweep with a single work search cut cold latency from 71 s to 7.5 s on West End Blues and from 45 s to 19 s on Rhapsody in Blue.
 
 ## License
 
