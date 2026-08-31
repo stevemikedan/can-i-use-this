@@ -51,6 +51,8 @@
     -webkit-font-smoothing: antialiased;
   }
   ::selection { background: var(--color-blue-18); }
+  /* On the ink band BLUE_18 is invisible — selection must read there too. */
+  .on-ink ::selection { background: var(--color-blue-on-ink); color: var(--color-ink); }
   button, input { font-family: inherit; }
   input::placeholder { color: var(--color-ink-70); font-weight: 500; }
   a {

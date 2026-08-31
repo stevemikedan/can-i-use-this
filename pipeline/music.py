@@ -89,12 +89,19 @@ def _search_and_gate(query: AssetQuery, title: str, artist: Optional[str], em: E
     if not s.ok:
         em.emit(S.IDENTIFY, "failed", "MusicBrainz search failed", error_message=s.error, degraded=True)
         return None, failed_response(query, title, artist, em,
-                                     f"MusicBrainz could not be reached ({s.error}).")
+                                     f"MusicBrainz could not be reached ({s.error}). "
+                                     "This is usually transient — run the inquiry again.",
+                                     upstream=True)
     cands = s.data
     if not cands:
-        em.emit(S.IDENTIFY, "failed", "No recordings found")
-        return None, failed_response(query, title, artist, em,
-                                     "No recording with that title was found in MusicBrainz.")
+        em.emit(S.IDENTIFY, "failed", "No recordings found — searching for close matches")
+        sugg = _suggestion_candidates(mb.suggest_recordings(title))
+        why = (f'No recording of "{title}" credited to {artist} was found.' if artist
+               else "No recording with that title was found in MusicBrainz.")
+        return None, failed_response(
+            query, title, artist, em,
+            why + (" The closest real entries in the index are listed below." if sugg else ""),
+            suggestions=sugg)
 
     if artist is None:
         by_artist: dict[str, list] = defaultdict(list)
@@ -123,10 +130,14 @@ def _search_and_gate(query: AssetQuery, title: str, artist: Optional[str], em: E
     else:
         matched = [c for c in cands if mb.credited_to(c["artist"], artist)]
         if not matched:
-            em.emit(S.IDENTIFY, "failed", f'No recording credited to "{artist}"')
-            return None, failed_response(query, title, artist, em,
-                                         f'No recording of "{title}" credited to {artist} was found. '
-                                         "Try the artist name as it appears on the release.")
+            em.emit(S.IDENTIFY, "failed", f'No recording credited to "{artist}" — listing artists who did record it')
+            sugg = _suggestion_candidates(cands)
+            return None, failed_response(
+                query, title, artist, em,
+                f'The title was found, but no recording of it is credited to {artist}. '
+                + ("Artists who did record it are listed below." if sugg
+                   else "Try the artist name as it appears on the release."),
+                suggestions=sugg)
         cands = matched
     return cands, None
 
@@ -397,6 +408,43 @@ def _research_composition(sel: Selection, em: Emitter) -> CompositionFacts:
                             year_sources, qid, iswcs, title, notes, sibling_extra)
 
 
+def _suggestion_candidates(hits: list[dict], limit: int = 5) -> list[Candidate]:
+    """
+    "Did you mean" rows from real MusicBrainz hits, grouped by artist credit,
+    most-issued first. The label carries MB's own spelling of the title, so a
+    near-miss query surfaces the exact string that will match.
+    """
+    by_artist: dict[str, list[dict]] = defaultdict(list)
+    for h in hits:
+        if h.get("artist") and h.get("title"):
+            by_artist[h["artist"]].append(h)
+    # Artists who recorded the dominant title first, then most-issued: a
+    # search for "West End Blues" must not rank a band with many "West End"
+    # entities above the artists who actually recorded the queried title.
+    titles = [h["title"] for h in hits if h.get("title")]
+    top_title = mb._norm_title(max(set(titles), key=titles.count)) if titles else ""
+
+    def has_top(cs: list[dict]) -> bool:
+        return any(mb._norm_title(c["title"]) == top_title for c in cs)
+
+    rows = sorted(by_artist.items(),
+                  key=lambda kv: (not has_top(kv[1]), -len(kv[1]),
+                                  min((c["date"] or "9999") for c in kv[1])))
+    out = []
+    for a, cs in rows[:limit]:
+        earliest = min((c["date"] for c in cs if c["date"]), default=None)
+        c0 = min(cs, key=lambda c: c["date"] or "9999")
+        out.append(Candidate(
+            label=f"{a} — {c0['title']}",
+            disambiguator=(f"earliest release on file {earliest}" if earliest else "no release date on file")
+                          + f"; {len(cs)} recording entit{'y' if len(cs) == 1 else 'ies'}",
+            identifiers=[Identifier(scheme="musicbrainz_recording", value=c0["mbid"],
+                                    layer_id=RECORDING, confidence=Confidence.LOW)],
+            likelihood=Confidence.LOW,
+        ))
+    return out
+
+
 # --- the renewal question -------------------------------------------------------
 
 _RENEWAL_WHY = "Works published 1931–1963 lost protection after 28 years unless renewed."
@@ -480,14 +528,35 @@ def recording_question(title: str, artist: str, date_on_file: Optional[str], lin
     )
 
 
+def publication_floor(sel: Selection) -> Optional[ResearchedFact]:
+    """
+    No publication record for the composition, but a trustworthy recording
+    date of 1978 or later: under 17 U.S.C. §101 distributing phonorecords
+    publishes the work they embody, so the recording's release year serves as
+    the composition's publication year at LOW confidence, with the question
+    left open. Pre-1978 the premise fails — under the 1909 Act phonorecords
+    did not publish the composition — so no inference is made there, and the
+    layer stays undetermined honestly. The asymmetry rule in determine.py
+    keeps a low-confidence year from ever supporting a public-domain verdict.
+    """
+    if (sel.rec_year and sel.rec_year >= 1978
+            and sel.basis is RecordingDateBasis.DATED_PERFORMANCE):
+        return ResearchedFact(
+            value=sel.rec_year, confidence=Confidence.LOW, sources=[sel.source],
+            reasoning=f"Inferred from the recording: distributing the {sel.rec_year} recording embodying "
+                      f"the work published it (17 U.S.C. §101). No publication record found on Wikidata — "
+                      f"verify against the copyright registration.")
+    return None
+
+
 def year_question(title: str, fact: ResearchedFact) -> UnresolvedQuestion:
-    """The composition's publication year rests on a weak Wikidata property (first performance / inception)."""
+    """The composition's publication year rests on weak evidence (a lesser Wikidata property, or inference from the recording)."""
     lead_text, lead_links = _lead(fact, f"the year is {fact.value}")
     return UnresolvedQuestion(
         question_id=f"{COMPOSITION}:publication_year",
         question=f'In what year was "{title}" first published in the US?',
-        why_it_matters="The US term runs from publication. Wikidata has no publication date for this work; "
-                       "the year in use comes from a weaker property." + lead_text,
+        why_it_matters="The US term runs from publication, and no publication record was found — "
+                       "the year in use rests on weaker evidence." + lead_text,
         if_yes="A confirmed year lets the 95-year rule and the renewal window be applied exactly.",
         if_no="Without a year the composition stays undetermined and the roll-up cannot be clear.",
         affects_layer_ids=[COMPOSITION],
@@ -622,6 +691,15 @@ def stage_research_composition(run: MusicRun) -> None:
             # A lead, not an answer (LOW_CONFIDENCE_PD_RULE): the question stays open.
             question_ids["first_publication_year"] = f"{COMPOSITION}:publication_year"
             questions.append(year_question(cf.title or title, tf.first_publication_year))
+    else:
+        floor = publication_floor(sel)
+        if floor is not None:
+            tf.first_publication_year = floor
+            composition.label = f"Composition ({floor.value})"
+            question_ids["first_publication_year"] = f"{COMPOSITION}:publication_year"
+            questions.append(year_question(cf.title or title, floor))
+            em.emit(S.RESEARCH, "progress",
+                    f"No publication record — inferred {floor.value} from the recording's release (low confidence)")
     known = [w.death_year for w in cf.writers if w.death_year is not None]
     if cf.writers and known and len(known) == len(cf.writers):
         last = max(known)

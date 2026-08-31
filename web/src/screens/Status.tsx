@@ -28,9 +28,10 @@ function StatusPage({ word, glyph, children, params, actions }:
   )
 }
 
-export function NotFound({ resp, params, onRefine, onRetry }:
-  { resp: RightsResponse; params: QueryParams; onRefine: () => void; onRetry: () => void }) {
+export function NotFound({ resp, params, onRefine, onRetry, onPick }:
+  { resp: RightsResponse; params: QueryParams; onRefine: () => void; onRetry: () => void; onPick: (title: string, artist: string) => void }) {
   const q = resp.unresolved[0]
+  const suggestions = resp.entity.alternate_candidates
   return (
     <StatusPage word="Not found" glyph="." params={params}
       actions={<>
@@ -43,7 +44,26 @@ export function NotFound({ resp, params, onRefine, onRetry }:
           <span className="font-mono font-medium">{params.title}{params.artist ? ` — ${params.artist}` : ''}</span> against the MusicBrainz recording index.
         </div>
       </div>
-      <div className="text-body leading-[1.55] text-ink-70 max-w-[66ch]">{resp.overall_headline}{q ? ` ${q.why_it_matters}` : ''}</div>
+      <div className="text-body leading-[1.55] text-ink-70 max-w-[66ch]">{q ? q.why_it_matters : resp.overall_headline}</div>
+      {suggestions.length > 0 && (
+        <div className="flex flex-col">
+          <Eyebrow className="mb-[6px]">Did you mean — real entries in the index</Eyebrow>
+          {suggestions.map((c) => {
+            const artist = c.label.split(' — ')[0]
+            const title = c.label.split(' — ').slice(1).join(' — ')
+            return (
+              <a key={c.label} href="#" onClick={(e) => { e.preventDefault(); onPick(title, artist) }}
+                className="row-link gap-y-2 gap-x-6 items-baseline flex-wrap py-[14px] px-1 border-t border-ink-20 no-underline">
+                <div className="flex-[1_1_240px] min-w-[180px] flex flex-col gap-[2px]">
+                  <div className="font-bold text-title">{title} <span className="font-medium text-body text-ink-70">— {artist}</span></div>
+                  <div className="font-mono font-medium text-meta text-ink-70">{c.disambiguator}</div>
+                </div>
+                <div className="font-semibold text-body text-blue whitespace-nowrap">Research this →</div>
+              </a>
+            )
+          })}
+        </div>
+      )}
     </StatusPage>
   )
 }

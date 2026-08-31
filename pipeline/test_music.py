@@ -194,3 +194,64 @@ def test_artist_not_credited(cache, transport, no_parallel):
     resp, _ = run_music(q("West End Blues — Nobody"))
     assert resp.overall_verdict is Verdict.UNDETERMINED and resp.overall_headline.startswith("Not found")
     assert resp.unresolved[0].question_id == "resolve:not_found"
+
+
+# --- upstream failure vs not-found, and the post-1978 publication floor (Aug 31) ---
+
+def test_upstream_failure_is_not_not_found(cache, transport, sleeps, no_parallel):
+    """A 503 from MusicBrainz routes to retry, never to 'refine your query'."""
+    import httpx
+    from pipeline.music import run_music
+    from schemas import AssetQuery, AssetType, Intent, Jurisdiction
+    transport(lambda req: httpx.Response(503, text="service unavailable"))
+    resp, _ = run_music(AssetQuery(raw_input="Aliens Exist — blink-182", intent=Intent.FILM_TV,
+                                   jurisdiction=Jurisdiction.US, asset_type_hint=AssetType.MUSIC))
+    assert resp.overall_headline.startswith("Interrupted")
+    assert resp.unresolved[0].question_id == "resolve:upstream_failure"
+    assert "transient" in resp.unresolved[0].why_it_matters
+
+
+def test_publication_floor_only_post_1978_dated():
+    from datetime import datetime, timezone
+    from pipeline.music import Selection, publication_floor
+    from schemas import Confidence, RecordingDateBasis, ResearchMethod, Source
+    src = Source(name="MusicBrainz", url="https://musicbrainz.org/recording/x",
+                 method=ResearchMethod.DIRECT_API, retrieved_at=datetime.now(timezone.utc))
+    def sel(year, basis):
+        return Selection(pick={}, work={}, rec_year=year, basis=basis, rec_conf=Confidence.HIGH,
+                         resolution=Confidence.HIGH, sessions=[], undated=0, complete=True,
+                         works={}, source=src)
+    f = publication_floor(sel(1999, RecordingDateBasis.DATED_PERFORMANCE))
+    assert f is not None and f.value == 1999 and f.confidence is Confidence.LOW
+    assert "17 U.S.C." in f.reasoning
+    # pre-1978: the 1909-Act premise fails, so no inference is made
+    assert publication_floor(sel(1960, RecordingDateBasis.DATED_PERFORMANCE)) is None
+    # untrustworthy basis: never
+    assert publication_floor(sel(1999, RecordingDateBasis.FIRST_RELEASE_DATE)) is None
+
+
+def test_not_found_wrong_artist_suggests_real_artists(cache, transport, sleeps, no_parallel):
+    """Title exists, artist doesn't match: suggest the artists who did record it — real MB hits only."""
+    from pipeline.mockworld import handler
+    from pipeline.music import run_music
+    from schemas import AssetQuery, AssetType, Intent, Jurisdiction
+    transport(handler)
+    resp, _ = run_music(AssetQuery(raw_input="West End Blues — The Beatles", intent=Intent.FILM_TV,
+                                   jurisdiction=Jurisdiction.US, asset_type_hint=AssetType.MUSIC))
+    assert resp.unresolved[0].question_id == "resolve:not_found"
+    assert "Artists who did record it are listed below" in resp.overall_headline
+    sugg = resp.entity.alternate_candidates
+    assert sugg and any("Armstrong" in c.label for c in sugg)
+    assert all(c.identifiers and c.identifiers[0].scheme == "musicbrainz_recording" for c in sugg)
+
+
+def test_not_found_unknown_title_suggests_nothing_invented(cache, transport, sleeps, no_parallel):
+    """A title even fuzzy search can't find yields an empty suggestion list, never a guess."""
+    from pipeline.mockworld import handler
+    from pipeline.music import run_music
+    from schemas import AssetQuery, AssetType, Intent, Jurisdiction
+    transport(handler)
+    resp, _ = run_music(AssetQuery(raw_input="Zxqvzzz Nonesuch Blues", intent=Intent.FILM_TV,
+                                   jurisdiction=Jurisdiction.US, asset_type_hint=AssetType.MUSIC))
+    assert resp.unresolved[0].question_id == "resolve:not_found"
+    assert resp.entity.alternate_candidates == []

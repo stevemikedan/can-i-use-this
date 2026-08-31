@@ -16,6 +16,7 @@ Spike findings baked in (PROJECT.md §3):
 from __future__ import annotations
 
 import hashlib
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Callable, Optional
@@ -44,32 +45,85 @@ def credit_string(artist_credit: list) -> str:
     )
 
 
+def _match_norm(s: str) -> str:
+    """Fold for name matching: NFKD, casefold, alphanumerics only. MusicBrainz
+    credits use typographic punctuation — 'blink‐182' carries U+2010, not
+    the ASCII hyphen anyone types — so matching must ignore punctuation."""
+    return "".join(c for c in unicodedata.normalize("NFKD", s or "").casefold() if c.isalnum())
+
+
 def credited_to(credit: str, artist: str) -> bool:
-    return artist.strip().lower() in (credit or "").lower()
+    a = _match_norm(artist)
+    return bool(a) and a in _match_norm(credit)
 
 
 # --- search -------------------------------------------------------------------
+
+def _loose_terms(s: str, joiner: str = " AND ", suffix: str = "") -> str:
+    """Tokens for an unquoted Lucene field group, punctuation dropped so the
+    analyzer bridges apostrophes and hyphens. AND-joined by default: Lucene
+    ORs bare tokens, and artist:(the beatles) would otherwise match every
+    "The ..." band through the article alone. suffix="~" makes tokens fuzzy."""
+    cleaned = "".join(ch if ch.isalnum() or ch.isspace() else " " for ch in s or "")
+    return joiner.join(t + suffix for t in cleaned.split())
+
 
 def search_recordings(title: str, artist: Optional[str] = None, limit: int = 25) -> Fetched:
     """
     /recording?query=... Top candidates as
     {mbid, title, artist, date, score}. `date` is first-release-date.
+
+    Strict phrase first. If that matches nothing, one loose tokenized retry:
+    "alien's exist" then finds "Aliens Exist". This is the app's front door,
+    so it also gets 5 attempts against MusicBrainz's routine 503 bursts.
     """
+    def run(q: str) -> Fetched:
+        return _run_recording_query(q, limit, attempts=5)
+
     q = f'recording:"{_lucene_phrase(title)}"'
     if artist:
         q += f' AND artist:"{_lucene_phrase(artist)}"'
-    key = f"mb:search:recording:{hashlib.sha1(q.encode()).hexdigest()[:16]}:{limit}"
-    f = _mb("recording", {"query": q, "limit": limit}, key, max_age_s=SEARCH_MAX_AGE_S)
-    if not f.ok:
-        return f
-    f.data = [{
-        "mbid": r["id"],
-        "title": r.get("title"),
-        "artist": credit_string(r.get("artist-credit")),
-        "date": r.get("first-release-date"),
-        "score": r.get("score"),
-    } for r in f.data.get("recordings", [])]
+    f = run(q)
+    if f.ok and not f.data:
+        lt, la = _loose_terms(title), _loose_terms(artist) if artist else ""
+        if lt:
+            q2 = f"recording:({lt})" + (f" AND artist:({la})" if la else "")
+            f2 = run(q2)
+            if f2.ok and f2.data:
+                return f2
     return f
+
+
+def _run_recording_query(q: str, limit: int, attempts: int = 3) -> Fetched:
+    key = f"mb:search:recording:{hashlib.sha1(q.encode()).hexdigest()[:16]}:{limit}"
+    f = _mb("recording", {"query": q, "limit": limit}, key, max_age_s=SEARCH_MAX_AGE_S, attempts=attempts)
+    if f.ok:
+        f.data = [{
+            "mbid": r["id"],
+            "title": r.get("title"),
+            "artist": credit_string(r.get("artist-credit")),
+            "date": r.get("first-release-date"),
+            "score": r.get("score"),
+        } for r in f.data.get("recordings", [])]
+    return f
+
+
+def suggest_recordings(title: str, limit: int = 25) -> list[dict]:
+    """
+    Real MusicBrainz hits for a search that found nothing: the title alone
+    (strict, then loose), then Lucene fuzzy per token. Every suggestion is an
+    actual index entry — an invented suggestion would be the same failure
+    class as an uncited fact. Returns [] when even fuzzy finds nothing.
+    """
+    f = search_recordings(title, None, limit)
+    if f.ok and f.data:
+        return f.data
+    fuzzy = _loose_terms(title, suffix="~")
+    if not fuzzy:
+        return []
+    q = f"recording:({fuzzy})"
+    f2 = _run_recording_query(q, limit)
+    return f2.data if f2.ok and f2.data else []
 
 
 def _norm_title(s: str) -> str:

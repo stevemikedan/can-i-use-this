@@ -112,11 +112,13 @@ def handler(req: httpx.Request) -> httpx.Response:
         q = WD_SEARCH.get(p.get("search"))
         return httpx.Response(200, json={"search": [{"id": q, "label": p["search"], "description": "x"}] if q else []})
     if path == "/ws/2/recording" and "query" in p:
-        title = p["query"].split('"')[1]
-        hits = [r for r in RECORDINGS if r["title"] == title]
+        parts = p["query"].split('"')
+        title = parts[1] if len(parts) > 1 else None   # loose/fuzzy queries are unquoted: no mock matches
+        hits = [r for r in RECORDINGS if title and r["title"] == title]
         return httpx.Response(200, json={"recordings": [dict(r, relations=[]) for r in hits]})
     if path == "/ws/2/work" and "query" in p:
-        title = p["query"].split('"')[1]
+        wparts = p["query"].split('"')
+        title = wparts[1] if len(wparts) > 1 else None
         return httpx.Response(200, json={"works": [w for w in WORKS.values() if w["title"] == title]})
     if path == "/ws/2/recording" and "work" in p:
         hits = [r for r in RECORDINGS if any(x["work"]["id"] == p["work"] for x in r["relations"])]

@@ -20,7 +20,10 @@ const DEFAULT_PARAMS: QueryParams = { title: '', intent: 'film_tv', jurisdiction
 function routeFor(resp: RightsResponse): Screen {
   if (resp.stop_for_disambiguation) return 'disambiguation'
   if (resp.boundary_note) return 'boundary'
-  if (resp.entity.layers.length === 0) return 'notfound'
+  if (resp.entity.layers.length === 0) {
+    // An unreachable source is a retry, not a "refine your query".
+    return resp.unresolved[0]?.question_id === 'resolve:upstream_failure' ? 'error' : 'notfound'
+  }
   return 'result'
 }
 
@@ -56,7 +59,12 @@ export default function App() {
     setScreen('progress')
     stopStream.current = streamQuery(p, {
       onProgress: (ev) => setEvents((es) => [...es, ev]),
-      onResponse: (r) => { setResp(r); setScreen(routeFor(r)) },
+      onResponse: (r) => {
+        setResp(r)
+        const next = routeFor(r)
+        if (next === 'error') setError(r.unresolved[0]?.why_it_matters ?? r.overall_headline)
+        setScreen(next)
+      },
       onError: (message) => { setError(message); setScreen('error') },
     })
   }, [])
@@ -121,7 +129,8 @@ export default function App() {
             onRefine={toEntry} />
         )
       case 'notfound':
-        return resp && <NotFound resp={resp} params={params} onRefine={toEntry} onRetry={() => research(params)} />
+        return resp && <NotFound resp={resp} params={params} onRefine={toEntry} onRetry={() => research(params)}
+          onPick={(title, artist) => research({ ...params, title, artist })} />
       case 'boundary':
         return resp?.boundary_note && <Boundary note={resp.boundary_note} params={params} onNew={toEntry} />
       case 'error':

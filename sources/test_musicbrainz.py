@@ -137,3 +137,25 @@ def test_work_recordings_http_error_fails_soft_with_partial(cache, transport):
 def test_credited_to():
     assert mb.credited_to("Louis Armstrong and His Hot Five", "louis armstrong")
     assert not mb.credited_to("Ella Fitzgerald", "Louis Armstrong")
+
+
+# --- name matching and loose search terms (Aug 31: the blink-182 front-door bug) ---
+
+def test_credited_to_folds_typographic_punctuation():
+    from sources.musicbrainz import credited_to
+    assert credited_to("blink\u2010182", "blink-182")          # MB credits use U+2010
+    assert credited_to("blink\u2010182", "blink 182")
+    assert credited_to("blink\u2010182", "BLINK182")
+    assert credited_to("JAY\u2010Z featuring Beyonc\u00e9", "Jay-Z")
+    assert credited_to("X\u2010Ray Spex", "x-ray spex")
+    assert credited_to("U2", "U2")
+    assert not credited_to("The Marcels", "blink-182")
+    assert not credited_to("anyone", "")
+
+
+def test_loose_terms_strip_punctuation():
+    from sources.musicbrainz import _loose_terms, _match_norm
+    assert _loose_terms("alien's exist") == "alien AND s AND exist"
+    assert _loose_terms("blink-182") == "blink AND 182"
+    assert _loose_terms("aliens exist", suffix="~") == "aliens~ AND exist~"
+    assert _match_norm("blink\u2010182") == "blink182"

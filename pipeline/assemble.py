@@ -164,18 +164,34 @@ def stop_response(query: AssetQuery, title: str, candidates: list[Candidate], n_
 
 
 def failed_response(query: AssetQuery, title: str, artist: Optional[str], em: Emitter,
-                    why: str) -> RightsResponse:
+                    why: str, *, upstream: bool = False,
+                    suggestions: Optional[list[Candidate]] = None) -> RightsResponse:
+    """
+    suggestions: real MusicBrainz candidates for a genuine miss ("did you
+    mean"), rendered on the not-found screen. Never used for upstream
+    failures — a retry needs no alternatives.
+
+    upstream=True: a source could not be reached — a transient condition, so
+    the right next step is RETRY, and the interface must not tell the user to
+    refine a query that was never actually searched. Not-found stays reserved
+    for a search that ran and matched nothing.
+    """
     entity = ResolvedEntity(canonical_title=title, asset_type=AssetType.MUSIC,
-                            resolution_confidence=Confidence.NONE)
+                            resolution_confidence=Confidence.NONE,
+                            alternate_candidates=suggestions or [])
     q = UnresolvedQuestion(
-        question_id="resolve:not_found",
-        question=f'Which recording of "{title}"' + (f" by {artist}" if artist else "") + " is meant?",
-        why_it_matters=why, if_yes="Research can run once the recording is identified.",
+        question_id="resolve:upstream_failure" if upstream else "resolve:not_found",
+        question=("Why did research stop?" if upstream else
+                  f'Which recording of "{title}"' + (f" by {artist}" if artist else "") + " is meant?"),
+        why_it_matters=why,
+        if_yes=("Running the inquiry again usually works; nothing about the query needs to change."
+                if upstream else "Research can run once the recording is identified."),
         if_no="Nothing can be determined without a resolved recording.",
         search_terms=[f'"{title}" {artist or ""} musicbrainz'.strip()], estimated_effort="minutes",
     )
     return RightsResponse(
         query=query, entity=entity, overall_verdict=Verdict.UNDETERMINED,
-        overall_headline=f"Not found: {why}"[:160], overall_confidence=Confidence.NONE,
+        overall_headline=(f"Interrupted: {why}" if upstream else f"Not found: {why}")[:160],
+        overall_confidence=Confidence.NONE,
         unresolved=[q], generated_at=datetime.now(timezone.utc),
     )
