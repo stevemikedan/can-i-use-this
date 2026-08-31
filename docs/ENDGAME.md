@@ -128,7 +128,13 @@ gate below protects the four frontend days.
   worksheet-not-filed-cue-sheet note. Export also landed on Result: a CSV row
   in the same column schema, Markdown to the clipboard, and PDF via the print
   stylesheet (no second layout engine). Permalinks (`/?q=…`) re-run the record.
-- **Parallel Search visible in the progress ledger** (~½ day) — still open.
+- **Parallel Search visible in the progress ledger** — done Aug 31: one mono
+  ledger line per actual query, then the hit count, for all three search
+  types (renewal records, original release, writer credits). And with
+  Search-backed writer corroboration, West End Blues itself now exercises
+  Parallel Search on its primary path — the headline demo carries the
+  mandated integration, and the jurisdiction flip works end to end
+  (US: recording blocks to 2029; UK/EU: composition blocks to 2036).
 
 **Gated on the frontend being done *and deployed* — candidates for Sep 5, and only then:**
 
