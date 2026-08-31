@@ -72,6 +72,17 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
+
+  /* Print = the PDF export. One layout engine: hide chrome, keep the design. */
+  @media print {
+    .no-print, .caret { display: none !important; }
+    html, body { background: #fff; }
+    .on-ink { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    a { text-decoration: none; }
+    section, .avoid-break { break-inside: avoid-page; }
+    button { display: none !important; }
+    input, textarea { display: none !important; }
+  }
 }
 
 @layer components {

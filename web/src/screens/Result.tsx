@@ -1,27 +1,55 @@
 // Result — docs/design-system.md §5 "Result". Every value rendered here comes
 // from the RightsResponse; the screen adds no judgement of its own.
-import { useEffect, useState } from 'react'
-import type { HandoffLink, Intent, Jurisdiction, LayerVerdict, ResearchedFact, RightsHolder, RightsLayer, RightsResponse, Source, UnresolvedQuestion, Verdict } from '../types'
+import { useCallback, useEffect, useState } from 'react'
+import type { HandoffLink, Intent, LayerVerdict, QueryParams, ResearchedFact, RightsHolder, RightsLayer, RightsResponse, Source, UnresolvedQuestion } from '../types'
 import { Band, Controls, Doc, Eyebrow, SectionHead, Stamp, Tag, TextToggle, Ticks } from '../components/ui'
 import { EFFORT_LABEL, FACT_LABEL, METHOD_LABEL, TIER_LABEL, VERDICT_WORD, confidenceLabel, expiryLine, factValue, pct, shortDate, sourceHref, splitQuery } from '../lib/format'
+import { VERDICT_SEVERITY, csvRow, CSV_HEADER, downloadText, safeFilename, toMarkdown } from '../lib/export'
 
-const ORDER: Record<Verdict, number> = { clear: 0, clear_with_conditions: 1, license_required: 2, restricted: 3, undetermined: 4 }
+const ORDER = VERDICT_SEVERITY
 
 export interface ResultProps {
   resp: RightsResponse
-  intent: Intent
-  jurisdiction: Jurisdiction
+  params: QueryParams
   busy: boolean
   onIntent: (i: Intent) => void
-  onJurisdiction: (j: Jurisdiction) => void
+  onJurisdiction: (j: QueryParams['jurisdiction']) => void
   onNewInquiry: () => void
+  onBack?: () => void
 }
 
-export default function Result({ resp, intent, jurisdiction, busy, onIntent, onJurisdiction, onNewInquiry }: ResultProps) {
-  const [open, setOpen] = useState<Record<string, boolean>>({})
-  const toggle = (k: string) => setOpen((s) => ({ ...s, [k]: !s[k] }))
+export default function Result({ resp, params, busy, onIntent, onJurisdiction, onNewInquiry, onBack }: ResultProps) {
+  const { intent, jurisdiction } = params
+  const [openState, setOpenState] = useState<Record<string, boolean>>({})
+  const [printing, setPrinting] = useState(false)
+  const open: Record<string, boolean> = printing
+    ? new Proxy(openState, { get: () => true }) as Record<string, boolean>
+    : openState
+  const toggle = (k: string) => setOpenState((s) => ({ ...s, [k]: !s[k] }))
+  const [copied, setCopied] = useState(false)
   const [stampKey, setStampKey] = useState(0)
   useEffect(() => { setStampKey((k) => k + 1) }, [resp])
+
+  // Cmd/Ctrl-P and the Print button both render every section expanded.
+  useEffect(() => {
+    const before = () => setPrinting(true)
+    const after = () => setPrinting(false)
+    window.addEventListener('beforeprint', before)
+    window.addEventListener('afterprint', after)
+    return () => { window.removeEventListener('beforeprint', before); window.removeEventListener('afterprint', after) }
+  }, [])
+  const printPdf = useCallback(() => {
+    setPrinting(true)
+    setTimeout(() => window.print(), 60)
+  }, [])
+  const exportCsv = useCallback(() => {
+    downloadText(`${safeFilename(params.title)}.csv`, CSV_HEADER.join(',') + '\r\n' + csvRow(resp, params) + '\r\n', 'text/csv')
+  }, [resp, params])
+  const copyMarkdown = useCallback(() => {
+    navigator.clipboard?.writeText(toMarkdown(resp, params))
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1600)
+  }, [resp, params])
 
   const { artist } = splitQuery(resp.query.raw_input)
   const year = resp.entity.year?.value
@@ -41,6 +69,7 @@ export default function Result({ resp, intent, jurisdiction, busy, onIntent, onJ
             <div className="font-mono font-medium text-meta text-paper-72">
               researched {shortDate(resp.generated_at).toLowerCase()} · {resp.served_from_cache ? 'cached' : 'fresh'}
             </div>
+            {onBack && <button type="button" onClick={onBack} className="bg-transparent border-none p-0 cursor-pointer text-meta font-semibold tracking-[0.08em] uppercase text-blue-on-ink underline decoration-[1.5px] underline-offset-[3px] hover:text-paper">Back to the cue sheet</button>}
             <button type="button" onClick={onNewInquiry} className="bg-transparent border-none p-0 cursor-pointer text-meta font-semibold tracking-[0.08em] uppercase text-blue-on-ink underline decoration-[1.5px] underline-offset-[3px] hover:text-paper">New inquiry</button>
           </div>
         }
@@ -71,6 +100,12 @@ export default function Result({ resp, intent, jurisdiction, busy, onIntent, onJ
       </Band>
 
       <Doc>
+        <div className="no-print flex gap-x-5 gap-y-1 justify-end items-baseline flex-wrap pt-4 -mb-8">
+          <Eyebrow className="text-ink-70 !tracking-[0.1em]">Export</Eyebrow>
+          <button type="button" className="text-toggle !text-meta" onClick={exportCsv}>CSV row</button>
+          <button type="button" className="text-toggle !text-meta" onClick={copyMarkdown}>{copied ? 'Markdown copied ✓' : 'Copy Markdown'}</button>
+          <button type="button" className="text-toggle !text-meta" onClick={printPdf}>Print / PDF</button>
+        </div>
         {/* Layer ledger */}
         <section className="mt-14">
           <SectionHead title="Rights layers" sub="One search is several separately-owned works. The answer rolls up from these." />

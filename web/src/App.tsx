@@ -7,14 +7,16 @@ import Progress from './screens/Progress'
 import Result from './screens/Result'
 import Disambiguation from './screens/Disambiguation'
 import About from './screens/About'
+import Cues, { type CueRow } from './screens/Cues'
 import { Boundary, ErrorScreen, NotFound } from './screens/Status'
+import { paramsFromUrl, permalinkFor } from './lib/export'
 
 // Development fixtures: real RightsResponses captured from the pipeline
 // (web/src/dev/*.json). ?fixture=<name> renders one without running a query.
 const FIXTURES = import.meta.glob<RightsResponse>('./dev/*.json', { import: 'default' })
 const fixtureNames = Object.keys(FIXTURES).map((p) => p.replace('./dev/', '').replace('.json', '')).sort()
 
-type Screen = 'entry' | 'progress' | 'result' | 'disambiguation' | 'notfound' | 'boundary' | 'error' | 'about'
+type Screen = 'entry' | 'progress' | 'result' | 'disambiguation' | 'notfound' | 'boundary' | 'error' | 'about' | 'cues'
 
 const DEFAULT_PARAMS: QueryParams = { title: '', intent: 'film_tv', jurisdiction: 'US' }
 
@@ -29,7 +31,10 @@ function routeFor(resp: RightsResponse): Screen {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>(window.location.pathname === '/about' ? 'about' : 'entry')
+  const [screen, setScreen] = useState<Screen>(
+    window.location.pathname === '/about' ? 'about' : window.location.pathname === '/cues' ? 'cues' : 'entry')
+  const [cueRows, setCueRows] = useState<CueRow[]>([])
+  const [fromCues, setFromCues] = useState(false)
   const [params, setParams] = useState<QueryParams>(DEFAULT_PARAMS)
   const [resp, setResp] = useState<RightsResponse | null>(null)
   const [events, setEvents] = useState<PipelineEvent[]>([])
@@ -55,9 +60,11 @@ export default function App() {
   const research = useCallback((p: QueryParams) => {
     stopStream.current?.()
     setParams(p)
+    setFromCues(false)
     setEvents([])
     setError(null)
     setScreen('progress')
+    try { window.history.replaceState(null, '', permalinkFor(p).slice(window.location.origin.length)) } catch { /* permalink is best-effort */ }
     stopStream.current = streamQuery(p, {
       onProgress: (ev) => setEvents((es) => [...es, ev]),
       onResponse: (r) => {
@@ -104,8 +111,21 @@ export default function App() {
     window.history.replaceState(null, '', '/about')
   }, [])
 
+  const toCues = useCallback(() => {
+    setScreen('cues')
+    window.history.replaceState(null, '', '/cues')
+  }, [])
+
+  // A shared permalink (/?q=...) re-opens the record by re-running the query.
+  useEffect(() => {
+    if (fixtureParam) return
+    const p = paramsFromUrl(window.location.search)
+    if (p) research(p)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const devBar = fixtureParam && (
-    <div className="max-w-[920px] mx-auto px-6 pt-3 flex gap-x-3 gap-y-1 items-baseline flex-wrap text-meta">
+    <div className="no-print max-w-[920px] mx-auto px-6 pt-3 flex gap-x-3 gap-y-1 items-baseline flex-wrap text-meta">
       <span className="eyebrow text-ink-70">Dev — fixture</span>
       {fixtureNames.map((n) => (
         <a key={n} href={`?fixture=${n}`} className={`font-mono ${n === fixtureParam ? 'text-ink font-semibold no-underline' : ''}`}>{n}</a>
@@ -120,10 +140,11 @@ export default function App() {
       case 'result':
         return resp && (
           <>
-            <Result resp={resp} intent={params.intent} jurisdiction={params.jurisdiction} busy={busy}
+            <Result resp={resp} params={params} busy={busy}
               onIntent={(intent) => requery({ ...params, intent })}
               onJurisdiction={(jurisdiction) => requery({ ...params, jurisdiction })}
-              onNewInquiry={toEntry} />
+              onNewInquiry={toEntry}
+              onBack={fromCues ? toCues : undefined} />
             {error && <div className="max-w-[920px] mx-auto px-6 pb-8 text-body text-ink-70">Could not re-run the inquiry: {error}</div>}
           </>
         )
@@ -144,8 +165,11 @@ export default function App() {
           onRetry={() => research(params)} onNew={toEntry} />
       case 'about':
         return <About onNewInquiry={toEntry} />
+      case 'cues':
+        return <Cues params={params} rows={cueRows} setRows={setCueRows} onNewInquiry={toEntry}
+          onOpen={(r, p) => { setResp(r); setParams(p); setFromCues(true); setScreen('result') }} />
       default:
-        return <Entry busy={false} error={null} initial={params.title ? params : undefined} onSubmit={research} onAbout={toAbout} />
+        return <Entry busy={false} error={null} initial={params.title ? params : undefined} onSubmit={research} onAbout={toAbout} onCues={toCues} />
     }
   })()
 

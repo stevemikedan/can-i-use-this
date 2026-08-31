@@ -112,11 +112,15 @@ gate below protects the four frontend days.
 
 ## Gated work
 
-**Gated on the frontend being done by end of Sep 2:**
+**Gated on the frontend being done by end of Sep 2 — both gates met early:**
 
-- **Cue sheet mode** (~1 day). A film has 20–40 cues; per-cue verdicts turn
-  this from a lookup utility into a production tool.
-- **Parallel Search visible in the progress ledger** (~½ day).
+- **Cue sheet mode** — built Aug 31 (`/cues`): paste one cue per line, serial
+  runs over the same pipeline, rows resolve as they land, summary line
+  ("6 of 22 need clearing"), most-restrictive-first sort, CSV export, honest
+  worksheet-not-filed-cue-sheet note. Export also landed on Result: a CSV row
+  in the same column schema, Markdown to the clipboard, and PDF via the print
+  stylesheet (no second layout engine). Permalinks (`/?q=…`) re-run the record.
+- **Parallel Search visible in the progress ledger** (~½ day) — still open.
 
 **Gated on the frontend being done *and deployed* — candidates for Sep 5, and only then:**
 

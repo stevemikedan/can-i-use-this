@@ -29,8 +29,8 @@ const EXAMPLES: { title: string; artist: string; meta: string; stamp: string; co
   },
 ]
 
-export default function Entry({ busy, error, initial, onSubmit, onAbout }:
-  { busy: boolean; error: string | null; initial?: Partial<QueryParams>; onSubmit: (p: QueryParams) => void; onAbout: () => void }) {
+export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues }:
+  { busy: boolean; error: string | null; initial?: Partial<QueryParams>; onSubmit: (p: QueryParams) => void; onAbout: () => void; onCues: () => void }) {
   const [raw, setRaw] = useState(initial?.title ? `${initial.title}${initial.artist ? ` — ${initial.artist}` : ''}` : '')
   const [intent, setIntent] = useState<Intent>(initial?.intent ?? 'film_tv')
   const [jurisdiction, setJurisdiction] = useState<Jurisdiction>(initial?.jurisdiction ?? 'US')
@@ -98,6 +98,7 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout }:
           <p className="text-body leading-[1.55] text-ink-70 mt-6 mb-0 max-w-[62ch]">
             Research takes 30–90 seconds against the public record — copyright registries, renewal catalogs,
             discographies. You’ll watch it happen, source by source.
+            {' '}<a href="/cues" onClick={(e) => { e.preventDefault(); onCues() }}>Clearing a full cue sheet? →</a>
           </p>
           {error && <p className="text-body leading-[1.55] mt-4 mb-0 max-w-[62ch]">Could not start the research: {error}</p>}
         </section>
