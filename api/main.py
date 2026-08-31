@@ -86,6 +86,31 @@ def _check_jurisdiction(j: Jurisdiction) -> None:
 
 # --- endpoints -------------------------------------------------------------------
 
+PROBE_URLS = {
+    "musicbrainz": "https://musicbrainz.org/ws/2/recording?query=recording:%22test%22&limit=1&fmt=json",
+    "wikidata": "https://www.wikidata.org/w/api.php?action=wbsearchentities&search=test&language=en&format=json",
+}
+
+
+@app.get("/api/probe")
+async def probe() -> dict:
+    """Live GETs to the upstream sources, no cache: separates 'source is down'
+    from 'source refuses this egress'. The MusicBrainz TLS-EOF incident of
+    31 Aug is exactly what this exists to see from inside the container."""
+    import httpx
+    from sources.http import UA
+    out: dict = {}
+    async with httpx.AsyncClient(headers={"User-Agent": UA}, timeout=8) as client:
+        for name, url in PROBE_URLS.items():
+            t0 = time.time()
+            try:
+                r = await client.get(url)
+                out[name] = {"status": r.status_code, "ms": int((time.time() - t0) * 1000)}
+            except Exception as e:
+                out[name] = {"error": f"{type(e).__name__}: {e}"[:200], "ms": int((time.time() - t0) * 1000)}
+    return out
+
+
 @app.get("/api/health")
 async def health() -> dict:
     """Liveness plus a real probe of each backend. On Cloud Run this is the proof the Firestore cache works."""

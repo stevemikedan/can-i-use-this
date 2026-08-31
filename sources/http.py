@@ -178,6 +178,19 @@ def get_json(url: str, params: Optional[dict] = None, *, cache_key: str,
                    error=last_error, attempts=attempts)
 
 
+def plain_error(error: str) -> str:
+    """A sentence a person can read; the raw exception text stays in the logs.
+    The error screen's own rule: never a stack trace."""
+    e = (error or "").lower()
+    if "ssl" in e or "connecterror" in e or "connection" in e or "reset" in e or "eof" in e:
+        return "the connection was dropped before the source answered"
+    if "timeout" in e or "timed out" in e:
+        return "the source did not answer in time"
+    if e.startswith("http "):
+        return f"the source kept returning {error} errors"
+    return "the source could not be reached"
+
+
 def as_source(fetched: Fetched, name: str, *, authoritative: bool = False,
               excerpt: Optional[str] = None):
     """Build a schemas.Source for a value derived from this fetch."""

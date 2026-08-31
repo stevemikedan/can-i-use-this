@@ -35,7 +35,7 @@ from schemas import (
 )
 from sources import musicbrainz as mb
 from sources import wikidata as wd
-from sources.http import as_source
+from sources.http import as_source, plain_error
 
 from .assemble import assemble, failed_response, stop_response
 from .determine import determine_all
@@ -89,7 +89,7 @@ def _search_and_gate(query: AssetQuery, title: str, artist: Optional[str], em: E
     if not s.ok:
         em.emit(S.IDENTIFY, "failed", "MusicBrainz search failed", error_message=s.error, degraded=True)
         return None, failed_response(query, title, artist, em,
-                                     f"MusicBrainz could not be reached ({s.error}). "
+                                     f"MusicBrainz could not be reached — {plain_error(s.error)}. "
                                      "This is usually transient — run the inquiry again.",
                                      upstream=True)
     cands = s.data

@@ -209,6 +209,7 @@ def test_upstream_failure_is_not_not_found(cache, transport, sleeps, no_parallel
     assert resp.overall_headline.startswith("Interrupted")
     assert resp.unresolved[0].question_id == "resolve:upstream_failure"
     assert "transient" in resp.unresolved[0].why_it_matters
+    assert "_ssl" not in resp.unresolved[0].why_it_matters and "ConnectError" not in resp.unresolved[0].why_it_matters
 
 
 def test_publication_floor_only_post_1978_dated():
