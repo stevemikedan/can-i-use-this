@@ -638,30 +638,38 @@ def recording_question(title: str, artist: str, date_on_file: Optional[str], lin
     )
 
 
-def publication_floor(sel: Selection) -> Optional[ResearchedFact]:
+def publication_floor(rec_tf: TermFacts) -> Optional[ResearchedFact]:
     """
     No publication record for the composition, but a trustworthy recording
-    date of 1978 or later: under 17 U.S.C. §101 distributing phonorecords
-    publishes the work they embody, so the recording's release year serves as
-    the composition's publication year at LOW confidence, with the question
-    left open. Pre-1978 the premise fails — under the 1909 Act phonorecords
-    did not publish the composition — so no inference is made there, and the
-    layer stays undetermined honestly. The asymmetry rule in determine.py
-    keeps a low-confidence year from ever supporting a public-domain verdict.
+    year of 1978 or later — a dated session or a researched original release:
+    under 17 U.S.C. §101 distributing phonorecords publishes the work they
+    embody, so the recording's year serves as the composition's publication
+    year at LOW confidence, with the question left open as a lead. Pre-1978
+    the premise fails — under the 1909 Act phonorecords did not publish the
+    composition — so no inference is made there, and the layer stays
+    undetermined honestly. The asymmetry rule in determine.py keeps a
+    low-confidence year from ever supporting a public-domain verdict.
+
+    Runs in the RULES stage: the researched recording year lands in the
+    recording stage, which executes in parallel with the composition stage,
+    so the composition stage structurally cannot see it.
     """
-    if (sel.rec_year and sel.rec_year >= 1978
-            and sel.basis is RecordingDateBasis.DATED_PERFORMANCE):
+    f = rec_tf.recording_first_published_year
+    basis = rec_tf.recording_date_basis
+    if (f is not None and f.value >= 1978
+            and basis in (RecordingDateBasis.DATED_PERFORMANCE, RecordingDateBasis.RESEARCHED)):
         return ResearchedFact(
-            value=sel.rec_year, confidence=Confidence.LOW, sources=[sel.source],
-            reasoning=f"Inferred from the recording: distributing the {sel.rec_year} recording embodying "
+            value=f.value, confidence=Confidence.LOW, sources=list(f.sources),
+            reasoning=f"Inferred from the recording: distributing the {f.value} recording embodying "
                       f"the work published it (17 U.S.C. §101). No publication record found on Wikidata — "
                       f"verify against the copyright registration.")
     return None
 
 
-def year_question(title: str, fact: ResearchedFact) -> UnresolvedQuestion:
-    """The composition's publication year rests on weak evidence (a lesser Wikidata property, or inference from the recording)."""
-    lead_text, lead_links = _lead(fact, f"the year is {fact.value}")
+def year_question(title: str, fact: Optional[ResearchedFact] = None) -> UnresolvedQuestion:
+    """The composition's publication year is unknown, or rests on weak
+    evidence (a lesser Wikidata property, or inference from the recording)."""
+    lead_text, lead_links = _lead(fact, f"the year is {fact.value}" if fact else "")
     return UnresolvedQuestion(
         question_id=f"{COMPOSITION}:publication_year",
         question=f'In what year was "{title}" first published in the US?',
@@ -832,14 +840,11 @@ def stage_research_composition(run: MusicRun) -> None:
             question_ids["first_publication_year"] = f"{COMPOSITION}:publication_year"
             questions.append(year_question(cf.title or title, tf.first_publication_year))
     else:
-        floor = publication_floor(sel)
-        if floor is not None:
-            tf.first_publication_year = floor
-            composition.label = f"Composition ({floor.value})"
-            question_ids["first_publication_year"] = f"{COMPOSITION}:publication_year"
-            questions.append(year_question(cf.title or title, floor))
-            em.emit(S.RESEARCH, "progress",
-                    f"No publication record — inferred {floor.value} from the recording's release (low confidence)")
+        # No publication year at all: the question exists from the start —
+        # a blocked determination without an open question is a broken
+        # promise. The rules stage may later attach a §101 floor as a lead.
+        question_ids["first_publication_year"] = f"{COMPOSITION}:publication_year"
+        questions.append(year_question(cf.title or title))
     known = [w.death_year for w in cf.writers if w.death_year is not None]
     if cf.writers and known and len(known) == len(cf.writers):
         last = max(known)
@@ -848,6 +853,21 @@ def stage_research_composition(run: MusicRun) -> None:
                                               sources=[s for w in cf.writers for s in w.sources],
                                               reasoning=f"Last surviving author: {who}")
     tf.writer_list_corroborated = cf.corroborated
+    if cf.corroborated and any(w.death_year is None for w in cf.writers):
+        missing = ", ".join(w.name for w in cf.writers if w.death_year is None)
+        question_ids["author_death_year"] = f"{COMPOSITION}:death_years"
+        questions.append(UnresolvedQuestion(
+            question_id=f"{COMPOSITION}:death_years",
+            question=f"When did the credited writers of \"{cf.title or title}\" die — or are they living?",
+            why_it_matters=f"UK/EU terms run 70 years past the death of the last surviving author, and no "
+                           f"death year is on record for {missing}. A living author means the work stays "
+                           f"protected for decades; an unrecorded death year leaves the term uncomputable.",
+            if_yes="With every death year known, the UK/EU expiry is 70 years after the last of them.",
+            if_no="While any writer may be living, the work is protected and no expiry can be stated.",
+            affects_layer_ids=[COMPOSITION],
+            search_terms=[f'"{w.name}"' for w in cf.writers if w.death_year is None],
+            estimated_effort="minutes",
+        ))
     for w in cf.writers:
         composition.holders.append(__import__("schemas").RightsHolder(
             name=ResearchedFact(value=w.name, confidence=cf.writer_conf, sources=w.sources,
@@ -981,6 +1001,20 @@ def stage_research_recording(run: MusicRun) -> None:
 
 def stage_rules(run: MusicRun) -> None:
     em = run.em
+    # §101 publication floor — both research stages are done, so the
+    # recording's year (dated or researched) is now known.
+    comp_tf = run.composition.term_facts
+    if comp_tf.first_publication_year is None:
+        floor = publication_floor(run.recording.term_facts)
+        if floor is not None:
+            comp_tf.first_publication_year = floor
+            run.composition.label = f"Composition ({floor.value})"
+            title = run.cf.title or run.title
+            run.comp_questions = [q for q in run.comp_questions
+                                  if q.question_id != f"{COMPOSITION}:publication_year"]
+            run.comp_questions.append(year_question(title, floor))
+            em.emit(S.RESEARCH, "progress",
+                    f"No publication record — inferred {floor.value} from the recording (17 U.S.C. §101, low confidence)")
     em.emit(S.RESEARCH, "complete", f"Consulted {em.sources_consulted} sources"
             + (" — Tier 3 degraded" if any(e.degraded for e in em.events) else ""))
     death_years = [w.death_year for w in run.cf.writers] or [None]

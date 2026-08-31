@@ -214,21 +214,27 @@ def test_upstream_failure_is_not_not_found(cache, transport, sleeps, no_parallel
 
 def test_publication_floor_only_post_1978_dated():
     from datetime import datetime, timezone
-    from pipeline.music import Selection, publication_floor
-    from schemas import Confidence, RecordingDateBasis, ResearchMethod, Source
+    from pipeline.music import publication_floor
+    from schemas import Confidence, RecordingDateBasis, ResearchMethod, ResearchedFact, Source, TermFacts
     src = Source(name="MusicBrainz", url="https://musicbrainz.org/recording/x",
                  method=ResearchMethod.DIRECT_API, retrieved_at=datetime.now(timezone.utc))
-    def sel(year, basis):
-        return Selection(pick={}, work={}, rec_year=year, basis=basis, rec_conf=Confidence.HIGH,
-                         resolution=Confidence.HIGH, sessions=[], undated=0, complete=True,
-                         works={}, source=src)
-    f = publication_floor(sel(1999, RecordingDateBasis.DATED_PERFORMANCE))
+    def tf(year, basis):
+        t = TermFacts()
+        if year is not None:
+            t.recording_first_published_year = ResearchedFact(value=year, confidence=Confidence.MEDIUM, sources=[src])
+        t.recording_date_basis = basis
+        return t
+    f = publication_floor(tf(1999, RecordingDateBasis.DATED_PERFORMANCE))
     assert f is not None and f.value == 1999 and f.confidence is Confidence.LOW
     assert "17 U.S.C." in f.reasoning
+    # the researched original release counts too — the Aliens Exist regression
+    f2 = publication_floor(tf(1999, RecordingDateBasis.RESEARCHED))
+    assert f2 is not None and f2.value == 1999
     # pre-1978: the 1909-Act premise fails, so no inference is made
-    assert publication_floor(sel(1960, RecordingDateBasis.DATED_PERFORMANCE)) is None
-    # untrustworthy basis: never
-    assert publication_floor(sel(1999, RecordingDateBasis.FIRST_RELEASE_DATE)) is None
+    assert publication_floor(tf(1960, RecordingDateBasis.DATED_PERFORMANCE)) is None
+    # untrustworthy basis or no year: never
+    assert publication_floor(tf(1999, RecordingDateBasis.FIRST_RELEASE_DATE)) is None
+    assert publication_floor(tf(None, RecordingDateBasis.DATED_PERFORMANCE)) is None
 
 
 def test_not_found_wrong_artist_suggests_real_artists(cache, transport, sleeps, no_parallel):
@@ -350,3 +356,21 @@ def test_dated_later_take_does_not_outrank_an_earlier_release(cache, transport, 
     assert "belongs to a later take" in tf.recording_first_published_year.sources[0].excerpt
     # the release-date path keeps its honesty: question open, Tier 3 asked
     assert any(u.question_id == "sound_recording:first_publication" for u in resp.unresolved)
+
+
+def test_every_blocked_determination_has_an_open_question():
+    """The core promise: a blocked layer always names what would unblock it."""
+    from agent.freeze_fixtures import mock_environment, query_for
+    from pipeline import mockworld
+    from pipeline.music import run_music
+    from schemas import DeterminationStatus
+    for name, case in mockworld.CASES.items():
+        with mock_environment():
+            resp, _ = run_music(query_for(case))
+        if resp.stop_for_disambiguation or not resp.entity.layers:
+            continue
+        qids = {u.question_id for u in resp.unresolved}
+        for det in resp.all_determinations:
+            if det.status is DeterminationStatus.UNDETERMINED:
+                assert det.blocked_by, f"{name}: {det.layer_id}/{det.jurisdiction} blocked with no question"
+                assert set(det.blocked_by) <= qids, f"{name}: blocked_by points at a missing question"

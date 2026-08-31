@@ -59,6 +59,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
   const blockingIds = worst > 0 ? required.filter((l) => ORDER[l.verdict] === worst).map((l) => l.layer_id) : []
   const layerOf = (id: string) => resp.entity.layers.find((l) => l.layer_id === id)
   const toClear = required.filter((l) => l.verdict === 'license_required')
+  const actLinks = resp.handoff_links.filter((l) => l.purpose === 'license')
 
   return (
     <>
@@ -114,33 +115,35 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
               first={i === 0} open={!!open[lv.layer_id]} onToggle={() => toggle(lv.layer_id)} />
           ))}
 
-          {/* Clearance */}
+          {/* Clearance — which layer, what license, where to go. */}
           <div className="border-t border-ink-20 py-5 px-1 flex gap-y-3 gap-x-8 flex-wrap">
             <div className="flex-[0_1_240px] min-w-[180px] pt-1"><Eyebrow>Clearance</Eyebrow></div>
-            <div className="flex-[1_1_380px] min-w-[240px] flex flex-col gap-2">
-              <div className="flex gap-y-2 gap-x-5 items-baseline flex-wrap">
+            <div className="flex-[1_1_380px] min-w-[240px] flex flex-col gap-3">
+              {toClear.length === 0 ? (
                 <div className="text-body leading-[1.55] max-w-[56ch]">
-                  {toClear.length === 0
-                    ? (worst === 0 ? 'Nothing to clear for this purpose.' : 'Nothing can be cleared until the open question below is settled.')
-                    : `${toClear.length} ${toClear.length === 1 ? 'layer' : 'layers'} to clear · difficulty ${toClear.map((l) => l.clearance.difficulty).sort()[toClear.length - 1]}.`}
+                  {worst === 0 ? 'Nothing to clear for this purpose.' : 'Nothing can be cleared until the open question below is settled.'}
                 </div>
-                {toClear.length > 0 && <TextToggle open={!!open.clearance} closed="Breakdown" opened="Hide breakdown" onClick={() => toggle('clearance')} className="whitespace-nowrap" />}
-              </div>
-              {open.clearance && toClear.length > 0 && (
-                <div className="flex flex-col gap-[14px] pt-[10px]">
-                  <div className="flex gap-y-5 gap-x-10 flex-wrap">
-                    <Stat value={String(toClear.length)} label="Layers to clear" />
-                    <Stat value={pct(toClear.reduce<number | null>((a, l) => (l.clearance.unclaimed_share_percent ?? a), null))} label="Unclaimed" />
-                    <Stat value={toClear.map((l) => l.clearance.difficulty).sort()[toClear.length - 1]} label="Difficulty" mono={false} />
-                  </div>
-                  <div className="flex flex-col gap-[10px] text-body leading-[1.55] text-ink-70 max-w-[60ch]">
-                    {toClear.map((l) => (
-                      <div key={l.layer_id}>
-                        <span className="font-semibold text-ink">{titleOf(l)}.</span> {l.licensing_path}{l.cost_band ? ` Cost band: ${l.cost_band}.` : ''}
+              ) : (
+                <>
+                  {toClear.map((l) => (
+                    <div key={l.layer_id} className="flex flex-col gap-1 max-w-[62ch]">
+                      <div className="text-body leading-[1.55]">
+                        <span className="font-semibold">{titleOf(l)}.</span> {l.licensing_path}.
                       </div>
-                    ))}
+                      {l.cost_band && <div className="text-meta font-medium text-ink-70">Cost band: {l.cost_band}</div>}
+                    </div>
+                  ))}
+                  {actLinks.length > 0 && (
+                    <div className="flex flex-col gap-2 pt-1">
+                      {actLinks.map((l) => <LinkLine key={l.url + l.source_name} l={l} />)}
+                    </div>
+                  )}
+                  <div className="text-meta font-medium leading-[1.7] text-ink-70 max-w-[70ch]">
+                    Party counts, ownership splits and one-stop status live in the MLC&rsquo;s public database; API
+                    access is pending, so clearance difficulty is not yet computed — the links above are the
+                    manual path.
                   </div>
-                </div>
+                </>
               )}
             </div>
           </div>
@@ -359,15 +362,6 @@ function SourceLine({ s }: { s: Source }) {
   )
 }
 
-function Stat({ value, label, mono = true }: { value: string; label: string; mono?: boolean }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className={`${mono ? 'font-mono font-medium' : 'font-bold uppercase tracking-[0.02em]'} text-stat leading-none`}>{value}</div>
-      <Eyebrow className="text-ink-70 tracking-[0.1em]">{label}</Eyebrow>
-    </div>
-  )
-}
-
 function QuestionRow({ q, open, onToggle }: { q: UnresolvedQuestion; open: boolean; onToggle: () => void }) {
   const [copied, setCopied] = useState(false)
   const terms = q.search_terms.join('  ·  ')
@@ -418,10 +412,10 @@ function LinkLine({ l }: { l: HandoffLink }) {
 }
 
 function groupLinks(links: HandoffLink[]): { title: string; sub: string; items: HandoffLink[] }[] {
+  // Act links render in the Clearance section, next to the decision they serve.
   const groups = [
     { key: 'verify', title: 'Verify', sub: 'Check what we determined.' },
     { key: 'resolve', title: 'Resolve', sub: 'Settle what research couldn’t.' },
-    { key: 'license', title: 'Act', sub: 'Start the license.' },
     { key: 'alternative', title: 'Instead', sub: 'Substitutes without the rights problem.' },
   ]
   return groups.map((g) => ({ ...g, items: links.filter((l) => l.purpose === g.key) })).filter((g) => g.items.length > 0)
