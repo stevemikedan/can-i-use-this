@@ -123,6 +123,17 @@ export const FACT_LABEL: Record<string, string> = {
   recording_first_published_year: 'Recording first published',
 }
 
+/** Why a layer is blocked, at a glance — for the cue table's blocking column. */
+export const BLOCK_REASON: Record<string, string> = {
+  us_renewal_unknown: 'renewal unknown',
+  life_plus_70_writers_uncorroborated: 'writer list unconfirmed',
+  recording_pub_year_unconfirmed: 'release date unconfirmed',
+  us_publication_year_unknown: 'publication year unknown',
+  public_domain_withheld_low_confidence: 'evidence too weak for public domain',
+  uk_death_year_unknown: 'death year unknown',
+  eu_death_year_unknown: 'death year unknown',
+}
+
 export function factValue(key: string, value: unknown): string {
   if (key === 'renewal_filed') return value ? 'Renewed' : 'Not renewed'
   return String(value)

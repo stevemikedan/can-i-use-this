@@ -6,7 +6,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { QueryParams, RightsResponse } from '../types'
 import { Band, Doc, Eyebrow, SectionHead, Stamp } from '../components/ui'
-import { confidenceLabel, expiryLine, splitQuery } from '../lib/format'
+import { BLOCK_REASON, confidenceLabel, expiryLine, splitQuery } from '../lib/format'
 import { VERDICT_SEVERITY, blockingLayers, layerTitle, toCsv, downloadText } from '../lib/export'
 import { runQuery } from '../lib/api'
 
@@ -170,10 +170,18 @@ export default function Cues({ params, rows, setRows, onOpen, onNewInquiry }: {
                       <>
                         <div className="flex-[0_0_auto]"><Stamp verdict={resp.overall_verdict} size={16} /></div>
                         <div className="text-meta font-medium text-ink-70 flex-[0_1_auto]">
-                          {blocking.length ? `blocks: ${blocking.map(layerTitle).join(' + ').toLowerCase()}` : 'nothing blocking'}
+                          {blocking.length
+                            ? `blocks: ${blocking.map((b) => {
+                                const why = BLOCK_REASON[b.determination.rule_id]
+                                return layerTitle(b).toLowerCase() + (why ? ` — ${why}` : '')
+                              }).join(' · ')}`
+                            : 'nothing blocking'}
                         </div>
                         <div className="font-mono font-medium text-meta text-ink-70 whitespace-nowrap">
-                          {blocking.length ? expiryLine(blocking[0].determination) : expiryLine(resp.layer_verdicts.filter((l) => l.is_required)[0]?.determination ?? resp.layer_verdicts[0].determination)}
+                          {/* the LATER constraint: the row's expiry is when the last block lifts */}
+                          {blocking.length
+                            ? expiryLine([...blocking].sort((a, b) => (b.determination.expiry_year ?? 9999) - (a.determination.expiry_year ?? 9999))[0].determination)
+                            : expiryLine(resp.layer_verdicts.filter((l) => l.is_required)[0]?.determination ?? resp.layer_verdicts[0].determination)}
                         </div>
                         <div className="text-meta font-medium text-ink-70 whitespace-nowrap">{confidenceLabel(resp.overall_confidence)}</div>
                         <button type="button" className="text-toggle whitespace-nowrap" onClick={() => onOpen(resp, { ...params, title: r.title, artist: r.artist })}>

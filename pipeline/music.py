@@ -163,6 +163,10 @@ def _find_works(title: str, cands: list[dict], em: Emitter) -> dict[str, dict]:
     single call). Falls back to the recording work-rels sweep only when the
     search fails or returns nothing.
     """
+    # Selection must be deterministic: the same query gives the same record
+    # every run. Every ordering below breaks ties on MBID, never on API
+    # response order — MusicBrainz search scores tie constantly, and a
+    # degraded sub-fetch must not reshuffle what the next run picks.
     works: dict[str, dict] = {}
     ws = mb.search_works(title) if USE_WORK_SEARCH else None
     if ws is not None:
@@ -175,7 +179,7 @@ def _find_works(title: str, cands: list[dict], em: Emitter) -> dict[str, dict]:
             return works
         if not ws.ok:
             em.emit(S.IDENTIFY, "progress", f"Work search failed ({ws.error}); falling back to a recording sweep", degraded=True)
-    for c in cands[:K_WORK_LOOKUPS]:
+    for c in sorted(cands, key=lambda c: (-(c.get("score") or 0), c["mbid"]))[:K_WORK_LOOKUPS]:
         f = mb.recording_works(c["mbid"])
         em.consulted()
         if f.ok:
@@ -195,7 +199,7 @@ def _select_recording(title: str, cands: list[dict], artist: Optional[str], em: 
     mine: list[dict] = []
     complete = True
     src_url, src_at = None, datetime.now(timezone.utc)
-    ordered = sorted(works.items(), key=lambda kv: -(kv[1].get("score") or 0))
+    ordered = sorted(works.items(), key=lambda kv: (-(kv[1].get("score") or 0), kv[0]))
     for wid, w in ordered:
         # Lower-ranked same-title works (score < 90) are usually stray
         # arrangements; only browse them if nothing dated has turned up yet.
@@ -224,8 +228,11 @@ def _select_recording(title: str, cands: list[dict], artist: Optional[str], em: 
     undated = len(sessions.get(None, []))
 
     if dated:
+        # The earliest dated session is the original; everything later is a
+        # live take, compilation or reissue. Ties break on release date, then
+        # MBID — never on response order.
         k = dated[0]
-        pick = min(sessions[k], key=lambda r: r["date"] or "9999")
+        pick = min(sessions[k], key=lambda r: (r["date"] or "9999", r["mbid"]))
         year = int(k[:4])
         basis = RecordingDateBasis.DATED_PERFORMANCE
         # Terms run from PUBLICATION; the dated relation is the session. It is
@@ -236,7 +243,7 @@ def _select_recording(title: str, cands: list[dict], artist: Optional[str], em: 
         resolution = Confidence.HIGH if (len(dated) == 1 and undated == 0 and complete) else Confidence.MEDIUM
         excerpt = f"performance relation dated {k}; earliest release on file {pick['date']}"
     else:
-        pick = min(mine, key=lambda r: r["date"] or "9999")
+        pick = min(mine, key=lambda r: (r["date"] or "9999", r["mbid"]))
         year = int(pick["date"][:4]) if pick["date"] else None
         basis = RecordingDateBasis.FIRST_RELEASE_DATE if year else RecordingDateBasis.UNKNOWN
         rec_conf, resolution = Confidence.LOW, Confidence.LOW
@@ -653,6 +660,34 @@ def year_question(title: str, fact: ResearchedFact) -> UnresolvedQuestion:
     )
 
 
+def derivative_question(title: str, year: int, dead: list[Writer]) -> UnresolvedQuestion:
+    """
+    A credited writer died before the stated publication year — a machine-
+    detectable contradiction. The usual cause: the dated publication is a
+    translation, arrangement or new edition of an earlier work, and each
+    carries its own copyright with its own authors, term and country of
+    origin. Four days from freeze this is detected and disclosed, not
+    modelled: the verdict stands for the {year} publication, and the open
+    question says exactly what else may exist.
+    """
+    who = "; ".join(f"{w.name} (d. {w.death_year})" for w in dead)
+    return UnresolvedQuestion(
+        question_id=f"{COMPOSITION}:derivative",
+        question=f'Is the {year} "{title}" a translation or arrangement of an earlier work?',
+        why_it_matters=f"{who} died before the stated {year} US publication, so this {year} copyright is "
+                       f"likely a translation, arrangement or new edition of an earlier original — for "
+                       f"example a foreign-language original with its own, separate copyright. The verdict "
+                       f"on this record covers the {year} publication; the original would carry its own "
+                       f"term, authors and country of origin.",
+        if_yes=f"Two rights layers exist: the earlier original and the {year} version. Each must be "
+               f"cleared (or found expired) separately.",
+        if_no=f"The {year} publication is the original and this record's determination stands as computed.",
+        affects_layer_ids=[COMPOSITION],
+        search_terms=[f'"{title}" original version translation', f'"{title}" {dead[0].name} original'],
+        estimated_effort="minutes",
+    )
+
+
 def renewal_extras(title: str, year: int) -> dict:
     """Registry extras that select the CCE-scans and/or online-catalog handoff links."""
     system = renewal_record_system(year)
@@ -833,6 +868,24 @@ def stage_research_composition(run: MusicRun) -> None:
         if cf.sibling_extra and tf.author_death_year is not None:
             tf.author_death_year.conflicting_values = [
                 f"{s.death_year} ({s.name}, per sibling MusicBrainz work)" for s in cf.sibling_extra if s.death_year]
+
+    # A writer dead before the stated publication year: disclose the likely
+    # earlier original (translation / arrangement) rather than silently
+    # attributing the later publication to them.
+    if cf.year:
+        dead_before = [w for w in cf.writers if w.death_year and w.death_year < cf.year]
+        if dead_before:
+            question_ids["derivative"] = f"{COMPOSITION}:derivative"
+            questions.append(derivative_question(cf.title or title, cf.year, dead_before))
+            if tf.first_publication_year is not None:
+                tf.first_publication_year.reasoning = (
+                    (tf.first_publication_year.reasoning or "")
+                    + f" NOTE: {dead_before[0].name} died {dead_before[0].death_year}, before this "
+                      f"publication — see the open question about an earlier original."
+                )
+            em.emit(S.RESEARCH, "progress",
+                    f"Writer death year precedes the {cf.year} publication — flagged as a likely "
+                    f"translation or arrangement of an earlier work")
 
     # Renewal window -> Tier 3 SEARCH (primary path), then read the evidence
     cliff = CURRENT_YEAR - 95

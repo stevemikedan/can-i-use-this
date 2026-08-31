@@ -309,3 +309,26 @@ def test_partial_corroboration_never_lifts_the_block(cache, transport, sleeps, f
     qn = next(u for u in resp.unresolved if u.question_id == "composition:writers")
     assert "Clarence Williams" in qn.why_it_matters
     assert qn.resolution_links                                  # the search hits ride the question
+
+
+# --- the dead-author derivative signal (31 Aug): detect and disclose ---
+
+def test_writer_dead_before_publication_flags_a_likely_original():
+    from pipeline.music import Writer, derivative_question
+    q = derivative_question("Mack the Knife", 1954, [Writer("Kurt Weill", "composer", death_year=1950)])
+    assert q.question_id == "composition:derivative"
+    assert "Kurt Weill (d. 1950)" in q.why_it_matters and "1954" in q.why_it_matters
+    assert "translation" in q.why_it_matters
+    assert "cleared (or found expired) separately" in q.if_yes
+    assert q.estimated_effort == "minutes"
+
+
+def test_derivative_signal_not_raised_for_ordinary_works(cache, transport, sleeps, fake_parallel):
+    """Oliver died 1938, ten years after the 1928 publication — no flag."""
+    from pipeline.mockworld import handler
+    from pipeline.music import run_music
+    from schemas import AssetQuery, AssetType, Intent, Jurisdiction
+    transport(handler)
+    resp, _ = run_music(AssetQuery(raw_input="West End Blues — Louis Armstrong", intent=Intent.FILM_TV,
+                                   jurisdiction=Jurisdiction.US, asset_type_hint=AssetType.MUSIC))
+    assert not any(u.question_id == "composition:derivative" for u in resp.unresolved)
