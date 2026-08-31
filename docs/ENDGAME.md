@@ -92,6 +92,14 @@ Deploy day must cover:
 - Vertex AI access from the service account (the reader has only ever run on ADC)
 - `--min-instances=1` before judging; the service stays live Sep 23 – Oct 7
 - the billing alert stays on
+- **31 Aug incident:** MusicBrainz intermittently refuses Cloud Run's shared
+  egress pool at the TLS layer (SSL EOF on every connect, per-path lottery —
+  worked one day, failed for half an hour the next). Fixed with Direct VPC
+  egress + Cloud NAT: static IP `34.45.138.202` (`ciut-egress` /
+  `ciut-router` / `ciut-nat`), flags in `deploy/deploy.sh`. `/api/probe`
+  does live uncached GETs to MusicBrainz and Wikidata from inside the
+  container — check it first if queries ever fail during judging. The NAT
+  must stay up through Oct 7.
 
 ### The biggest risk
 
