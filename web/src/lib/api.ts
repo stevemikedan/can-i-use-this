@@ -5,7 +5,10 @@ export async function runQuery(p: QueryParams, signal?: AbortSignal): Promise<Ri
   const r = await fetch('/api/query', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ title: p.title, artist: p.artist || null, intent: p.intent, jurisdiction: p.jurisdiction }),
+    body: JSON.stringify({
+      title: p.title, artist: p.artist || null, intent: p.intent, jurisdiction: p.jurisdiction,
+      answers: p.answers && Object.keys(p.answers).length ? p.answers : undefined,
+    }),
     signal,
   })
   if (!r.ok) throw new Error(`${r.status} ${await r.text()}`)

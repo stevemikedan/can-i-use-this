@@ -521,7 +521,8 @@
     "disambiguation_choice": null,
     "intent": "film_tv",
     "jurisdiction": "US",
-    "raw_input": "West End Blues — Louis Armstrong"
+    "raw_input": "West End Blues — Louis Armstrong",
+    "user_answers": {}
   },
   "served_from_cache": false,
   "stop_for_disambiguation": false,

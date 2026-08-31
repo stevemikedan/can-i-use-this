@@ -38,6 +38,7 @@ from sources import wikidata as wd
 from sources.http import as_source, plain_error
 
 from .assemble import assemble, failed_response, stop_response
+from .user_facts import answered_fact
 from .determine import determine_all
 from .events import Emitter
 
@@ -569,6 +570,9 @@ def _lead(fact: Optional[ResearchedFact], says: str) -> tuple[str, list[HandoffL
     if fact is None:
         return "", []
     srcs = fact.sources[:3]
+    if srcs and all(s.method is ResearchMethod.USER_PROVIDED for s in srcs):
+        return (f" You answered: {says}, without naming a source. Recorded as a low-confidence "
+                f"lead; the question stays open until a record confirms it."), []
     where = "; ".join(dict.fromkeys(s.name for s in srcs))
     text = (f" Lead, low confidence: {where} states {says}. Not an official record; "
             f"verify it against one before relying on it.")
@@ -929,31 +933,50 @@ def stage_research_composition(run: MusicRun) -> None:
                     f"Writer death year precedes the {cf.year} publication; flagged as a likely "
                     f"translation or arrangement of an earlier work")
 
-    # Renewal window -> Tier 3 SEARCH (primary path), then read the evidence
+    # Renewal window -> the user's answer if they gave one on a re-run,
+    # else Tier 3 SEARCH (primary path) and the reader
     cliff = CURRENT_YEAR - 95
     if cf.year and cliff <= cf.year <= 1963:
-        em.emit(S.RESEARCH, "progress",
-                f"Published {cf.year}. Renewal in year 28 decides the US term; searching renewal records (Parallel Search)")
-        out, links = search_renewal(cf.title or title, writer_names, cf.year,
-                                    announce=_announce_search(em, "renewal records"))
-        _search_result_line(em, "renewal records", out)
-        if not out.ok:
-            em.emit(S.RESEARCH, "progress", "Parallel Search unavailable; renewal left unresolved",
-                    degraded=True, error_message=out.error)
-        answer = reader.read_renewal(title=cf.title or title, writers=writer_names, year=cf.year, evidence=out)
-        fact = renewal_to_fact(answer, retrieved_at=out.retrieved_at)
-        if fact is not None:
-            tf.renewal_filed = fact
+        supplied = answered_fact(run.query, f"{COMPOSITION}:renewal")
+        if supplied is not None:
+            # The user came back with the answer to the open question. The
+            # fact is theirs and marked as such (ResearchMethod.USER_PROVIDED);
+            # confidence policy in pipeline/user_facts.py: MEDIUM with an
+            # attestation, LOW without. Direction still runs through
+            # LOW_CONFIDENCE_PD_RULE — a bare "not renewed" stays a lead and
+            # the question stays open.
+            tf.renewal_filed = supplied
+            attested = supplied.confidence is not Confidence.LOW
             em.emit(S.RESEARCH, "progress",
-                    f"Renewal resolved from evidence: {'renewed' if fact.value else 'not renewed'} "
-                    f"({fact.confidence.value} confidence, {len(fact.sources)} citation(s))")
-        if fact is None or fact.confidence is Confidence.LOW:
-            # No answer, or a low-confidence one: the question stays open. A
-            # low-confidence finding rides along as a lead; the rules engine
-            # lets it support "protected" but not "public domain"
-            # (LOW_CONFIDENCE_PD_RULE in determine.py).
-            question_ids["renewal_filed"] = f"{COMPOSITION}:renewal"
-            questions.append(renewal_question(cf.title or title, cf.year, links, renewal_numbers(out), lead=fact))
+                    f"Renewal answered by you: {'renewed' if supplied.value else 'not renewed'}"
+                    + (f" ({supplied.confidence.value} confidence, source attested)" if attested
+                       else f" ({supplied.confidence.value} confidence; no source given, recorded as a lead)"))
+            if supplied.confidence is Confidence.LOW:
+                question_ids["renewal_filed"] = f"{COMPOSITION}:renewal"
+                questions.append(renewal_question(cf.title or title, cf.year, [], [], lead=supplied))
+        else:
+            em.emit(S.RESEARCH, "progress",
+                    f"Published {cf.year}. Renewal in year 28 decides the US term; searching renewal records (Parallel Search)")
+            out, links = search_renewal(cf.title or title, writer_names, cf.year,
+                                        announce=_announce_search(em, "renewal records"))
+            _search_result_line(em, "renewal records", out)
+            if not out.ok:
+                em.emit(S.RESEARCH, "progress", "Parallel Search unavailable; renewal left unresolved",
+                        degraded=True, error_message=out.error)
+            answer = reader.read_renewal(title=cf.title or title, writers=writer_names, year=cf.year, evidence=out)
+            fact = renewal_to_fact(answer, retrieved_at=out.retrieved_at)
+            if fact is not None:
+                tf.renewal_filed = fact
+                em.emit(S.RESEARCH, "progress",
+                        f"Renewal resolved from evidence: {'renewed' if fact.value else 'not renewed'} "
+                        f"({fact.confidence.value} confidence, {len(fact.sources)} citation(s))")
+            if fact is None or fact.confidence is Confidence.LOW:
+                # No answer, or a low-confidence one: the question stays open. A
+                # low-confidence finding rides along as a lead; the rules engine
+                # lets it support "protected" but not "public domain"
+                # (LOW_CONFIDENCE_PD_RULE in determine.py).
+                question_ids["renewal_filed"] = f"{COMPOSITION}:renewal"
+                questions.append(renewal_question(cf.title or title, cf.year, links, renewal_numbers(out), lead=fact))
 
 
 def stage_research_recording(run: MusicRun) -> None:

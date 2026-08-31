@@ -183,9 +183,16 @@ export interface PipelineEvent {
   partial: Record<string, unknown> | null
 }
 
+export interface UserAnswerParam {
+  answer: boolean
+  attestation?: string | null
+}
+
 export interface QueryParams {
   title: string
   artist?: string
   intent: Intent
   jurisdiction: Jurisdiction
+  /** question_id -> the user's answer to an open question, carried on re-runs. */
+  answers?: Record<string, UserAnswerParam>
 }

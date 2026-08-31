@@ -625,6 +625,23 @@ class Alternative(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+class UserAnswer(BaseModel):
+    """
+    A user's answer to an UnresolvedQuestion, supplied on resubmission.
+
+    The attestation is what turns an assertion into a finding: for "renewed"
+    an RE number and date; for "not renewed" what was searched and where.
+    Confidence policy — MEDIUM ceiling with an attestation, LOW without,
+    authoritative=False always — lives in pipeline/user_facts.py.
+    """
+
+    answer: bool
+    attestation: str | None = Field(
+        None, max_length=300,
+        description="The source behind the answer: an RE number and date, or "
+                    "what was searched and what came back.")
+
+
 class AssetQuery(BaseModel):
     raw_input: str
     intent: Intent = Intent.PERSONAL
@@ -633,6 +650,10 @@ class AssetQuery(BaseModel):
     disambiguation_choice: str | None = Field(
         None, description="Set on resubmission after the user picks a Candidate."
     )
+    user_answers: dict[str, UserAnswer] = Field(
+        default_factory=dict,
+        description="question_id -> the user's answer, on a re-run after they "
+                    "settle an open question. See pipeline/user_facts.py.")
 
 
 class ResolvedEntity(BaseModel):

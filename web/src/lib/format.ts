@@ -67,7 +67,7 @@ export const METHOD_LABEL: Record<ResearchMethod, string> = {
   parallel_task: 'Research task',
   parallel_extract: 'Extract',
   rules_engine: 'Rules',
-  user_provided: 'Supplied',
+  user_provided: 'Asserted by you',
 }
 
 export const EFFORT_LABEL: Record<string, string> = { minutes: 'Minutes', hours: 'Hours', specialist: 'Specialist' }

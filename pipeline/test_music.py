@@ -396,3 +396,68 @@ def test_derivative_flag_gates_life_plus_70():
     # without the flag, the same facts compute normally
     det2 = determine_composition(layer, Jurisdiction.UK, {"author_death_year": "x"}, [1950, 1956])
     assert det2.status is DeterminationStatus.PROTECTED and det2.expiry_year == 2027
+
+
+# --- user-supplied answers (pipeline/user_facts.py) -------------------------------
+#
+# The renewal question, answered on a re-run. MEDIUM ceiling with an
+# attestation, LOW without; authoritative=False always; a bare "not renewed"
+# stays withheld by LOW_CONFIDENCE_PD_RULE.
+
+def q_answered(answer, attestation=None):
+    from schemas import UserAnswer
+    return AssetQuery(raw_input="Blue Moon \u2014 Ella Fitzgerald", intent=Intent.FILM_TV,
+                      jurisdiction=Jurisdiction.US, asset_type_hint=AssetType.MUSIC,
+                      user_answers={"composition:renewal": UserAnswer(answer=answer, attestation=attestation)})
+
+
+def test_user_answer_renewed_attested(cache, transport, no_parallel):
+    # "Yes, renewed. RE-123-456, 12 Jan 1962" -> protected at MEDIUM, no
+    # search run (no_parallel would degrade if it were), question closed.
+    transport(handler)
+    resp, em = run_music(q_answered(True, "RE-123-456, renewed 12 Jan 1962"))
+    comp = det(resp, "composition", Jurisdiction.US)
+    assert comp.status is DeterminationStatus.PROTECTED and comp.expiry_year == 2030
+    assert comp.rule_id == "us_renewal_filed" and comp.confidence is Confidence.MEDIUM
+    assert "composition:renewal" not in [u.question_id for u in resp.unresolved]
+    layer = next(l for l in resp.entity.layers if l.layer_id == "composition")
+    src = layer.term_facts.renewal_filed.sources[0]
+    assert src.method.value == "user_provided" and not src.authoritative
+    assert "RE-123-456" in src.excerpt
+
+
+def test_user_answer_not_renewed_attested(cache, transport, no_parallel):
+    # An attested "no" is a finding, not an opinion: MEDIUM clears the
+    # asymmetry guard and the composition resolves public domain at MEDIUM.
+    transport(handler)
+    resp, em = run_music(q_answered(False, "Copyright Office online catalog, searched by title and claimant, no renewal record"))
+    comp = det(resp, "composition", Jurisdiction.US)
+    assert comp.status is DeterminationStatus.PUBLIC_DOMAIN and comp.expiry_year == 1963
+    assert comp.rule_id == "us_renewal_not_filed" and comp.confidence is Confidence.MEDIUM
+    assert "composition:renewal" not in [u.question_id for u in resp.unresolved]
+
+
+def test_user_answer_not_renewed_bare_stays_withheld(cache, transport, no_parallel):
+    # A bare "no" is an opinion: LOW, withheld by LOW_CONFIDENCE_PD_RULE.
+    # The verdict does not move to clear; the answer is recorded as a lead
+    # on the still-open question.
+    transport(handler)
+    resp, em = run_music(q_answered(False))
+    comp = det(resp, "composition", Jurisdiction.US)
+    assert comp.status is DeterminationStatus.UNDETERMINED
+    assert comp.rule_id == "public_domain_withheld_low_confidence"
+    assert comp.blocked_by == ["composition:renewal"]
+    qn = next(u for u in resp.unresolved if u.question_id == "composition:renewal")
+    assert "You answered" in qn.why_it_matters and "without naming a source" in qn.why_it_matters
+
+
+def test_user_answer_renewed_bare_protected_low(cache, transport, no_parallel):
+    # A bare "yes" moves toward protected — the safe direction — at LOW,
+    # and the question stays open with the answer as a lead.
+    transport(handler)
+    resp, em = run_music(q_answered(True))
+    comp = det(resp, "composition", Jurisdiction.US)
+    assert comp.status is DeterminationStatus.PROTECTED and comp.expiry_year == 2030
+    assert comp.confidence is Confidence.LOW
+    qn = next(u for u in resp.unresolved if u.question_id == "composition:renewal")
+    assert "You answered" in qn.why_it_matters

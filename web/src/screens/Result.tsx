@@ -1,7 +1,7 @@
 // Result — docs/design-system.md §5 "Result". Every value rendered here comes
 // from the RightsResponse; the screen adds no judgement of its own.
 import { useCallback, useEffect, useState } from 'react'
-import type { HandoffLink, Intent, LayerVerdict, QueryParams, ResearchedFact, RightsHolder, RightsLayer, RightsResponse, Source, UnresolvedQuestion } from '../types'
+import type { HandoffLink, Intent, LayerVerdict, QueryParams, ResearchedFact, RightsHolder, RightsLayer, RightsResponse, Source, UnresolvedQuestion, UserAnswerParam } from '../types'
 import { Band, Controls, Doc, Eyebrow, SectionHead, Stamp, Tag, TextToggle, Ticks } from '../components/ui'
 import { EFFORT_LABEL, FACT_LABEL, METHOD_LABEL, VERDICT_WORD, confidenceLabel, expiryLine, factValue, pct, shortDate, sourceHref, splitQuery } from '../lib/format'
 import { VERDICT_SEVERITY, csvRow, CSV_HEADER, downloadText, safeFilename, toMarkdown } from '../lib/export'
@@ -15,10 +15,11 @@ export interface ResultProps {
   onIntent: (i: Intent) => void
   onJurisdiction: (j: QueryParams['jurisdiction']) => void
   onNewInquiry: () => void
+  onAnswer: (questionId: string, answer: boolean, attestation: string) => void
   onBack?: () => void
 }
 
-export default function Result({ resp, params, busy, onIntent, onJurisdiction, onNewInquiry, onBack }: ResultProps) {
+export default function Result({ resp, params, busy, onIntent, onJurisdiction, onNewInquiry, onAnswer, onBack }: ResultProps) {
   const { intent, jurisdiction } = params
   const [openState, setOpenState] = useState<Record<string, boolean>>({})
   const [printing, setPrinting] = useState(false)
@@ -175,7 +176,8 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
           <SectionHead title={`Open questions — ${resp.unresolved.length}`}
             sub={resp.unresolved.length ? undefined : 'Research settled every question it asked.'} />
           {resp.unresolved.map((q, i) => (
-            <QuestionRow key={q.question_id} q={q} open={!!open[`q${i}`]} onToggle={() => toggle(`q${i}`)} />
+            <QuestionRow key={q.question_id} q={q} open={!!open[`q${i}`]} onToggle={() => toggle(`q${i}`)}
+              busy={busy} prior={params.answers?.[q.question_id]} onAnswer={onAnswer} />
           ))}
         </section>
 
@@ -370,7 +372,64 @@ function SourceLine({ s }: { s: Source }) {
   )
 }
 
-function QuestionRow({ q, open, onToggle }: { q: UnresolvedQuestion; open: boolean; onToggle: () => void }) {
+// Questions with an answer control. One entry today; more question types are
+// entries here plus a handler in pipeline/user_facts.py, not a redesign.
+const ANSWERABLE = new Set(['composition:renewal'])
+
+function AnswerControl({ prior, busy, onAnswer }: {
+  prior?: UserAnswerParam
+  busy: boolean
+  onAnswer: (answer: boolean, attestation: string) => void
+}) {
+  // The consequence is stated before they click. A bare answer is an opinion
+  // and stays low confidence; with a source it becomes a medium-confidence
+  // finding (the ceiling for anything user-supplied; high is reserved for
+  // records we retrieved and read ourselves). A "no" without a source cannot
+  // clear the work. Mirrors pipeline/user_facts.py.
+  const [choice, setChoice] = useState<boolean | null>(prior?.answer ?? null)
+  const [att, setAtt] = useState(prior?.attestation ?? '')
+  const attested = att.trim().length > 0
+  const consequence = choice === null ? null
+    : choice
+      ? (attested
+        ? 'A citation makes this a medium-confidence finding. The verdict moves to protected and the question closes.'
+        : 'Without the number this is a low-confidence assertion. The verdict still moves to protected; the question stays open.')
+      : (attested
+        ? 'A named search makes this a medium-confidence finding. The verdict can resolve to public domain at medium confidence.'
+        : 'Without a source this stays a low-confidence lead. The verdict will not change to clear; the question stays open.')
+  return (
+    <div className="mt-4 border-t border-dashed border-ink-20 pt-4 flex flex-col gap-3 max-w-[64ch] print:hidden">
+      <Eyebrow tracking={12} className="text-ink-70">Found the answer? Enter it</Eyebrow>
+      <div className="flex gap-2 flex-wrap">
+        <button type="button" className="btn-answer" aria-pressed={choice === true} onClick={() => setChoice(true)}>Renewed</button>
+        <button type="button" className="btn-answer" aria-pressed={choice === false} onClick={() => setChoice(false)}>Not renewed</button>
+      </div>
+      {choice !== null && (
+        <>
+          <div className="flex flex-col gap-[6px]">
+            <Eyebrow tracking={12} className="text-ink-70">Your source</Eyebrow>
+            <input value={att} onChange={(e) => setAtt(e.target.value)} maxLength={300}
+              placeholder={choice ? 'The RE number and date, e.g. RE-123-456, 12 Jan 1962'
+                : 'Which catalog, searched by what, and what came back'}
+              className="font-mono font-medium text-body text-ink bg-transparent border border-ink-20 rounded-6 px-[14px] py-[10px] w-full placeholder:text-ink-70" />
+          </div>
+          <div className="text-meta font-medium text-ink-70 leading-[1.6] max-w-[58ch]">
+            {consequence} The answer is entered on the record as asserted by you.
+          </div>
+          <button type="button" className="btn-copy self-start" disabled={busy}
+            onClick={() => onAnswer(choice, att.trim())}>
+            {busy ? 'Re-running research\u2026' : 'Record the answer and re-run'}
+          </button>
+        </>
+      )}
+    </div>
+  )
+}
+
+function QuestionRow({ q, open, onToggle, busy, prior, onAnswer }: {
+  q: UnresolvedQuestion; open: boolean; onToggle: () => void; busy: boolean
+  prior?: UserAnswerParam; onAnswer: (questionId: string, answer: boolean, attestation: string) => void
+}) {
   const [copied, setCopied] = useState(false)
   const terms = q.search_terms.join('  ·  ')
   const copy = () => {
@@ -396,6 +455,9 @@ function QuestionRow({ q, open, onToggle }: { q: UnresolvedQuestion; open: boole
               </div>
             ))}
           </div>
+          {ANSWERABLE.has(q.question_id) && (
+            <AnswerControl prior={prior} busy={busy} onAnswer={(a, att) => onAnswer(q.question_id, a, att)} />
+          )}
           {q.search_terms.length > 0 && (
             <div className="mt-4 border border-dashed border-ink-20 rounded-6 px-[18px] py-4 flex gap-4 items-center flex-wrap">
               <div className="font-mono font-medium text-body flex-[1_1_320px] min-w-[220px] leading-[1.5]">{terms}</div>
