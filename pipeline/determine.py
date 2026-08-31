@@ -112,8 +112,19 @@ def determine_composition(layer: RightsLayer, j: Jurisdiction, question_ids: dic
             "The term runs from the death of the last surviving author, and the writer list "
             "could not be corroborated against a second source; a missing co-writer would "
             "shorten the computed term.", blocked)
-    r = life_plus_70(death_years, jurisdiction=j.value)
-    conf = tf.author_death_year.confidence if tf.author_death_year else Confidence.NONE
+    work_year = tf.first_publication_year.value if tf.first_publication_year else None
+    r = life_plus_70(death_years, jurisdiction=j.value, work_year=work_year)
+    if tf.author_death_year is not None:
+        conf = tf.author_death_year.confidence
+    elif r.rule_id.endswith("_life_plus_70_running"):
+        # The living floor rests on the work year and the corroborated list,
+        # not on a death record — its confidence follows those.
+        conf = _min_conf(
+            tf.first_publication_year.confidence if tf.first_publication_year else None,
+            Confidence.MEDIUM if tf.writer_list_corroborated else Confidence.LOW,
+        )
+    else:
+        conf = Confidence.NONE
     depends = ["author_death_year", "writer_list_corroborated"]
     return _from_rule(layer, j, r, conf, depends, question_ids)
 

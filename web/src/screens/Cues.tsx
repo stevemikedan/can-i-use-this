@@ -183,7 +183,9 @@ export default function Cues({ params, rows, setRows, onOpen, onNewInquiry }: {
                             ? expiryLine([...blocking].sort((a, b) => (b.determination.expiry_year ?? 9999) - (a.determination.expiry_year ?? 9999))[0].determination)
                             : expiryLine(resp.layer_verdicts.filter((l) => l.is_required)[0]?.determination ?? resp.layer_verdicts[0].determination)}
                         </div>
-                        <div className="text-meta font-medium text-ink-70 whitespace-nowrap">{confidenceLabel(resp.overall_confidence)}</div>
+                        {resp.overall_verdict !== 'undetermined' && (
+                          <div className="text-meta font-medium text-ink-70 whitespace-nowrap">{confidenceLabel(resp.overall_confidence)}</div>
+                        )}
                         <button type="button" className="text-toggle whitespace-nowrap" onClick={() => onOpen(resp, { ...params, title: r.title, artist: r.artist })}>
                           Open record →
                         </button>

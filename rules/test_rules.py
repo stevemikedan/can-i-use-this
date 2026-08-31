@@ -153,3 +153,33 @@ ROLLUP_CASES = [
 @pytest.mark.parametrize("label,got,want", ROLLUP_CASES, ids=_ids(ROLLUP_CASES))
 def test_roll_up_edge_cases(label, got, want):
     assert got() == want, label
+
+
+# --- the living floor (31 Aug): an author cannot die before the work existed ---
+
+def test_life_plus_70_living_floor_protects_recent_works():
+    from rules.terms import life_plus_70
+    # 1999 work, no recorded death: death >= 1999, so protected until at least 2070
+    r = life_plus_70([None], jurisdiction="UK", current_year=2026, work_year=1999)
+    assert r.status == "protected" and r.expiry_year == 2070
+    assert r.rule_id == "uk_life_plus_70_running"
+    assert "at least" in r.explanation
+    # one known death, one unknown: the unknown still floors the term forward
+    r2 = life_plus_70([1990, None], jurisdiction="EU", current_year=2026, work_year=1999)
+    assert r2.status == "protected" and r2.rule_id == "eu_life_plus_70_running"
+
+
+def test_life_plus_70_old_work_with_unknown_death_still_blocks():
+    from rules.terms import life_plus_70
+    # 1940 work, unknown death: the floor (2011) has passed — genuinely unknown
+    r = life_plus_70([None], jurisdiction="UK", current_year=2026, work_year=1940)
+    assert r.status == "undetermined" and r.rule_id == "uk_death_year_unknown"
+    # and with no work year at all, unchanged behaviour
+    r2 = life_plus_70([None], jurisdiction="UK", current_year=2026)
+    assert r2.status == "undetermined"
+
+
+def test_life_plus_70_known_deaths_unchanged():
+    from rules.terms import life_plus_70
+    r = life_plus_70([1965], jurisdiction="UK", current_year=2026, work_year=1928)
+    assert r.status == "protected" and r.expiry_year == 2036

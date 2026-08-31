@@ -146,12 +146,31 @@ def life_plus_70(
     death_years: list[Optional[int]],
     jurisdiction: str = "EU",
     current_year: int = CURRENT_YEAR,
+    work_year: Optional[int] = None,
 ) -> Determination:
     """
     Term runs from the death of the LAST surviving author.
-    A single unknown death year blocks the whole determination.
+
+    An unknown death year does not always block: an author cannot have died
+    before the work existed, so death >= work_year, so the term runs at least
+    to work_year + 70. When that floor is in the future, the work is
+    PROTECTED regardless of when (or whether) the author died — no aliveness
+    claim, no absence-of-evidence problem, pure arithmetic. A 1999 song with
+    living writers is protected in the UK/EU until at least 1 January 2070,
+    and that is a determination, not an unknown. Only when the floor has
+    passed (an old work with a genuinely unrecorded death) does an unknown
+    death year block.
     """
     if not death_years or any(d is None for d in death_years):
+        if work_year is not None and work_year + 70 >= current_year:
+            return Determination(
+                "protected", work_year + 70 + 1,
+                f"{jurisdiction.lower()}_life_plus_70_running",
+                f"The term runs 70 years past the death of the last surviving author. One or more "
+                f"authors have no recorded death year, but every author was alive when the work "
+                f"appeared in {work_year}: protected until at least 1 January {work_year + 71}, "
+                f"and decades beyond a living author's lifetime.",
+            )
         return Determination(
             "undetermined", None, f"{jurisdiction.lower()}_death_year_unknown",
             "Term runs from the death of the last surviving author, and at "

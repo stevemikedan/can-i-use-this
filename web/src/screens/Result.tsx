@@ -91,9 +91,11 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
           <div className="flex flex-col gap-[22px]">
             <Controls intent={intent} jurisdiction={jurisdiction} onIntent={onIntent} onJurisdiction={onJurisdiction} onInk busy={busy} />
             <div className="flex flex-col gap-[10px]">
-              <Eyebrow className="text-paper-72">Confidence</Eyebrow>
+              <Eyebrow className="text-paper-72">{resp.overall_verdict === 'undetermined' ? 'Status' : 'Confidence'}</Eyebrow>
               <div className="min-h-10 flex items-center">
-                <Ticks level={resp.overall_confidence} size="overall" onInk />
+                {resp.overall_verdict === 'undetermined'
+                  ? <div className="text-body font-medium text-paper max-w-[46ch]">No answer yet — the term can&rsquo;t be computed until the open question below is settled.</div>
+                  : <Ticks level={resp.overall_confidence} size="overall" onInk />}
               </div>
             </div>
           </div>
@@ -263,7 +265,9 @@ function LayerRow({ lv, layer, artist, blocking, first, open, onToggle }:
             <div className="text-body leading-[1.55] max-w-[62ch] text-ink-70">{lv.licensing_path}.</div>
           )}
           <div className="flex items-center gap-5 flex-wrap mt-[2px]">
-            <Ticks level={lv.determination.confidence} size="layer" />
+            {lv.verdict === 'undetermined'
+              ? <div className="text-meta font-medium text-ink-70">awaits the open question below</div>
+              : <Ticks level={lv.determination.confidence} size="layer" />}
             <TextToggle open={open} closed="Holders & evidence" opened="Hide holders & evidence" onClick={onToggle} />
           </div>
           {open && <LayerDetail lv={lv} layer={layer} />}

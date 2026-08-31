@@ -44,7 +44,18 @@ UNDETERMINED_WHY = {
     "us_publication_year_unknown": "its publication year is unknown",
     "spike_no_work_link": "the recording is not linked to a composition",
     "public_domain_withheld_low_confidence": "the only evidence pointing to public domain is low-confidence — a lead, not an answer",
+    "uk_death_year_unknown": "a writer's death year is not on record, and the term runs from it",
+    "eu_death_year_unknown": "a writer's death year is not on record, and the term runs from it",
 }
+
+
+def _first_words(text: str, limit: int) -> str:
+    """A fallback trimmed at a word boundary — never mid-word."""
+    first = text.split(".")[0].split(";")[0]
+    if len(first) <= limit:
+        return first
+    cut = first[:limit].rsplit(" ", 1)[0]
+    return cut + "…"
 
 LICENSING_PATH = {
     "composition": "Sync license from the publisher(s) / administrator — find them via MLC, ASCAP or BMI (handoff links)",
@@ -63,8 +74,9 @@ def _headline_for(det: Determination, j: Jurisdiction) -> str:
     if det.status is DeterminationStatus.PUBLIC_DOMAIN:
         return f"Public domain in the {j.value}" + (f" since 1 January {det.expiry_year}" if det.expiry_year else "")
     if det.status is DeterminationStatus.PROTECTED:
-        return f"Protected in the {j.value}" + (f" until 1 January {det.expiry_year}" if det.expiry_year else "")
-    why = UNDETERMINED_WHY.get(det.rule_id) or det.rule_explanation.split(".")[0].split(";")[0]
+        at_least = "at least " if "at least" in det.rule_explanation else ""
+        return f"Protected in the {j.value}" + (f" until {at_least}1 January {det.expiry_year}" if det.expiry_year else "")
+    why = UNDETERMINED_WHY.get(det.rule_id) or _first_words(det.rule_explanation, 90)
     return ("Undetermined — " + why)[:120]
 
 
@@ -111,7 +123,7 @@ def overall_headline(verdict: Verdict, blocking: Optional[LayerVerdict], lvs: li
     others = [lv for lv in req if lv is not blocking]
     if verdict is Verdict.UNDETERMINED:
         why = UNDETERMINED_WHY.get(blocking.determination.rule_id) or \
-            blocking.determination.rule_explanation.split(".")[0].split(";")[0][:70]
+            _first_words(blocking.determination.rule_explanation, 70)
         return f"Not yet determined: the {b} layer is blocked — {why}."[:160]
     exp = blocking.determination.expiry_year
     tail = ""
@@ -120,8 +132,9 @@ def overall_headline(verdict: Verdict, blocking: Optional[LayerVerdict], lvs: li
         st = ("public domain" if o.verdict is Verdict.CLEAR else
               "also protected" if o.verdict is Verdict.LICENSE_REQUIRED else o.verdict.value.replace("_", " "))
         tail = f" The {o.layer_label.split(' (')[0].lower()} is {st}."
+    at_least = "at least " if "at least" in blocking.determination.rule_explanation else ""
     return (f"License required: the {b} is protected in the {j.value}"
-            + (f" until 1 January {exp}" if exp else "") + "." + tail)[:160]
+            + (f" until {at_least}1 January {exp}" if exp else "") + "." + tail)[:160]
 
 
 def overall_confidence(lvs: list[LayerVerdict]) -> Confidence:

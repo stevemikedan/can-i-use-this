@@ -853,7 +853,14 @@ def stage_research_composition(run: MusicRun) -> None:
                                               sources=[s for w in cf.writers for s in w.sources],
                                               reasoning=f"Last surviving author: {who}")
     tf.writer_list_corroborated = cf.corroborated
-    if cf.corroborated and any(w.death_year is None for w in cf.writers):
+    # A missing death year is only an open QUESTION when it is researchable —
+    # an old work whose writer's death went unrecorded. When the work is
+    # recent enough that death >= work_year keeps the term running (the
+    # living floor in rules/terms.py), UK/EU resolve to PROTECTED and there
+    # is nothing a human could look up: you cannot research when a living
+    # person will die.
+    floor_covers = cf.year is not None and cf.year + 70 >= CURRENT_YEAR
+    if cf.corroborated and not floor_covers and any(w.death_year is None for w in cf.writers):
         missing = ", ".join(w.name for w in cf.writers if w.death_year is None)
         question_ids["author_death_year"] = f"{COMPOSITION}:death_years"
         questions.append(UnresolvedQuestion(
@@ -1011,7 +1018,8 @@ def stage_rules(run: MusicRun) -> None:
             run.composition.label = f"Composition ({floor.value})"
             title = run.cf.title or run.title
             run.comp_questions = [q for q in run.comp_questions
-                                  if q.question_id != f"{COMPOSITION}:publication_year"]
+                                  if q.question_id not in (f"{COMPOSITION}:publication_year",
+                                                           f"{COMPOSITION}:death_years")]
             run.comp_questions.append(year_question(title, floor))
             em.emit(S.RESEARCH, "progress",
                     f"No publication record — inferred {floor.value} from the recording (17 U.S.C. §101, low confidence)")
