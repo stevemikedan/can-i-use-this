@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { HandoffLink, Intent, LayerVerdict, QueryParams, ResearchedFact, RightsHolder, RightsLayer, RightsResponse, Source, UnresolvedQuestion } from '../types'
 import { Band, Controls, Doc, Eyebrow, SectionHead, Stamp, Tag, TextToggle, Ticks } from '../components/ui'
-import { EFFORT_LABEL, FACT_LABEL, METHOD_LABEL, TIER_LABEL, VERDICT_WORD, confidenceLabel, expiryLine, factValue, pct, shortDate, sourceHref, splitQuery } from '../lib/format'
+import { EFFORT_LABEL, FACT_LABEL, METHOD_LABEL, VERDICT_WORD, confidenceLabel, expiryLine, factValue, pct, shortDate, sourceHref, splitQuery } from '../lib/format'
 import { VERDICT_SEVERITY, csvRow, CSV_HEADER, downloadText, safeFilename, toMarkdown } from '../lib/export'
 
 const ORDER = VERDICT_SEVERITY
@@ -60,6 +60,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
   const layerOf = (id: string) => resp.entity.layers.find((l) => l.layer_id === id)
   const toClear = required.filter((l) => l.verdict === 'license_required')
   const actLinks = resp.handoff_links.filter((l) => l.purpose === 'license')
+  const derivative = resp.unresolved.some((u) => u.question_id === 'composition:derivative')
 
   return (
     <>
@@ -114,6 +115,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
           <SectionHead title="Rights layers" sub="One search is several separately-owned works. The answer rolls up from these." />
           {required.map((lv, i) => (
             <LayerRow key={lv.layer_id} lv={lv} layer={layerOf(lv.layer_id)} artist={artist} blocking={blockingIds.includes(lv.layer_id)}
+              disputed={derivative && lv.layer_id === 'composition'}
               first={i === 0} open={!!open[lv.layer_id]} onToggle={() => toggle(lv.layer_id)} />
           ))}
 
@@ -141,9 +143,8 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
                     </div>
                   )}
                   <div className="text-meta font-medium leading-[1.7] text-ink-70 max-w-[70ch]">
-                    Party counts, ownership splits and one-stop status live in the MLC&rsquo;s public database; API
-                    access is pending, so clearance difficulty is not yet computed — the links above are the
-                    manual path.
+                    Ownership splits and unclaimed shares live in the MLC&rsquo;s database (access pending) —
+                    these links are the way to the parties until then.
                   </div>
                 </>
               )}
@@ -224,13 +225,14 @@ function titleOf(lv: LayerVerdict): string {
   return lv.layer_label.split(' (')[0]
 }
 
-function subOf(lv: LayerVerdict, layer: RightsLayer | undefined, artist: string | null): string {
+function subOf(lv: LayerVerdict, layer: RightsLayer | undefined, artist: string | null, disputed = false): string {
   const parts: string[] = []
   const tf = layer?.term_facts
   if (lv.layer_id === 'composition') {
     if (tf?.first_publication_year) parts.push(String(tf.first_publication_year.value))
     const writers = layer?.holders.map((h) => h.name.value) ?? []
     if (writers.length) parts.push(writers.join(' / '))
+    if (disputed) parts.push('authorship in question')
   } else {
     if (artist) parts.push(artist)
     if (tf?.recording_first_published_year) parts.push(String(tf.recording_first_published_year.value))
@@ -242,8 +244,8 @@ function subOf(lv: LayerVerdict, layer: RightsLayer | undefined, artist: string 
   return parts.join(' · ')
 }
 
-function LayerRow({ lv, layer, artist, blocking, first, open, onToggle }:
-  { lv: LayerVerdict; layer: RightsLayer | undefined; artist: string | null; blocking: boolean; first: boolean; open: boolean; onToggle: () => void }) {
+function LayerRow({ lv, layer, artist, blocking, first, open, onToggle, disputed = false }:
+  { lv: LayerVerdict; layer: RightsLayer | undefined; artist: string | null; blocking: boolean; first: boolean; open: boolean; onToggle: () => void; disputed?: boolean }) {
   const wrap = blocking
     ? 'my-7 border border-ink-20 border-l-4 border-l-red rounded-6 py-6 px-7 max-[560px]:py-[18px] max-[560px]:px-4'
     : `py-7 px-1 ${first ? '' : 'border-t border-ink-20'}`
@@ -258,7 +260,7 @@ function LayerRow({ lv, layer, artist, blocking, first, open, onToggle }:
         <div className="flex-[1_1_380px] min-w-[240px] flex flex-col gap-[10px]">
           <div className="flex gap-y-[6px] gap-x-[14px] items-baseline flex-wrap">
             <h2 className="m-0 font-bold text-title">{titleOf(lv)}</h2>
-            <div className="font-mono font-medium text-meta text-ink-70">{subOf(lv, layer, artist)}</div>
+            <div className="font-mono font-medium text-meta text-ink-70">{subOf(lv, layer, artist, disputed)}</div>
           </div>
           <div className="text-body leading-[1.55] max-w-[62ch] text-pretty">{lv.reasoning}</div>
           {lv.verdict === 'license_required' && lv.licensing_path && (
@@ -405,12 +407,16 @@ function QuestionRow({ q, open, onToggle }: { q: UnresolvedQuestion; open: boole
 }
 
 function LinkLine({ l }: { l: HandoffLink }) {
-  const note = [l.description, l.navigation_hint].filter(Boolean).join(' — ')
+  // The tier distinction lives in the instruction, not a category tag:
+  // a deep link just links; a search or manual entry says what to do there.
+  const note = [l.description, l.navigation_hint].filter(Boolean).join('. ')
   return (
-    <div className="text-body flex gap-y-[6px] gap-x-[10px] items-baseline flex-wrap">
-      <Tag>{TIER_LABEL[l.tier]}</Tag>
-      <a href={l.url} target="_blank" rel="noopener">{l.source_name}</a>
-      {note && <span className="basis-full text-ink-70 text-body leading-[1.5] max-w-[64ch]">{note}{l.paste_string ? <> Paste: <span className="font-mono font-medium">{l.paste_string}</span></> : null}</span>}
+    <div className="text-body flex flex-col gap-[2px] max-w-[64ch]">
+      <div><a href={l.url} target="_blank" rel="noopener">{l.source_name}</a></div>
+      {note && <div className="text-ink-70 text-body leading-[1.5]">{note}{note.endsWith('.') ? '' : '.'}</div>}
+      {l.paste_string && (
+        <div className="text-meta text-ink-70">search for <span className="font-mono font-medium text-ink">{l.paste_string}</span></div>
+      )}
     </div>
   )
 }

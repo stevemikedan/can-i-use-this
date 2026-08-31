@@ -45,7 +45,7 @@
   applicable_types: [music]
   purpose: license
   description: "ASCAP ACE repertory — writer and publisher credits"
-  navigation_hint: "Search by title; paste the string below"
+  navigation_hint: "Search the repertory by title"
   authoritative: true
 
 - name: BMI repertoire
@@ -55,7 +55,7 @@
   applicable_types: [music]
   purpose: license
   description: "BMI repertoire — writer and publisher credits"
-  navigation_hint: "Search by title; paste the string below"
+  navigation_hint: "Search the repertoire by title"
   authoritative: true
 
 # Only emitted when the pipeline sets the `renewal_title` extra, i.e. the

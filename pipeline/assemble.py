@@ -45,6 +45,7 @@ UNDETERMINED_WHY = {
     "spike_no_work_link": "the recording is not linked to a composition",
     "public_domain_withheld_low_confidence": "the only evidence pointing to public domain is low-confidence — a lead, not an answer",
     "uk_death_year_unknown": "a writer's death year is not on record, and the term runs from it",
+    "life_plus_70_authorship_disputed": "the credited writers predate the publication — whose deaths the term runs from is unsettled",
     "eu_death_year_unknown": "a writer's death year is not on record, and the term runs from it",
 }
 

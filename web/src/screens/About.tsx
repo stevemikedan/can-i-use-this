@@ -119,12 +119,20 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               determinations cover the composition (life + 70) and the recording (70 years from publication).
               Other territories are not modelled.
             </P>
-            <P>
-              <span className="font-semibold">Publisher and share data is thinner than the rest.</span> Ownership
-              splits, administrators and one-stop status live in the MLC&rsquo;s public database; API access is
-              pending, so the composition layer currently falls back to web research and the public repertory
-              links for holder information — which is why the clearance panel is leaner than the evidence trail.
-            </P>
+            <div className="border border-dashed border-ink-20 rounded-6 px-[22px] py-5 flex flex-col gap-2 max-w-[70ch]">
+              <Eyebrow tracking={12} className="text-ink-70">The MLC — API access requested, pending</Eyebrow>
+              <P>
+                The MLC&rsquo;s database is the authoritative source for who owns a composition: the parties,
+                their ownership splits, and <span className="font-semibold">unclaimed shares</span> — which
+                matter more than anything else here, because a work with an unclaimed share cannot be fully
+                cleared at any price.
+              </P>
+              <P muted>
+                We&rsquo;ve requested API access and are waiting. Until it arrives, every record links to the
+                MLC&rsquo;s public search instead, and the Clearance section shows the path to the parties
+                rather than computed splits.
+              </P>
+            </div>
             <P>
               <span className="font-semibold">Coverage follows the sources.</span> A recording MusicBrainz has
               not dated, or a work Wikidata has not described, ends in an open question, not an answer. Music

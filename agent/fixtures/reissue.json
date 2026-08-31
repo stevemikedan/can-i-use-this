@@ -483,7 +483,7 @@
     },
     {
       "description": "ASCAP ACE repertory — writer and publisher credits",
-      "navigation_hint": "Search by title; paste the string below",
+      "navigation_hint": "Search the repertory by title",
       "paste_string": "Blue Moon",
       "purpose": "license",
       "source_name": "ASCAP repertory",
@@ -492,7 +492,7 @@
     },
     {
       "description": "BMI repertoire — writer and publisher credits",
-      "navigation_hint": "Search by title; paste the string below",
+      "navigation_hint": "Search the repertoire by title",
       "paste_string": "Blue Moon",
       "purpose": "license",
       "source_name": "BMI repertoire",

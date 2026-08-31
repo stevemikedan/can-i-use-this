@@ -101,10 +101,26 @@ def determine_composition(layer: RightsLayer, j: Jurisdiction, question_ids: dic
                          tf.renewal_filed.confidence if tf.renewal_filed else None)
         return _from_rule(layer, j, r, conf, ["first_publication_year", "renewal_filed"], question_ids)
 
-    # UK / EU: life + 70 from the LAST surviving author. An uncorroborated
-    # writer list BLOCKS the determination: a missing co-writer can only ever
-    # shorten the computed term, so a confident verdict from a partial list is
-    # the same failure class as a term computed from a reissue date.
+    # UK / EU: life + 70 from the LAST surviving author.
+    #
+    # A derivative signal BLOCKS first: when the credited writers predate the
+    # stated publication, the publication is likely a translation or
+    # arrangement with its own authors — and computing life+70 from the wrong
+    # deaths errs in the dangerous direction (a translator who outlived the
+    # original authors lengthens the term). Same failure class as the reissue
+    # date: a confident answer resting on an unestablished fact.
+    if "derivative" in question_ids:
+        return _undetermined(
+            layer, j, "life_plus_70_authorship_disputed",
+            "The credited writers predate the stated publication, so this is likely a translation "
+            "or arrangement whose own authors' deaths the term runs from. Until authorship is "
+            "settled, no life-plus-70 term can be computed.",
+            [question_ids["derivative"]])
+
+    # An uncorroborated writer list BLOCKS the determination: a missing
+    # co-writer can only ever shorten the computed term, so a confident
+    # verdict from a partial list is the same failure class as a term
+    # computed from a reissue date.
     if not tf.writer_list_corroborated:
         blocked = [question_ids["author_death_year"]] if "author_death_year" in question_ids else []
         return _undetermined(

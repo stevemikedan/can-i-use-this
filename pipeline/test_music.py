@@ -374,3 +374,25 @@ def test_every_blocked_determination_has_an_open_question():
             if det.status is DeterminationStatus.UNDETERMINED:
                 assert det.blocked_by, f"{name}: {det.layer_id}/{det.jurisdiction} blocked with no question"
                 assert set(det.blocked_by) <= qids, f"{name}: blocked_by points at a missing question"
+
+
+def test_derivative_flag_gates_life_plus_70():
+    """A confident life+70 from disputed authors is the reissue-date failure class."""
+    from pipeline.determine import determine_composition
+    from schemas import (Confidence, DeterminationStatus, Jurisdiction, ResearchedFact,
+                         RightsLayer, RightsLayerKind, Source, ResearchMethod)
+    from datetime import datetime, timezone
+    layer = RightsLayer(layer_id="composition", kind=RightsLayerKind.COMPOSITION, label="Composition")
+    layer.term_facts.writer_list_corroborated = True
+    layer.term_facts.author_death_year = ResearchedFact(
+        value=1956, confidence=Confidence.HIGH,
+        sources=[Source(name="Wikidata", url="https://www.wikidata.org/wiki/Q",
+                        method=ResearchMethod.DIRECT_API, retrieved_at=datetime.now(timezone.utc))])
+    qids = {"derivative": "composition:derivative", "author_death_year": "composition:writers"}
+    det = determine_composition(layer, Jurisdiction.UK, qids, [1950, 1956])
+    assert det.status is DeterminationStatus.UNDETERMINED
+    assert det.rule_id == "life_plus_70_authorship_disputed"
+    assert det.blocked_by == ["composition:derivative"]
+    # without the flag, the same facts compute normally
+    det2 = determine_composition(layer, Jurisdiction.UK, {"author_death_year": "x"}, [1950, 1956])
+    assert det2.status is DeterminationStatus.PROTECTED and det2.expiry_year == 2027
