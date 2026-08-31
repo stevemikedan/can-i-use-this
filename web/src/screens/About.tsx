@@ -1,14 +1,49 @@
-// About — for users deciding whether to trust a verdict. The layer model in
-// plain language, the research tiers, what confidence means, the known
-// limits, and the full disclaimer. Same design system, no new tokens.
+// About — for users deciding whether to trust a verdict, and for judges
+// checking the stack. The layer model in plain language, the sources split
+// into records we READ and destinations we POINT TO (that distinction is the
+// architecture), the agent stack, what confidence means, the known limits,
+// and the full disclaimer. Same design system, no new tokens. One text
+// measure throughout (80ch) so the column reads deliberate against the
+// 920px container instead of arbitrarily short.
+import { useState } from 'react'
 import type { ReactNode } from 'react'
-import { Band, Doc, Eyebrow, SectionHead } from '../components/ui'
+import { Band, Doc, Eyebrow, SectionHead, TextToggle } from '../components/ui'
 
 function P({ children, muted = false }: { children: ReactNode; muted?: boolean }) {
-  return <p className={`m-0 text-body leading-[1.55] max-w-[66ch] ${muted ? 'text-ink-70' : ''}`}>{children}</p>
+  return <p className={`m-0 text-body leading-[1.55] max-w-[80ch] ${muted ? 'text-ink-70' : ''}`}>{children}</p>
 }
 
+/** One source or destination: mono tier tag, name, role line, optional detail behind a toggle. */
+function SourceRow({ tier, name, role, detail }: { tier: string; name: ReactNode; role: ReactNode; detail?: ReactNode }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="flex gap-y-1 gap-x-6 flex-wrap py-4 border-t border-dashed border-ink-20 first:border-t-0">
+      <div className="font-mono font-medium text-meta text-ink-70 flex-[0_0_48px] pt-1">{tier}</div>
+      <div className="flex-[1_1_320px] min-w-[240px] flex flex-col gap-1">
+        <div className="font-semibold text-body">{name}</div>
+        <P muted>{role}</P>
+        {detail && (
+          <>
+            <TextToggle open={open} closed="More" opened="Close" onClick={() => setOpen(!open)} className="self-start" />
+            {open && <P muted>{detail}</P>}
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const STAGES: [string, string][] = [
+  ['Classify', 'Music means two works: a composition and a sound recording, owned separately.'],
+  ['Identify', 'MusicBrainz resolves the work and the earliest dated recording. An ambiguous title stops for disambiguation; researching the wrong entity is the worst failure this product can have.'],
+  ['Decompose', 'The layers split before any research, so each is researched as its own work.'],
+  ['Research', 'Both layers concurrently, cheapest tier first. A failed source degrades to the next tier; it never fails the run.'],
+  ['Determine', 'The rules engine computes each term per territory and records which rule fired and why.'],
+  ['Assemble', 'Verdicts roll up conservatively. The most restrictive required layer sets the answer, and unknown outranks clear.'],
+]
+
 export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
+  const [stagesOpen, setStagesOpen] = useState(false)
   return (
     <>
       <Band label="Can I use this? — How the register works"
@@ -59,26 +94,86 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
         </section>
 
         <section className="mt-16">
-          <SectionHead title="Three research tiers, cheapest first" sub="Where the facts come from." />
-          <div className="flex flex-col">
+          <SectionHead title="Where every fact comes from"
+            sub="Two kinds of source. Records the register reads at runtime, and places it sends you because the answer lives there." />
+
+          <div className="pt-6 flex flex-col gap-1">
+            <Eyebrow tracking={12} className="text-ink-70">Sources we read</Eyebrow>
+            <P muted>Queried on every inquiry, cheapest tier first. Every fact on a record cites one of these.</P>
+          </div>
+          <div className="mt-2 flex flex-col">
+            <SourceRow tier="Tier 1" name="License URIs"
+              role="RightsStatements.org and Creative Commons marks, parsed from a static table. No call, no model."
+              detail="A CC0 or public-domain mark settles a layer outright, so it is checked before anything spends a request." />
+            <SourceRow tier="Tier 2" name="MusicBrainz"
+              role="Recordings, works, writer credits, dated performances."
+              detail="The recording is selected by earliest dated session, never by first-release date, which is frequently a reissue. Calls are cached persistently, throttled, and fail soft into Tier 3." />
+            <SourceRow tier="Tier 2" name="Wikidata"
+              role="Publication dates, writer death years, corroboration."
+              detail="Writer lists are cross-checked here before life-plus-70 runs: the term follows the last surviving author, so an incomplete list blocks the determination rather than shading it." />
+            <SourceRow tier="Tier 3" name="Parallel Search, read by Gemini"
+              role="Web evidence for what no API holds: renewal records, original release dates, writer corroboration."
+              detail="Search gathers candidate passages, and each query is entered in the ledger as it runs. The reader turns a passage into a cited fact or abstains; its confidence is capped by the class of source it cites, enforced in a validator rather than a prompt." />
+          </div>
+
+          <div className="mt-8 flex flex-col gap-1">
+            <Eyebrow tracking={12} className="text-ink-70">Destinations we point to</Eyebrow>
+            <P muted>
+              Never queried. These hold answers we cannot pull, so records link to them with the search already
+              filled in. If a fact ever cited one of these as read, that would be a bug; the distinction is the
+              architecture.
+            </P>
+          </div>
+          <div className="mt-2 flex flex-col">
+            <SourceRow tier="link" name={<>The MLC <span className="font-normal text-ink-70">(API access requested, pending)</span></>}
+              role="Publishers, administrators, ownership splits and unclaimed shares. A work with an unclaimed share cannot be fully cleared at any price, which is why this is the destination that matters most."
+              detail="Until API access arrives, every record links to the MLC's public search, and the Clearance section shows the path to the parties rather than computed splits." />
+            <SourceRow tier="link" name="US Copyright Office"
+              role="Renewal records. Filings from 1978 on sit in an online catalog closed to web search; earlier ones are scanned catalog pages."
+              detail="When renewal cannot be determined, the open question hands over the exact search terms and names the catalog that holds the record. You can bring the answer back: every renewal question carries an answer control." />
+            <SourceRow tier="link" name="ASCAP and BMI repertories"
+              role="Writer and publisher credits, for finding who to license from." />
+          </div>
+
+          <div className="mt-6">
+            <P muted>
+              The copyright arithmetic itself (the 95-year term, the renewal window, the CLASSICS Act schedule,
+              life plus 70) is a hand-written, unit-tested rules engine. No model ever computes a term.
+            </P>
+          </div>
+        </section>
+
+        <section className="mt-16">
+          <SectionHead title="The agent stack"
+            sub="Built for the Agentic Cinema hackathon on Devpost, Parallel track." />
+          <div className="pt-2 flex flex-col">
             {[
-              ['Tier 1', 'Static parsing', 'RightsStatements.org and Creative Commons URIs. No call, no model.'],
-              ['Tier 2', 'Direct APIs', 'MusicBrainz (recordings, works, dated sessions, writer credits) and Wikidata (publication dates, writer cross-checks, death years). Cached, throttled, and every call fails soft.'],
-              ['Tier 3', 'Deep research', 'Parallel Search over renewal catalogs and discographies, with a reading step that turns evidence into a cited fact or leaves the question open. A fact it cannot cite does not exist.'],
-            ].map(([tier, name, desc]) => (
-              <div key={tier} className="flex gap-y-1 gap-x-6 flex-wrap py-4 border-t border-dashed border-ink-20 first:border-t-0 first:pt-6">
-                <div className="font-mono font-medium text-meta text-ink-70 flex-[0_0_44px] pt-1">{tier}</div>
-                <div className="flex-[1_1_300px] min-w-[220px]">
-                  <div className="font-semibold text-body">{name}</div>
-                  <P muted>{desc}</P>
-                </div>
+              ['Google ADK', 'Orchestrates the run as an agent graph on Vertex AI: sequential stages, with the two research layers fanned out concurrently.'],
+              ['Gemini 2.5 Flash', 'The reading step only. Evidence in; a cited fact or an abstention out. It never computes a term and cannot assert a fact it cannot cite.'],
+              ['Parallel Search', 'On the primary request path, not a side channel. Renewal research, release research and writer corroboration run through it, and every search appears in the ledger.'],
+              ['The rules engine', 'Deterministic Python computes every term. Each determination records which rule fired and why, so a verdict can be audited line by line.'],
+            ].map(([name, desc]) => (
+              <div key={name} className="flex gap-y-1 gap-x-6 flex-wrap py-4 border-t border-dashed border-ink-20 first:border-t-0 first:pt-6">
+                <div className="font-semibold text-body flex-[0_0_150px]">{name}</div>
+                <div className="flex-[1_1_320px] min-w-[240px]"><P muted>{desc}</P></div>
               </div>
             ))}
           </div>
-          <P muted>
-            The copyright arithmetic itself — the 95-year term, the renewal window, the CLASSICS Act schedule,
-            life-plus-70 — is a hand-written, unit-tested rules engine. No model ever computes a term.
-          </P>
+          <TextToggle open={stagesOpen} closed="How a query runs, stage by stage" opened="Close"
+            onClick={() => setStagesOpen(!stagesOpen)} className="mt-2" />
+          {stagesOpen && (
+            <div className="mt-2 flex flex-col">
+              {STAGES.map(([name, desc], i) => (
+                <div key={name} className="flex gap-y-1 gap-x-6 flex-wrap py-3 border-t border-dashed border-ink-20 first:border-t-0">
+                  <div className="font-mono font-medium text-meta text-ink-70 flex-[0_0_48px] pt-[2px]">{i + 1}</div>
+                  <div className="flex-[1_1_320px] min-w-[240px]">
+                    <span className="font-semibold text-body">{name}. </span>
+                    <span className="text-body leading-[1.55] text-ink-70">{desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="mt-16">
@@ -96,6 +191,13 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               </div>
             ))}
           </div>
+          <div className="mt-4">
+            <P muted>
+              A fact you supply when answering an open question is marked <span className="font-mono font-medium">asserted
+              by you</span> on the record and capped at medium; high is reserved for records the register retrieved
+              and read itself.
+            </P>
+          </div>
         </section>
 
         <section className="mt-16">
@@ -104,10 +206,9 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
             <P>
               <span className="font-semibold">The 1931–1963 renewal window.</span> US works from those years lost
               protection after 28 years unless renewed, and most of the 20th-century songbook falls inside it.
-              Renewals filed before 1978 exist only as scanned catalog pages; renewals filed later live in the
-              Copyright Office&rsquo;s online catalog, which web search cannot reach. The register reads the records it
-              can, and otherwise hands over the exact search terms and the right catalog. It does not guess.
-              Expect many mid-century compositions to come back <span className="font-semibold">not determined</span>.
+              The register reads the renewal records it can reach, and otherwise hands over the exact search
+              terms and the right catalog. It does not guess. Expect many mid-century compositions to come
+              back <span className="font-semibold">not determined</span>.
             </P>
             <P>
               <span className="font-semibold">Licensing contacts are not a database.</span> Sync licenses are
@@ -116,23 +217,9 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
             </P>
             <P>
               <span className="font-semibold">US-centric.</span> The US rules are the most complete; UK and EU
-              determinations cover the composition (life + 70) and the recording (70 years from publication).
+              determinations cover the composition (life plus 70) and the recording (70 years from publication).
               Other territories are not modelled.
             </P>
-            <div className="border border-dashed border-ink-20 rounded-6 px-[22px] py-5 flex flex-col gap-2 max-w-[70ch]">
-              <Eyebrow tracking={12} className="text-ink-70">The MLC — API access requested, pending</Eyebrow>
-              <P>
-                The MLC&rsquo;s database is the authoritative source for who owns a composition: the parties,
-                their ownership splits, and <span className="font-semibold">unclaimed shares</span>, which
-                matter most here: a work with an unclaimed share cannot be fully
-                cleared at any price.
-              </P>
-              <P muted>
-                We&rsquo;ve requested API access and are waiting. Until it arrives, every record links to the
-                MLC&rsquo;s public search instead, and the Clearance section shows the path to the parties
-                rather than computed splits.
-              </P>
-            </div>
             <P>
               <span className="font-semibold">Coverage follows the sources.</span> A recording MusicBrainz has
               not dated, or a work Wikidata has not described, ends in an open question, not an answer. Music
