@@ -34,8 +34,8 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
           <SectionHead title="One search is several works" sub="The idea the product turns on." />
           <div className="pt-6 flex flex-col gap-4">
             <P>
-              A song is two separately-owned works: the <span className="font-semibold">composition</span> — the
-              song itself, owned by writers and publishers — and each <span className="font-semibold">sound
+              A song is two separately-owned works: the <span className="font-semibold">composition</span>, owned
+              by its writers and publishers, and each <span className="font-semibold">sound
               recording</span> of it, owned by whoever owns that master. They age under different rules, so they
               get different answers, and the verdict rolls up from the layers your use actually requires.
             </P>
@@ -43,11 +43,11 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               <Eyebrow tracking={12} className="text-ink-70">Worked example</Eyebrow>
               <div className="font-mono font-medium text-body">West End Blues — Louis Armstrong (1928)</div>
               <P muted>
-                The composition was published in 1928, so its US copyright expired on 1 January 2024 — the song
+                The composition was published in 1928, so its US copyright expired on 1 January 2024. The song
                 is public domain. The famous OKeh recording of it is protected until 2029 under the CLASSICS
                 Act. For a documentary the answer is therefore <span className="font-semibold text-violet">license
                 required</span>: the song is free, the master is not. Re-record it yourself and the master stops
-                mattering — the same search, a different verdict.
+                mattering. The same search, a different verdict.
               </P>
             </div>
             <P muted>
@@ -62,9 +62,9 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
           <SectionHead title="Three research tiers, cheapest first" sub="Where the facts come from." />
           <div className="flex flex-col">
             {[
-              ['Tier 1', 'Static parsing', 'RightsStatements.org and Creative Commons URIs — no call, no model.'],
+              ['Tier 1', 'Static parsing', 'RightsStatements.org and Creative Commons URIs. No call, no model.'],
               ['Tier 2', 'Direct APIs', 'MusicBrainz (recordings, works, dated sessions, writer credits) and Wikidata (publication dates, writer cross-checks, death years). Cached, throttled, and every call fails soft.'],
-              ['Tier 3', 'Deep research', 'Parallel Search over the public record — renewal catalogs, discographies — with a reading step that turns evidence into a cited fact or leaves the question open. A fact it cannot cite does not exist.'],
+              ['Tier 3', 'Deep research', 'Parallel Search over renewal catalogs and discographies, with a reading step that turns evidence into a cited fact or leaves the question open. A fact it cannot cite does not exist.'],
             ].map(([tier, name, desc]) => (
               <div key={tier} className="flex gap-y-1 gap-x-6 flex-wrap py-4 border-t border-dashed border-ink-20 first:border-t-0 first:pt-6">
                 <div className="font-mono font-medium text-meta text-ink-70 flex-[0_0_44px] pt-1">{tier}</div>
@@ -85,9 +85,9 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
           <SectionHead title="What confidence means" sub="Shown as four ticks beside every fact, layer, and verdict." />
           <div className="flex flex-col pt-2">
             {[
-              ['high', 'Multiple independent authoritative sources agree — or an official record states the fact outright.'],
+              ['high', 'Multiple independent authoritative sources agree, or an official record states the fact outright.'],
               ['medium', 'A single authoritative source, or a rightsholder’s own notice ("© 1934, renewed 1961").'],
-              ['low', 'Inference, or secondary sources only. A low-confidence fact may support "protected" but never "public domain" — a wrong "protected" costs a license; a wrong "public domain" ends in a takedown.'],
+              ['low', 'Inference, or secondary sources only. A low-confidence fact may support "protected" but never "public domain": a wrong "protected" costs a license; a wrong "public domain" ends in a takedown.'],
               ['none', 'Asserted by no source. Nothing is concluded from it.'],
             ].map(([level, desc]) => (
               <div key={level} className="flex gap-y-1 gap-x-6 flex-wrap py-3 border-t border-dashed border-ink-20 first:border-t-0 first:pt-4">
@@ -106,7 +106,7 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               protection after 28 years unless renewed, and most of the 20th-century songbook falls inside it.
               Renewals filed before 1978 exist only as scanned catalog pages; renewals filed later live in the
               Copyright Office&rsquo;s online catalog, which web search cannot reach. The register reads the records it
-              can, and otherwise hands over the exact search terms and the right catalog — it does not guess.
+              can, and otherwise hands over the exact search terms and the right catalog. It does not guess.
               Expect many mid-century compositions to come back <span className="font-semibold">not determined</span>.
             </P>
             <P>
@@ -123,8 +123,8 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               <Eyebrow tracking={12} className="text-ink-70">The MLC — API access requested, pending</Eyebrow>
               <P>
                 The MLC&rsquo;s database is the authoritative source for who owns a composition: the parties,
-                their ownership splits, and <span className="font-semibold">unclaimed shares</span> — which
-                matter more than anything else here, because a work with an unclaimed share cannot be fully
+                their ownership splits, and <span className="font-semibold">unclaimed shares</span>, which
+                matter most here: a work with an unclaimed share cannot be fully
                 cleared at any price.
               </P>
               <P muted>
@@ -151,7 +151,7 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
           </P>
           <div className="mt-3">
             <a href="/" onClick={(e) => { e.preventDefault(); onNewInquiry() }} className="font-semibold text-body">
-              Back to the register — begin an inquiry →
+              Back to the register →
             </a>
           </div>
         </section>

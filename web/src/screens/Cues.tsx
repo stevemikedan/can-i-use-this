@@ -104,23 +104,23 @@ export default function Cues({ params, rows, setRows, onOpen, onNewInquiry }: {
             Cue sheet<span className="text-blue-on-ink">.</span>
           </h1>
           <p className="m-0 mt-5 text-headline font-medium leading-[1.3] max-w-[42ch] text-pretty text-paper">
-            A film is a list of cues, not one song. Paste the list; every line gets the full layered check.
+            A film is a list of cues. Paste it; every line gets the full layered check.
           </p>
         </div>
         <p className="m-0 text-body leading-[1.5] max-w-[62ch] text-paper-72">
-          A clearance worksheet, not a filed cue sheet — a filed one needs timings and use types this research
-          doesn’t have. Music only. Territory and purpose: {params.jurisdiction} · {params.intent === 'film_tv' ? 'documentary' : params.intent}.
+          A clearance worksheet, not a filed cue sheet; a filed one needs timings and use types this research
+          doesn’t have. Music only. {params.jurisdiction} · {params.intent === 'film_tv' ? 'documentary' : params.intent}.
         </p>
       </Band>
 
       <Doc>
         <section className="mt-14 no-print">
-          <Eyebrow className="mb-[14px]">Cues — one per line, title — artist</Eyebrow>
+          <Eyebrow className="mb-[14px]">One cue per line, as title — artist</Eyebrow>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={Math.min(12, Math.max(5, text.split('\n').length + 1))}
-            placeholder={'Paste a cue list — one per line\nWest End Blues — Louis Armstrong\nBlue Moon — Ella Fitzgerald'}
+            placeholder={'Paste a cue list, one per line\nWest End Blues — Louis Armstrong\nBlue Moon — Ella Fitzgerald'}
             aria-label="Cue list, one cue per line"
             className="w-full box-border bg-ink-04 rounded-t-6 border-0 border-b-[3px] border-ink px-3 py-3 text-body font-mono font-medium leading-[1.6] text-ink outline-none focus:border-blue resize-y"
           />
@@ -129,7 +129,7 @@ export default function Cues({ params, rows, setRows, onOpen, onNewInquiry }: {
               {running ? 'Working the list…' : 'Research the list'}
             </button>
             <button type="button" className="text-toggle" onClick={() => setText(EXAMPLE)}>
-              Load an example list — 8 cues, already researched
+              Load an example list (8 cues, already researched)
             </button>
           </div>
         </section>
@@ -141,7 +141,7 @@ export default function Cues({ params, rows, setRows, onOpen, onNewInquiry }: {
               sub={
                 `${counts.license} need${counts.license === 1 ? 's' : ''} clearing · ${counts.clear} clear · ` +
                 `${counts.undet} not determined · ${counts.unresolved} not resolved` +
-                (finished ? ' — most restrictive first.' : running ? ' — resolving…' : '.')
+                (finished ? '. Most restrictive first.' : running ? '. Resolving…' : '.')
               }
               right={done.length > 0 ? (
                 <button type="button" className="text-toggle whitespace-nowrap no-print" onClick={exportCsv}>Export CSV</button>
@@ -171,10 +171,10 @@ export default function Cues({ params, rows, setRows, onOpen, onNewInquiry }: {
                         <div className="flex-[0_0_auto]"><Stamp verdict={resp.overall_verdict} size={16} /></div>
                         <div className="text-meta font-medium text-ink-70 flex-[0_1_auto]">
                           {blocking.length
-                            ? `blocks: ${blocking.map((b) => {
+                            ? blocking.map((b) => {
                                 const why = BLOCK_REASON[b.determination.rule_id]
-                                return layerTitle(b).toLowerCase() + (why ? ` — ${why}` : '')
-                              }).join(' · ')}`
+                                return layerTitle(b).toLowerCase() + (why ? ` · ${why}` : '')
+                              }).join(' + ')
                             : 'nothing blocking'}
                         </div>
                         <div className="font-mono font-medium text-meta text-ink-70 whitespace-nowrap">
@@ -196,8 +196,7 @@ export default function Cues({ params, rows, setRows, onOpen, onNewInquiry }: {
               })}
             </div>
             <p className="mt-6 mb-0 text-meta font-medium leading-[1.7] text-ink-70 max-w-[78ch]">
-              This is research, not legal advice, and a worksheet, not a filed cue sheet. Each row links to its
-              full cited record; verify before relying on it for a distributed production.
+              Each row links to its full cited record.
             </p>
           </section>
         )}

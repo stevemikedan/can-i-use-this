@@ -4,7 +4,7 @@
   "boundary_note": null,
   "cache_key": null,
   "disagreements": [],
-  "disclaimer": "This is research, not legal advice. Verify before relying on it for anything consequential.",
+  "disclaimer": "Research, not legal advice. Where the public record is wrong, this is wrong. Have a professional confirm before you rely on it.",
   "entity": {
     "alternate_candidates": [
       {
@@ -63,7 +63,7 @@
   "handoff_links": [],
   "layer_verdicts": [],
   "overall_confidence": "none",
-  "overall_headline": "Which recording of \"Blue Moon\" did you mean? 3 artists have recorded it — add the artist.",
+  "overall_headline": "Which recording of \"Blue Moon\" did you mean? 3 artists have recorded it. Add the artist.",
   "overall_verdict": "undetermined",
   "permalink": null,
   "query": {

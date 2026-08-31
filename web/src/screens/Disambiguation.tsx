@@ -41,19 +41,19 @@ export default function Disambiguation({ resp, params, onPick, onComposition, on
           </h1>
           <p className="m-0 mt-5 text-headline font-medium leading-[1.3] max-w-[42ch] text-pretty text-paper">
             “{title}” has been recorded by {nArtists ?? 'many'} different artists, and each master is separately
-            owned — the answer differs between them. Research stops here until you point at one.
+            owned. Research stops here until you point at one.
           </p>
         </div>
         <div className="flex gap-y-6 gap-x-10 flex-wrap items-start">
           <div className="flex flex-col gap-[6px] flex-[1_1_300px] min-w-[240px]">
             <Eyebrow className="text-paper-72">What we understood</Eyebrow>
             <div className="text-body leading-[1.5] text-paper">
-              A musical work titled <span className="font-mono font-medium">{title}</span> — no artist, year, or label given.
+              A musical work titled <span className="font-mono font-medium">{title}</span>, with no artist, year, or label given.
             </div>
           </div>
           <div className="flex flex-col gap-[6px] flex-[1_1_300px] min-w-[240px]">
             <Eyebrow className="text-paper-72">What’s ambiguous</Eyebrow>
-            <div className="text-body leading-[1.5] text-paper">One composition, many recordings — the composition has one answer, each recording its own.</div>
+            <div className="text-body leading-[1.5] text-paper">One composition, many recordings. The composition has one answer; each recording its own.</div>
           </div>
         </div>
       </Band>
@@ -81,7 +81,7 @@ export default function Disambiguation({ resp, params, onPick, onComposition, on
             })}
           </div>
           {!all && candidates.length > SHOW && (
-            <TextToggle open={false} closed={`Show the other ${candidates.length - SHOW} — mostly later covers and reissues`}
+            <TextToggle open={false} closed={`Show the other ${candidates.length - SHOW} (mostly later covers and reissues)`}
               opened="" onClick={() => setAll(true)} className="py-[14px] px-1" />
           )}
         </section>
@@ -91,7 +91,7 @@ export default function Disambiguation({ resp, params, onPick, onComposition, on
             <div className="flex-[1_1_320px] min-w-[240px] flex flex-col gap-1">
               <Eyebrow className="text-ink-70">Not using a specific recording?</Eyebrow>
               <div className="text-body leading-[1.55] max-w-[58ch]">
-                If you’re performing or re-recording it yourself, only the composition matters — one answer for
+                If you’re performing or re-recording it yourself, only the composition matters. One answer for
                 all {candidates.length}{nArtists && Number(nArtists) > candidates.length ? '+' : ''} of them.
               </div>
             </div>
@@ -104,7 +104,7 @@ export default function Disambiguation({ resp, params, onPick, onComposition, on
         <section className="mt-12 border-t-2 border-dashed border-ink-20 pt-5 flex gap-y-2 gap-x-6 items-baseline flex-wrap">
           <div className="text-body text-ink-70">None of these is it?</div>
           <a href="#" onClick={(e) => { e.preventDefault(); onRefine() }} className="font-semibold text-body">
-            Refine the inquiry — add an artist, year, or label →
+            Add an artist, year, or label →
           </a>
         </section>
       </Doc>

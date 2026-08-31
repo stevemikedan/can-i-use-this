@@ -50,7 +50,7 @@
       "expiry_year": 2029,
       "jurisdiction": "US",
       "layer_id": "sound_recording",
-      "rule_explanation": "Published 1928. Under the CLASSICS Act (95-year term plus 5 additional years), protected until 1 January 2029.",
+      "rule_explanation": "Published 1928. The CLASSICS Act protects it until 1 January 2029.",
       "rule_id": "us_sr_mma_1923_1946",
       "status": "protected"
     },
@@ -87,7 +87,7 @@
   "boundary_note": null,
   "cache_key": "music:a97c426c-0000-0000-0000-000000000001:web-1928",
   "disagreements": [],
-  "disclaimer": "This is research, not legal advice. Verify before relying on it for anything consequential.",
+  "disclaimer": "Research, not legal advice. Where the public record is wrong, this is wrong. Have a professional confirm before you rely on it.",
   "entity": {
     "alternate_candidates": [],
     "asset_type": "music",
@@ -378,7 +378,7 @@
       "url": "https://www.wikidata.org/wiki/Q4019073"
     },
     {
-      "description": "Mechanical Licensing Collective — publishers, administrators and shares for \"West End Blues\"",
+      "description": "Publishers, administrators and ownership shares for \"West End Blues\"",
       "navigation_hint": null,
       "paste_string": null,
       "purpose": "license",
@@ -387,7 +387,7 @@
       "url": "https://portal.themlc.com/search?query=West+End+Blues"
     },
     {
-      "description": "ASCAP ACE repertory — writer and publisher credits",
+      "description": "Writer and publisher credits",
       "navigation_hint": "Search the repertory by title",
       "paste_string": "West End Blues",
       "purpose": "license",
@@ -396,7 +396,7 @@
       "url": "https://www.ascap.com/repertory"
     },
     {
-      "description": "BMI repertoire — writer and publisher credits",
+      "description": "Writer and publisher credits for BMI-affiliated writers",
       "navigation_hint": "Search the repertoire by title",
       "paste_string": "West End Blues",
       "purpose": "license",
@@ -497,7 +497,7 @@
         "expiry_year": 2029,
         "jurisdiction": "US",
         "layer_id": "sound_recording",
-        "rule_explanation": "Published 1928. Under the CLASSICS Act (95-year term plus 5 additional years), protected until 1 January 2029.",
+        "rule_explanation": "Published 1928. The CLASSICS Act protects it until 1 January 2029.",
         "rule_id": "us_sr_mma_1923_1946",
         "status": "protected"
       },
@@ -507,13 +507,13 @@
       "is_required": true,
       "layer_id": "sound_recording",
       "layer_label": "Sound recording (1928)",
-      "licensing_path": "Master use license from the label or current rights holder of this recording",
-      "reasoning": "Published 1928. Under the CLASSICS Act (95-year term plus 5 additional years), protected until 1 January 2029.",
+      "licensing_path": "You need a master use license from the label or whoever currently holds the rights",
+      "reasoning": "Published 1928. The CLASSICS Act protects it until 1 January 2029.",
       "verdict": "license_required"
     }
   ],
   "overall_confidence": "high",
-  "overall_headline": "License required: the sound recording is protected in the US until 1 January 2029. The composition is public domain.",
+  "overall_headline": "The sound recording is protected in the US until 1 January 2029. The composition is public domain.",
   "overall_verdict": "license_required",
   "permalink": null,
   "query": {

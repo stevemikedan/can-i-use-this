@@ -54,7 +54,7 @@
       "expiry_year": 2067,
       "jurisdiction": "US",
       "layer_id": "sound_recording",
-      "rule_explanation": "Published 1961. Under the CLASSICS Act (fixed statutory expiry of 15 February 2067), protected until 1 January 2067.",
+      "rule_explanation": "Published 1961. The CLASSICS Act protects it until 1 January 2067.",
       "rule_id": "us_sr_mma_1957_1972",
       "status": "protected"
     },
@@ -91,7 +91,7 @@
   "boundary_note": null,
   "cache_key": "music:3c339d3d-0000-0000-0000-000000000002:bm-ella",
   "disagreements": [],
-  "disclaimer": "This is research, not legal advice. Verify before relying on it for anything consequential.",
+  "disclaimer": "Research, not legal advice. Where the public record is wrong, this is wrong. Have a professional confirm before you rely on it.",
   "entity": {
     "alternate_candidates": [],
     "asset_type": "music",
@@ -476,7 +476,7 @@
       "url": "https://www.wikidata.org/wiki/Q804574"
     },
     {
-      "description": "Mechanical Licensing Collective — publishers, administrators and shares for \"Blue Moon\"",
+      "description": "Publishers, administrators and ownership shares for \"Blue Moon\"",
       "navigation_hint": null,
       "paste_string": null,
       "purpose": "license",
@@ -485,7 +485,7 @@
       "url": "https://portal.themlc.com/search?query=Blue+Moon"
     },
     {
-      "description": "ASCAP ACE repertory — writer and publisher credits",
+      "description": "Writer and publisher credits",
       "navigation_hint": "Search the repertory by title",
       "paste_string": "Blue Moon",
       "purpose": "license",
@@ -494,7 +494,7 @@
       "url": "https://www.ascap.com/repertory"
     },
     {
-      "description": "BMI repertoire — writer and publisher credits",
+      "description": "Writer and publisher credits for BMI-affiliated writers",
       "navigation_hint": "Search the repertoire by title",
       "paste_string": "Blue Moon",
       "purpose": "license",
@@ -503,7 +503,7 @@
       "url": "https://repertoire.bmi.com/"
     },
     {
-      "description": "US Copyright Office catalog scans on the Internet Archive — renewal registrations",
+      "description": "Renewal registrations in the Copyright Office catalog scans on the Internet Archive",
       "navigation_hint": "Catalog of Copyright Entries, Third Series, Music; renewals volume for 1961",
       "paste_string": "Blue Moon",
       "purpose": "resolve",
@@ -538,7 +538,7 @@
         "rule_id": "us_renewal_unknown",
         "status": "undetermined"
       },
-      "headline": "Undetermined — its year-28 renewal status is unknown",
+      "headline": "Undetermined. Its year-28 renewal status is unknown",
       "holders": [
         {
           "contact_path": null,
@@ -644,7 +644,7 @@
         "expiry_year": 2067,
         "jurisdiction": "US",
         "layer_id": "sound_recording",
-        "rule_explanation": "Published 1961. Under the CLASSICS Act (fixed statutory expiry of 15 February 2067), protected until 1 January 2067.",
+        "rule_explanation": "Published 1961. The CLASSICS Act protects it until 1 January 2067.",
         "rule_id": "us_sr_mma_1957_1972",
         "status": "protected"
       },
@@ -654,13 +654,13 @@
       "is_required": true,
       "layer_id": "sound_recording",
       "layer_label": "Sound recording (1961)",
-      "licensing_path": "Master use license from the label or current rights holder of this recording",
-      "reasoning": "Published 1961. Under the CLASSICS Act (fixed statutory expiry of 15 February 2067), protected until 1 January 2067.",
+      "licensing_path": "You need a master use license from the label or whoever currently holds the rights",
+      "reasoning": "Published 1961. The CLASSICS Act protects it until 1 January 2067.",
       "verdict": "license_required"
     }
   ],
   "overall_confidence": "none",
-  "overall_headline": "Not yet determined: the composition layer is blocked — its year-28 renewal status is unknown.",
+  "overall_headline": "The composition layer is blocked. Its year-28 renewal status is unknown.",
   "overall_verdict": "undetermined",
   "permalink": null,
   "query": {
@@ -706,7 +706,7 @@
         "\"Blue Moon\" renewal 1961",
         "\"Blue Moon\" renewal 1962"
       ],
-      "why_it_matters": "Works published 1931–1963 lost protection after 28 years unless renewed. Renewal records are scanned catalogs, not a queryable database. Search found renewal-style registration numbers ['R290123'] — check them."
+      "why_it_matters": "Works published 1931–1963 lost protection after 28 years unless renewed. Renewal records are scanned catalogs, not a queryable database. Search found renewal-style registration numbers ['R290123']. Check them."
     }
   ]
 }

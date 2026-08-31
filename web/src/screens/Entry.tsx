@@ -10,22 +10,22 @@ const EXAMPLES: { title: string; artist: string; meta: string; stamp: string; co
   {
     title: 'West End Blues', artist: 'Louis Armstrong', meta: 'recording · 1928 · OKeh 8597',
     stamp: 'License required', color: 'text-violet',
-    note: 'The song is public domain; this 1928 recording of it is not. One search, two separately-owned works with different answers — the case this product exists for.',
+    note: 'The song is public domain; this 1928 recording of it is not.',
   },
   {
     title: 'Rhapsody in Blue', artist: 'Paul Whiteman', meta: 'composition + recording · 1924',
     stamp: 'Clear', color: 'text-green',
-    note: 'Both layers out of copyright in the US — the 1924 composition and the Whiteman recording of it. A clean yes, with the records to prove it.',
+    note: 'Both layers out of copyright in the US, with the records to prove it.',
   },
   {
     title: 'Blue Moon', artist: 'Ella Fitzgerald', meta: 'composition · 1934 · renewal window',
     stamp: 'License required', color: 'text-violet',
-    note: 'Published in the 1931–1963 renewal window: the answer turns on a year-28 renewal, researched from the copyright records and cited.',
+    note: 'The answer turns on a year-28 renewal, researched and cited from the copyright records.',
   },
   {
     title: 'Summertime', artist: 'Billy Stewart', meta: 'recording · 1965 · Chess',
     stamp: 'License required', color: 'text-violet',
-    note: 'MusicBrainz has only a release date that may be a reissue — the original release is researched, and what stays uncertain is said out loud.',
+    note: 'The only date on file may be a reissue, so the original release is researched.',
   },
 ]
 
@@ -58,7 +58,7 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
             Can I use this?<span className="text-blue-on-ink">_</span>
           </h1>
           <p className="m-0 text-title font-medium leading-[1.4] max-w-[44ch] text-pretty text-paper">
-            Researches whether a piece of music is yours to use — layer by layer, with the records to prove it.
+            Researches whether a piece of music is yours to use, layer by layer, with the records to prove it.
           </p>
         </div>
       </Band>
@@ -88,15 +88,14 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
             </button>
           </div>
           <p className="text-body leading-[1.55] text-ink-70 mt-6 mb-0 max-w-[62ch]">
-            Research takes 30–90 seconds against the public record — copyright registries, renewal catalogs,
-            discographies. You’ll watch it happen, source by source.
+            Research runs 30–90 seconds against the public record. You’ll watch it happen, source by source.
             {' '}<a href="/cues" onClick={(e) => { e.preventDefault(); onCues() }}>Clearing a full cue sheet? →</a>
           </p>
           {error && <p className="text-body leading-[1.55] mt-4 mb-0 max-w-[62ch]">Could not start the research: {error}</p>}
         </section>
 
         <section className="mt-16">
-          <SectionHead title="Or open an existing record" sub="Inquiries already researched — open one to see how a record reads." />
+          <SectionHead title="Or open an existing record" sub="Inquiries already researched. Open one to see how a record reads." />
           <div className="flex flex-col">
             {EXAMPLES.map((ex) => (
               <a key={ex.title} href="#" onClick={(e) => { e.preventDefault(); submit(ex.title, ex.artist) }}
@@ -120,9 +119,8 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
         <section className="mt-16 border-t-2 border-dashed border-ink-20 pt-5 flex flex-col gap-2">
           <Eyebrow className="text-ink-70">Scope of the register</Eyebrow>
           <p className="m-0 text-body leading-[1.55] text-ink-70 max-w-[66ch]">
-            Music only: compositions and sound recordings, researched separately. Books, film, images, fonts and
-            trademarks are recognized but not researched — the record says so honestly instead of guessing.
-            Territories: US, UK, EU. This is research, not legal advice.
+            Music only: compositions and sound recordings, researched separately. Books, film and images are
+            recognized but not researched. Territories: US, UK, EU.
             {' '}<a href="/about" onClick={(e) => { e.preventDefault(); onAbout() }}>How the register works, and its limits →</a>
           </p>
         </section>

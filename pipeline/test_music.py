@@ -192,7 +192,7 @@ def test_work_search_failure_falls_back_to_sweep(cache, transport, no_parallel):
 def test_artist_not_credited(cache, transport, no_parallel):
     transport(handler)
     resp, _ = run_music(q("West End Blues — Nobody"))
-    assert resp.overall_verdict is Verdict.UNDETERMINED and resp.overall_headline.startswith("Not found")
+    assert resp.overall_verdict is Verdict.UNDETERMINED and "was found" in resp.overall_headline
     assert resp.unresolved[0].question_id == "resolve:not_found"
 
 
@@ -206,7 +206,7 @@ def test_upstream_failure_is_not_not_found(cache, transport, sleeps, no_parallel
     transport(lambda req: httpx.Response(503, text="service unavailable"))
     resp, _ = run_music(AssetQuery(raw_input="Aliens Exist — blink-182", intent=Intent.FILM_TV,
                                    jurisdiction=Jurisdiction.US, asset_type_hint=AssetType.MUSIC))
-    assert resp.overall_headline.startswith("Interrupted")
+    assert "could not be reached" in resp.overall_headline
     assert resp.unresolved[0].question_id == "resolve:upstream_failure"
     assert "transient" in resp.unresolved[0].why_it_matters
     assert "_ssl" not in resp.unresolved[0].why_it_matters and "ConnectError" not in resp.unresolved[0].why_it_matters

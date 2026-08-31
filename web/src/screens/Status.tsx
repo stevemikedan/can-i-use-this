@@ -35,19 +35,17 @@ export function NotFound({ resp, params, onRefine, onRetry, onPick }:
   return (
     <StatusPage word="Not found" glyph="." params={params}
       actions={<>
-        <a href="#" onClick={(e) => { e.preventDefault(); onRefine() }} className="font-semibold text-body">Refine the inquiry — check the spelling, add the artist as credited →</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); onRefine() }} className="font-semibold text-body">Refine the inquiry →</a>
         <a href="#" onClick={(e) => { e.preventDefault(); onRetry() }} className="font-semibold text-body">Try again →</a>
       </>}>
       <div className="flex flex-col gap-2">
         <Eyebrow className="text-ink-70">What was searched</Eyebrow>
-        <div className="text-body leading-[1.55] max-w-[66ch]">
-          <span className="font-mono font-medium">{params.title}{params.artist ? ` — ${params.artist}` : ''}</span> against the MusicBrainz recording index.
-        </div>
+        <div className="font-mono font-medium text-body">{params.title}{params.artist ? ` — ${params.artist}` : ''}</div>
       </div>
       <div className="text-body leading-[1.55] text-ink-70 max-w-[66ch]">{q ? q.why_it_matters : resp.overall_headline}</div>
       {suggestions.length > 0 && (
         <div className="flex flex-col">
-          <Eyebrow className="mb-[6px]">Did you mean — real entries in the index</Eyebrow>
+          <Eyebrow className="mb-[6px]">Did you mean</Eyebrow>
           {suggestions.map((c) => {
             const artist = c.label.split(' — ')[0]
             const title = c.label.split(' — ').slice(1).join(' — ')
@@ -74,7 +72,7 @@ export function Boundary({ note, params, onNew }: { note: string; params: QueryP
       actions={<a href="#" onClick={(e) => { e.preventDefault(); onNew() }} className="font-semibold text-body">Try a piece of music instead →</a>}>
       <div className="text-body leading-[1.55] max-w-[66ch]">{note}</div>
       <div className="text-body leading-[1.55] text-ink-70 max-w-[66ch]">
-        This register researches music — compositions and sound recordings, separately. Other kinds of work are
+        This register researches music: compositions and sound recordings, separately. Other kinds of work are
         recognized and declined honestly rather than researched badly.
       </div>
     </StatusPage>
@@ -90,15 +88,15 @@ export function ErrorScreen({ message, eventsSeen, params, onRetry, onNew }:
         <a href="#" onClick={(e) => { e.preventDefault(); onNew() }} className="font-semibold text-body">New inquiry →</a>
       </>}>
       <div className="text-body leading-[1.55] max-w-[66ch]">
-        The research run did not finish{eventsSeen > 0 ? ` — it stopped after ${eventsSeen} logged step${eventsSeen === 1 ? '' : 's'}` : ''}.
+        The research run did not finish{eventsSeen > 0 ? `. It stopped after ${eventsSeen} logged step${eventsSeen === 1 ? '' : 's'}` : ''}.
       </div>
       <div className="flex flex-col gap-2">
         <Eyebrow className="text-ink-70">What failed</Eyebrow>
         <div className="font-mono font-medium text-body text-ink-70 max-w-[66ch] break-words">{message}</div>
       </div>
       <div className="text-body leading-[1.55] text-ink-70 max-w-[66ch]">
-        Nothing was concluded from the partial run — a half-researched verdict is worse than none. Running it
-        again usually works; the caches keep what already succeeded.
+        Nothing was concluded from the partial run; a half-researched verdict is worse than none. Retrying
+        usually works, and the caches keep what already succeeded.
       </div>
     </StatusPage>
   )

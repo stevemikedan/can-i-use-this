@@ -64,7 +64,7 @@ export default function Progress({ params, events }: { params: QueryParams; even
   const consulted = last?.sources_consulted ?? 0
   const failures = events.filter((e) => e.degraded || e.status === 'failed').length
   const decomposed = events.some((e) => e.stage === 'decompose' && e.status === 'complete')
-  const pace = t < 60 ? 'typically 30–90 seconds' : t < 95 ? 'deep research — up to 90 seconds is normal' : 'running long — archive sources can be slow'
+  const pace = t < 60 ? 'typically 30–90 seconds' : t < 95 ? 'deep research; up to 90 seconds is normal' : 'running long; archive sources can be slow'
 
   return (
     <>

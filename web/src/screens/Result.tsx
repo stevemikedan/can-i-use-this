@@ -95,7 +95,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
               <Eyebrow className="text-paper-72">{resp.overall_verdict === 'undetermined' ? 'Status' : 'Confidence'}</Eyebrow>
               <div className="min-h-10 flex items-center">
                 {resp.overall_verdict === 'undetermined'
-                  ? <div className="text-body font-medium text-paper max-w-[46ch]">No answer yet — the term can&rsquo;t be computed until the open question below is settled.</div>
+                  ? <div className="text-body font-medium text-paper max-w-[46ch]">No answer yet. The term can&rsquo;t be computed until the open question below is settled.</div>
                   : <Ticks level={resp.overall_confidence} size="overall" onInk />}
               </div>
             </div>
@@ -112,7 +112,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
         </div>
         {/* Layer ledger */}
         <section className="mt-14">
-          <SectionHead title="Rights layers" sub="One search is several separately-owned works. The answer rolls up from these." />
+          <SectionHead title="Rights layers" sub="Separately owned. The answer rolls up from these." />
           {required.map((lv, i) => (
             <LayerRow key={lv.layer_id} lv={lv} layer={layerOf(lv.layer_id)} artist={artist} blocking={blockingIds.includes(lv.layer_id)}
               disputed={derivative && lv.layer_id === 'composition'}
@@ -131,20 +131,22 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
                 <>
                   {toClear.map((l) => (
                     <div key={l.layer_id} className="flex flex-col gap-1 max-w-[62ch]">
+                      <Eyebrow tracking={12} className="text-ink-70">{titleOf(l)}</Eyebrow>
                       <div className="text-body leading-[1.55]">
-                        <span className="font-semibold">{titleOf(l)}.</span> {l.licensing_path}.
+                        {l.licensing_path}.{l.cost_band ? ` Typically ${l.cost_band}.` : ''}
                       </div>
-                      {l.cost_band && <div className="text-meta font-medium text-ink-70">Cost band: {l.cost_band}</div>}
                     </div>
                   ))}
                   {actLinks.length > 0 && (
-                    <div className="flex flex-col gap-2 pt-1">
+                    <div className="flex flex-col gap-3 pt-2">
+                      <Eyebrow tracking={12} className="text-ink-70">Where to find them</Eyebrow>
                       {actLinks.map((l) => <LinkLine key={l.url + l.source_name} l={l} />)}
                     </div>
                   )}
                   <div className="text-meta font-medium leading-[1.7] text-ink-70 max-w-[70ch]">
-                    Ownership splits and unclaimed shares live in the MLC&rsquo;s database (access pending) —
-                    these links are the way to the parties until then.
+                    We can&rsquo;t yet tell you how many parties are involved or whether one company controls
+                    everything. That data is in the MLC&rsquo;s database and we don&rsquo;t have API access yet.
+                    The links above are the manual route.
                   </div>
                 </>
               )}
@@ -153,7 +155,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
 
           {nonRequired.map((lv) => (
             <div key={lv.layer_id} className="border-t-2 border-dashed border-ink-20 pt-6 pb-2 px-1">
-              <Eyebrow tracking={12} className="text-ink-70 mb-[14px]">Not required for this purpose — shown for reference, excluded from the answer</Eyebrow>
+              <Eyebrow tracking={12} className="text-ink-70 mb-[14px]">Not required for this purpose</Eyebrow>
               <div className="flex gap-y-4 gap-x-8 flex-wrap">
                 <div className="flex-[0_1_240px] min-w-[180px]"><Stamp verdict={lv.verdict} size={16} /></div>
                 <div className="flex-[1_1_380px] min-w-[240px]">
@@ -171,7 +173,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
         {/* Open questions */}
         <section className="mt-16">
           <SectionHead title={`Open questions — ${resp.unresolved.length}`}
-            sub={resp.unresolved.length ? 'What research couldn’t settle, and exactly where to settle it.' : 'Research settled every question it asked.'} />
+            sub={resp.unresolved.length ? undefined : 'Research settled every question it asked.'} />
           {resp.unresolved.map((q, i) => (
             <QuestionRow key={q.question_id} q={q} open={!!open[`q${i}`]} onToggle={() => toggle(`q${i}`)} />
           ))}
@@ -187,7 +189,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
                 <div className="font-semibold text-body">{a.title}</div>
                 {a.creator && <div className="text-meta font-medium text-ink-70">{a.creator}</div>}
                 <div className="text-body text-ink-70 flex-[1_1_100%] max-w-[70ch] leading-[1.5]">
-                  {a.why_similar}{a.url && <span> — <a href={a.url} target="_blank" rel="noopener">record</a> ↗</span>}
+                  {a.why_similar}{a.url && <span> · <a href={a.url} target="_blank" rel="noopener">record</a> ↗</span>}
                 </div>
               </div>
             ))}
@@ -196,7 +198,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
 
         {/* Records */}
         <section className="mt-16">
-          <SectionHead title="Go to the records" sub="The records behind this verdict — check them, then act."
+          <SectionHead title="The records"
             right={<TextToggle open={!!open.records} closed="Show links" opened="Hide links" onClick={() => toggle('records')} className="whitespace-nowrap" />} />
           {open.records && (
             <div className="flex gap-y-8 gap-x-12 flex-wrap pt-[22px]">
@@ -270,7 +272,7 @@ function LayerRow({ lv, layer, artist, blocking, first, open, onToggle, disputed
             {lv.verdict === 'undetermined'
               ? <div className="text-meta font-medium text-ink-70">awaits the open question below</div>
               : <Ticks level={lv.determination.confidence} size="layer" />}
-            <TextToggle open={open} closed="Holders & evidence" opened="Hide holders & evidence" onClick={onToggle} />
+            <TextToggle open={open} closed="Evidence" opened="Hide evidence" onClick={onToggle} />
           </div>
           {open && <LayerDetail lv={lv} layer={layer} />}
         </div>
@@ -284,8 +286,8 @@ function LayerDetail({ lv, layer }: { lv: LayerVerdict; layer: RightsLayer | und
     .filter(([k, v]) => k in FACT_LABEL && v && typeof v === 'object')
     .map(([k, v]) => [k, v as ResearchedFact] as const) : []
   const note = lv.holders.length === 0
-    ? (lv.verdict === 'clear' ? 'No active rights holder — the copyright has expired.' : 'No rights holder identified from the records consulted — see the records below.')
-    : (lv.verdict === 'clear' ? 'No active rights holder — the copyright has expired. Original parties, for the record:' : null)
+    ? (lv.verdict === 'clear' ? 'No active rights holder; the copyright has expired.' : 'No rights holder identified from the records consulted.')
+    : (lv.verdict === 'clear' ? 'No active rights holder; the copyright has expired. Original parties, for the record:' : null)
   return (
     <div className="mt-[14px] border-t border-ink-20 pt-[18px] flex flex-col gap-6">
       <div>
@@ -383,11 +385,16 @@ function QuestionRow({ q, open, onToggle }: { q: UnresolvedQuestion; open: boole
         <Tag className="ml-auto tracking-[0.1em] !px-[9px] !py-[3px]">Effort: {EFFORT_LABEL[q.estimated_effort] ?? q.estimated_effort}</Tag>
       </div>
       <div className="text-body leading-[1.55] mt-[10px] max-w-[68ch]">{q.why_it_matters}</div>
-      <TextToggle open={open} closed="Where to check, and what it would change" opened="Hide where to check" onClick={onToggle} className="mt-[10px]" />
+      <TextToggle open={open} closed="Where to settle it" opened="Close" onClick={onToggle} className="mt-[10px]" />
       {open && (
         <>
-          <div className="text-body leading-[1.55] mt-[14px] text-ink-70 max-w-[68ch]">
-            <span className="font-semibold text-ink">If yes:</span> {q.if_yes} <span className="font-semibold text-ink">If no:</span> {q.if_no}
+          <div className="mt-[14px] flex flex-col max-w-[68ch]">
+            {[['If yes', q.if_yes], ['If no', q.if_no]].map(([k, v]) => (
+              <div key={k} className="flex gap-x-4 py-2 border-t border-dashed border-ink-20 first:border-t-0">
+                <Eyebrow tracking={12} className="text-ink-70 flex-[0_0_52px] pt-[2px]">{k}</Eyebrow>
+                <div className="text-body leading-[1.5] text-ink-70">{v}</div>
+              </div>
+            ))}
           </div>
           {q.search_terms.length > 0 && (
             <div className="mt-4 border border-dashed border-ink-20 rounded-6 px-[18px] py-4 flex gap-4 items-center flex-wrap">
@@ -407,15 +414,23 @@ function QuestionRow({ q, open, onToggle }: { q: UnresolvedQuestion; open: boole
 }
 
 function LinkLine({ l }: { l: HandoffLink }) {
-  // The tier distinction lives in the instruction, not a category tag:
-  // a deep link just links; a search or manual entry says what to do there.
-  const note = [l.description, l.navigation_hint].filter(Boolean).join('. ')
+  // Label above content: the type hierarchy carries what tier tags and
+  // punctuation were carrying. The instruction says whether the link goes
+  // straight there, opens a search, or needs hand-work.
+  const parts = [l.description, l.navigation_hint].filter(Boolean) as string[]
+  if (l.tier === 'prefilled_search') parts.push('Opens a search already filled in')
+  const note = parts.join('. ')
   return (
-    <div className="text-body flex flex-col gap-[2px] max-w-[64ch]">
-      <div><a href={l.url} target="_blank" rel="noopener">{l.source_name}</a></div>
-      {note && <div className="text-ink-70 text-body leading-[1.5]">{note}{note.endsWith('.') ? '' : '.'}</div>}
-      {l.paste_string && (
-        <div className="text-meta text-ink-70">search for <span className="font-mono font-medium text-ink">{l.paste_string}</span></div>
+    <div className="flex flex-col gap-[2px] max-w-[64ch]">
+      <div>
+        <a href={l.url} target="_blank" rel="noopener"
+          className="font-mono font-medium text-meta tracking-[0.08em] uppercase">{l.source_name}</a>
+      </div>
+      {(note || l.paste_string) && (
+        <div className="text-ink-70 text-body leading-[1.5]">
+          {note}{note ? '. ' : ''}
+          {l.paste_string && <>Copy <span className="font-mono font-medium text-ink">“{l.paste_string}”</span>.</>}
+        </div>
       )}
     </div>
   )

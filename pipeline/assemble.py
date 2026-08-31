@@ -43,9 +43,9 @@ UNDETERMINED_WHY = {
     "life_plus_70_writers_uncorroborated": "the writer list could not be corroborated, and a missing co-writer changes the term",
     "us_publication_year_unknown": "its publication year is unknown",
     "spike_no_work_link": "the recording is not linked to a composition",
-    "public_domain_withheld_low_confidence": "the only evidence pointing to public domain is low-confidence — a lead, not an answer",
+    "public_domain_withheld_low_confidence": "the only evidence for public domain is low-confidence, a lead rather than an answer",
     "uk_death_year_unknown": "a writer's death year is not on record, and the term runs from it",
-    "life_plus_70_authorship_disputed": "the credited writers predate the publication — whose deaths the term runs from is unsettled",
+    "life_plus_70_authorship_disputed": "the credited writers predate the publication, so whose deaths the term runs from is unsettled",
     "eu_death_year_unknown": "a writer's death year is not on record, and the term runs from it",
 }
 
@@ -59,8 +59,8 @@ def _first_words(text: str, limit: int) -> str:
     return cut + "…"
 
 LICENSING_PATH = {
-    "composition": "Sync license from the publisher(s) / administrator — find them via MLC, ASCAP or BMI (handoff links)",
-    "sound_recording": "Master use license from the label or current rights holder of this recording",
+    "composition": "You need a sync license from the publisher or its administrator",
+    "sound_recording": "You need a master use license from the label or whoever currently holds the rights",
 }
 
 
@@ -78,7 +78,7 @@ def _headline_for(det: Determination, j: Jurisdiction) -> str:
         at_least = "at least " if "at least" in det.rule_explanation else ""
         return f"Protected in the {j.value}" + (f" until {at_least}1 January {det.expiry_year}" if det.expiry_year else "")
     why = UNDETERMINED_WHY.get(det.rule_id) or _first_words(det.rule_explanation, 90)
-    return ("Undetermined — " + why)[:120]
+    return ("Undetermined. " + why[:1].upper() + why[1:])[:120]
 
 
 def layer_verdicts(entity: ResolvedEntity, dets: list[Determination], jurisdiction: Jurisdiction,
@@ -91,7 +91,7 @@ def layer_verdicts(entity: ResolvedEntity, dets: list[Determination], jurisdicti
         is_required = layer.layer_id in req
         note = None
         if not is_required and intent is Intent.RERECORD and layer.layer_id == "sound_recording":
-            note = "Not required for a re-recording — you would license the composition only."
+            note = "Not required for a re-recording; you would license the composition only."
         out.append(LayerVerdict(
             layer_id=layer.layer_id, layer_label=layer.label, verdict=verdict, is_required=is_required,
             headline=_headline_for(det, jurisdiction)[:120], reasoning=det.rule_explanation,
@@ -117,7 +117,7 @@ def overall_headline(verdict: Verdict, blocking: Optional[LayerVerdict], lvs: li
     if verdict is Verdict.CLEAR:
         names = " and ".join(lv.layer_label.split(" (")[0].lower() for lv in req)
         verb = "are" if len(req) > 1 else "is"
-        return f"Clear: the {names} {verb} in the public domain in the {j.value}."
+        return f"The {names} {verb} in the public domain in the {j.value}."
     if blocking is None:
         return "No layer applies to this purpose."
     b = blocking.layer_label.split(" (")[0].lower()
@@ -125,7 +125,7 @@ def overall_headline(verdict: Verdict, blocking: Optional[LayerVerdict], lvs: li
     if verdict is Verdict.UNDETERMINED:
         why = UNDETERMINED_WHY.get(blocking.determination.rule_id) or \
             _first_words(blocking.determination.rule_explanation, 70)
-        return f"Not yet determined: the {b} layer is blocked — {why}."[:160]
+        return f"The {b} layer is blocked. {why[:1].upper() + why[1:]}."[:160]
     exp = blocking.determination.expiry_year
     tail = ""
     if others:
@@ -134,7 +134,7 @@ def overall_headline(verdict: Verdict, blocking: Optional[LayerVerdict], lvs: li
               "also protected" if o.verdict is Verdict.LICENSE_REQUIRED else o.verdict.value.replace("_", " "))
         tail = f" The {o.layer_label.split(' (')[0].lower()} is {st}."
     at_least = "at least " if "at least" in blocking.determination.rule_explanation else ""
-    return (f"License required: the {b} is protected in the {j.value}"
+    return (f"The {b} is protected in the {j.value}"
             + (f" until {at_least}1 January {exp}" if exp else "") + "." + tail)[:160]
 
 
@@ -172,7 +172,7 @@ def stop_response(query: AssetQuery, title: str, candidates: list[Candidate], n_
     return RightsResponse(
         query=query, entity=entity, stop_for_disambiguation=True,
         overall_verdict=Verdict.UNDETERMINED,
-        overall_headline=f'Which recording of "{title}" did you mean? {n_artists} artists have recorded it — add the artist.'[:160],
+        overall_headline=f'Which recording of "{title}" did you mean? {n_artists} artists have recorded it. Add the artist.'[:160],
         overall_confidence=Confidence.NONE, generated_at=datetime.now(timezone.utc),
     )
 
@@ -205,7 +205,7 @@ def failed_response(query: AssetQuery, title: str, artist: Optional[str], em: Em
     )
     return RightsResponse(
         query=query, entity=entity, overall_verdict=Verdict.UNDETERMINED,
-        overall_headline=(f"Interrupted: {why}" if upstream else f"Not found: {why}")[:160],
+        overall_headline=why[:160],
         overall_confidence=Confidence.NONE,
         unresolved=[q], generated_at=datetime.now(timezone.utc),
     )

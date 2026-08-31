@@ -35,7 +35,7 @@
   requires_scheme: title
   applicable_types: [music]
   purpose: license
-  description: "Mechanical Licensing Collective — publishers, administrators and shares for \"{value}\""
+  description: "Publishers, administrators and ownership shares for \"{value}\""
   authoritative: true
 
 - name: ASCAP repertory
@@ -44,7 +44,7 @@
   requires_scheme: title
   applicable_types: [music]
   purpose: license
-  description: "ASCAP ACE repertory — writer and publisher credits"
+  description: "Writer and publisher credits"
   navigation_hint: "Search the repertory by title"
   authoritative: true
 
@@ -54,7 +54,7 @@
   requires_scheme: title
   applicable_types: [music]
   purpose: license
-  description: "BMI repertoire — writer and publisher credits"
+  description: "Writer and publisher credits for BMI-affiliated writers"
   navigation_hint: "Search the repertoire by title"
   authoritative: true
 
@@ -66,7 +66,7 @@
   requires_scheme: renewal_title
   applicable_types: [music, text]
   purpose: resolve
-  description: "US Copyright Office catalog scans on the Internet Archive — renewal registrations"
+  description: "Renewal registrations in the Copyright Office catalog scans on the Internet Archive"
   navigation_hint: "Catalog of Copyright Entries, Third Series, Music; renewals volume for {year}"
   authoritative: true
 
@@ -80,7 +80,7 @@
   requires_scheme: renewal_online_title
   applicable_types: [music, text]
   purpose: resolve
-  description: "US Copyright Office online public records — registrations and renewals received since 1978"
+  description: "Registrations and renewals received by the US Copyright Office since 1978"
   navigation_hint: "Search by title; look for a renewal (RE-numbered) record received {year} or {year_after} naming this work"
   authoritative: true
 
@@ -92,6 +92,6 @@
   requires_scheme: unconfirmed_recording
   applicable_types: [music]
   purpose: resolve
-  description: "UCSB discography of pre-1950s recordings — matrix numbers, session and release dates"
+  description: "UCSB discography of early recordings, with matrix numbers and session and release dates"
   navigation_hint: "Search by title, then filter by artist {artist}"
   authoritative: true

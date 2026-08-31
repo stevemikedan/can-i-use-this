@@ -89,8 +89,8 @@ def _search_and_gate(query: AssetQuery, title: str, artist: Optional[str], em: E
     if not s.ok:
         em.emit(S.IDENTIFY, "failed", "MusicBrainz search failed", error_message=s.error, degraded=True)
         return None, failed_response(query, title, artist, em,
-                                     f"MusicBrainz could not be reached — {plain_error(s.error)}. "
-                                     "This is usually transient — run the inquiry again.",
+                                     f"MusicBrainz could not be reached: {plain_error(s.error)}. "
+                                     "This is usually transient; run the inquiry again.",
                                      upstream=True)
     cands = s.data
     if not cands:
@@ -239,7 +239,7 @@ def _select_recording(title: str, cands: list[dict], artist: Optional[str], em: 
         session_year = int(dated[0][:4])
         min_release = min((int(r["date"][:4]) for r in mine if r["date"]), default=None)
         if min_release is not None and min_release < session_year:
-            guard_note = (f"a dated {dated[0]} session exists but a release from {min_release} predates it — "
+            guard_note = (f"a dated {dated[0]} session exists but a release from {min_release} predates it; "
                           f"the dated relation belongs to a later take, not the original")
             dated = []
 
@@ -310,12 +310,12 @@ def corroborate_writers(cf: CompositionFacts, em: Emitter, reader, title: str) -
     if not candidates:
         return
     em.emit(S.RESEARCH, "progress",
-            "Writer list uncorroborated — searching repertories and credits (Parallel Search)")
+            "Writer list uncorroborated; searching repertories and credits (Parallel Search)")
     out, links = search_writers(title, cf.year, candidates, announce=_announce_search(em, "writer credits"))
     _search_result_line(em, "writer credits", out)
     cf.writer_links = links
     if not out.ok:
-        em.emit(S.RESEARCH, "progress", "Parallel Search unavailable — writer list stays uncorroborated",
+        em.emit(S.RESEARCH, "progress", "Parallel Search unavailable; writer list stays uncorroborated",
                 degraded=True, error_message=out.error)
     answer = reader.read_writers(title=title, year=cf.year, candidates=candidates, evidence=out)
     if answer.status != "found":
@@ -352,7 +352,7 @@ def corroborate_writers(cf: CompositionFacts, em: Emitter, reader, title: str) -
         cf.corroborated = True
         cf.writer_conf = min(confs, key=_rank) if confs else Confidence.MEDIUM
         em.emit(S.RESEARCH, "progress",
-                f"Writer list corroborated from evidence — every candidate confirmed ({len(cf.writers)} writers)")
+                f"Writer list corroborated from evidence, every candidate confirmed ({len(cf.writers)} writers)")
 
 
 # --- research: composition ----------------------------------------------------
@@ -570,7 +570,7 @@ def _lead(fact: Optional[ResearchedFact], says: str) -> tuple[str, list[HandoffL
         return "", []
     srcs = fact.sources[:3]
     where = "; ".join(dict.fromkeys(s.name for s in srcs))
-    text = (f" Lead, low confidence: {where} states {says}. That is not an official record — "
+    text = (f" Lead, low confidence: {where} states {says}. Not an official record; "
             f"verify it against one before relying on it.")
     links = [HandoffLink(source_name=s.name, url=s.url, tier=LinkTier.DEEP_LINK, purpose="resolve",
                          description=f"Low-confidence lead: states {says}") for s in srcs]
@@ -594,13 +594,13 @@ def renewal_question(title: str, year: int, links, numbers: list[str],
     if system == "online":
         where = (f" The {y28}–{y28 + 1} renewal window falls after 1977, so the record is in the US Copyright "
                  f"Office online public catalog (renewals received since 1978, RE-numbered), not in the scanned "
-                 f"Catalog of Copyright Entries volumes that web search reaches — search the online catalog by "
+                 f"Catalog of Copyright Entries volumes that web search reaches. Search the online catalog by "
                  f"title and claimant.")
         effort = "minutes"
     elif system == "both":
         where = (f" The {y28}–{y28 + 1} renewal window straddles 1978: a {y28} renewal is in the scanned Catalog "
                  f"of Copyright Entries, a {y28 + 1} renewal in the US Copyright Office online public catalog "
-                 f"(RE-numbered) — check both.")
+                 f"(RE-numbered). Check both.")
         effort = "hours"
     else:
         where = " Renewal records are scanned catalogs, not a queryable database."
@@ -609,7 +609,7 @@ def renewal_question(title: str, year: int, links, numbers: list[str],
         question_id=f"{COMPOSITION}:renewal",
         question=f'Was the {year} US copyright in "{title}" renewed in {y28}–{y28 + 1}?',
         why_it_matters=_RENEWAL_WHY + where
-                       + (f" Search found renewal-style registration numbers {numbers[:3]} — check them." if numbers else "")
+                       + (f" Search found renewal-style registration numbers {numbers[:3]}. Check them." if numbers else "")
                        + lead_text,
         if_yes=f"Protected until 1 January {year + 96}.",
         if_no=f"Entered the public domain 1 January {year + 29}.",
@@ -661,7 +661,7 @@ def publication_floor(rec_tf: TermFacts) -> Optional[ResearchedFact]:
         return ResearchedFact(
             value=f.value, confidence=Confidence.LOW, sources=list(f.sources),
             reasoning=f"Inferred from the recording: distributing the {f.value} recording embodying "
-                      f"the work published it (17 U.S.C. §101). No publication record found on Wikidata — "
+                      f"the work published it (17 U.S.C. §101). No publication record found on Wikidata; "
                       f"verify against the copyright registration.")
     return None
 
@@ -673,7 +673,7 @@ def year_question(title: str, fact: Optional[ResearchedFact] = None) -> Unresolv
     return UnresolvedQuestion(
         question_id=f"{COMPOSITION}:publication_year",
         question=f'In what year was "{title}" first published in the US?',
-        why_it_matters="The US term runs from publication, and no publication record was found — "
+        why_it_matters="The US term runs from publication, and no publication record was found; "
                        "the year in use rests on weaker evidence." + lead_text,
         if_yes="A confirmed year lets the 95-year rule and the renewal window be applied exactly.",
         if_no="Without a year the composition stays undetermined and the roll-up cannot be clear.",
@@ -699,10 +699,9 @@ def derivative_question(title: str, year: int, dead: list[Writer]) -> Unresolved
         question_id=f"{COMPOSITION}:derivative",
         question=f'Is the {year} "{title}" a translation or arrangement of an earlier work?',
         why_it_matters=f"{who} died before the stated {year} US publication, so this {year} copyright is "
-                       f"likely a translation, arrangement or new edition of an earlier original — for "
-                       f"example a foreign-language original with its own, separate copyright. The verdict "
-                       f"on this record covers the {year} publication; the original would carry its own "
-                       f"term, authors and country of origin.",
+                       f"likely a translation, arrangement or new edition of an earlier original with its "
+                       f"own, separate copyright. The verdict on this record covers the {year} publication; "
+                       f"the original would carry its own term, authors and country of origin.",
         if_yes=f"Two rights layers exist: the earlier original and the {year} version. Each must be "
                f"cleared (or found expired) separately.",
         if_no=f"The {year} publication is the original and this record's determination stands as computed.",
@@ -927,19 +926,19 @@ def stage_research_composition(run: MusicRun) -> None:
                       f"publication — see the open question about an earlier original."
                 )
             em.emit(S.RESEARCH, "progress",
-                    f"Writer death year precedes the {cf.year} publication — flagged as a likely "
+                    f"Writer death year precedes the {cf.year} publication; flagged as a likely "
                     f"translation or arrangement of an earlier work")
 
     # Renewal window -> Tier 3 SEARCH (primary path), then read the evidence
     cliff = CURRENT_YEAR - 95
     if cf.year and cliff <= cf.year <= 1963:
         em.emit(S.RESEARCH, "progress",
-                f"Published {cf.year}: renewal in year 28 decides the US term — searching renewal records (Parallel Search)")
+                f"Published {cf.year}. Renewal in year 28 decides the US term; searching renewal records (Parallel Search)")
         out, links = search_renewal(cf.title or title, writer_names, cf.year,
                                     announce=_announce_search(em, "renewal records"))
         _search_result_line(em, "renewal records", out)
         if not out.ok:
-            em.emit(S.RESEARCH, "progress", "Parallel Search unavailable — renewal left unresolved",
+            em.emit(S.RESEARCH, "progress", "Parallel Search unavailable; renewal left unresolved",
                     degraded=True, error_message=out.error)
         answer = reader.read_renewal(title=cf.title or title, writers=writer_names, year=cf.year, evidence=out)
         fact = renewal_to_fact(answer, retrieved_at=out.retrieved_at)
@@ -983,12 +982,12 @@ def stage_research_recording(run: MusicRun) -> None:
             value=sel.rec_year, confidence=sel.rec_conf, sources=[sel.source],
             reasoning=why + ("; " + "; ".join(sel_notes) if sel_notes else ""))
     if sel.basis is not RecordingDateBasis.DATED_PERFORMANCE:
-        em.emit(S.RESEARCH, "progress", "No dated session on file — searching for the original release (Parallel Search)")
+        em.emit(S.RESEARCH, "progress", "No dated session on file; searching for the original release (Parallel Search)")
         out, links = search_recording_date(title, sel.pick["artist"], sel.pick["date"],
                                            announce=_announce_search(em, "original release"))
         _search_result_line(em, "original release", out)
         if not out.ok:
-            em.emit(S.RESEARCH, "progress", "Parallel Search unavailable — release year left unresolved",
+            em.emit(S.RESEARCH, "progress", "Parallel Search unavailable; release year left unresolved",
                     degraded=True, error_message=out.error)
         answer = reader.read_recording_year(title=title, artist=sel.pick["artist"],
                                             year_on_file=sel.pick["date"], evidence=out)
@@ -1022,7 +1021,7 @@ def stage_rules(run: MusicRun) -> None:
                                                            f"{COMPOSITION}:death_years")]
             run.comp_questions.append(year_question(title, floor))
             em.emit(S.RESEARCH, "progress",
-                    f"No publication record — inferred {floor.value} from the recording (17 U.S.C. §101, low confidence)")
+                    f"No publication record; inferred {floor.value} from the recording (17 U.S.C. §101, low confidence)")
     em.emit(S.RESEARCH, "complete", f"Consulted {em.sources_consulted} sources"
             + (" — Tier 3 degraded" if any(e.degraded for e in em.events) else ""))
     death_years = [w.death_year for w in run.cf.writers] or [None]

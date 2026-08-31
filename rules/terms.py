@@ -168,8 +168,8 @@ def life_plus_70(
                 f"{jurisdiction.lower()}_life_plus_70_running",
                 f"The term runs 70 years past the death of the last surviving author. One or more "
                 f"authors have no recorded death year, but every author was alive when the work "
-                f"appeared in {work_year}: protected until at least 1 January {work_year + 71}, "
-                f"and decades beyond a living author's lifetime.",
+                f"appeared in {work_year}, so it is protected until at least 1 January "
+                f"{work_year + 71} and for decades beyond a living author's lifetime.",
             )
         return Determination(
             "undetermined", None, f"{jurisdiction.lower()}_death_year_unknown",

@@ -713,8 +713,8 @@ class RightsResponse(BaseModel):
                     "boundaries read as rigor; faked coverage does not.",
     )
     disclaimer: str = Field(
-        default="This is research, not legal advice. Verify before relying on "
-                "it for anything consequential."
+        default="Research, not legal advice. Where the public record is wrong, "
+                "this is wrong. Have a professional confirm before you rely on it."
     )
 
     generated_at: datetime

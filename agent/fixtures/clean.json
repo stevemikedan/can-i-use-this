@@ -52,7 +52,7 @@
       "expiry_year": 2025,
       "jurisdiction": "US",
       "layer_id": "sound_recording",
-      "rule_explanation": "Published 1924. Under the CLASSICS Act (95-year term plus 5 additional years), protection ended 1 January 2025.",
+      "rule_explanation": "Published 1924. CLASSICS Act protection ended 1 January 2025.",
       "rule_id": "us_sr_mma_1923_1946",
       "status": "public_domain"
     },
@@ -89,7 +89,7 @@
   "boundary_note": null,
   "cache_key": "music:60b22df4-0000-0000-0000-000000000004:rib-whiteman-1924",
   "disagreements": [],
-  "disclaimer": "This is research, not legal advice. Verify before relying on it for anything consequential.",
+  "disclaimer": "Research, not legal advice. Where the public record is wrong, this is wrong. Have a professional confirm before you rely on it.",
   "entity": {
     "alternate_candidates": [],
     "asset_type": "music",
@@ -378,7 +378,7 @@
       "url": "https://www.wikidata.org/wiki/Q722599"
     },
     {
-      "description": "Mechanical Licensing Collective — publishers, administrators and shares for \"Rhapsody in Blue\"",
+      "description": "Publishers, administrators and ownership shares for \"Rhapsody in Blue\"",
       "navigation_hint": null,
       "paste_string": null,
       "purpose": "license",
@@ -387,7 +387,7 @@
       "url": "https://portal.themlc.com/search?query=Rhapsody+in+Blue"
     },
     {
-      "description": "ASCAP ACE repertory — writer and publisher credits",
+      "description": "Writer and publisher credits",
       "navigation_hint": "Search the repertory by title",
       "paste_string": "Rhapsody in Blue",
       "purpose": "license",
@@ -396,7 +396,7 @@
       "url": "https://www.ascap.com/repertory"
     },
     {
-      "description": "BMI repertoire — writer and publisher credits",
+      "description": "Writer and publisher credits for BMI-affiliated writers",
       "navigation_hint": "Search the repertoire by title",
       "paste_string": "Rhapsody in Blue",
       "purpose": "license",
@@ -497,7 +497,7 @@
         "expiry_year": 2025,
         "jurisdiction": "US",
         "layer_id": "sound_recording",
-        "rule_explanation": "Published 1924. Under the CLASSICS Act (95-year term plus 5 additional years), protection ended 1 January 2025.",
+        "rule_explanation": "Published 1924. CLASSICS Act protection ended 1 January 2025.",
         "rule_id": "us_sr_mma_1923_1946",
         "status": "public_domain"
       },
@@ -508,12 +508,12 @@
       "layer_id": "sound_recording",
       "layer_label": "Sound recording (1924)",
       "licensing_path": null,
-      "reasoning": "Published 1924. Under the CLASSICS Act (95-year term plus 5 additional years), protection ended 1 January 2025.",
+      "reasoning": "Published 1924. CLASSICS Act protection ended 1 January 2025.",
       "verdict": "clear"
     }
   ],
   "overall_confidence": "high",
-  "overall_headline": "Clear: the composition and sound recording are in the public domain in the US.",
+  "overall_headline": "The composition and sound recording are in the public domain in the US.",
   "overall_verdict": "clear",
   "permalink": null,
   "query": {

@@ -138,7 +138,7 @@ export function Footer() {
           <span className="eyebrow-12 tracking-[0.1em] ml-2">Code</span>
           {src('github.com/stevemikedan/can-i-use-this', 'https://github.com/stevemikedan/can-i-use-this')}
         </div>
-        <div className="max-w-[78ch]">This is research, not legal advice. Verify before relying on it for anything consequential.</div>
+        <div className="max-w-[78ch]">Research, not legal advice. Where the public record is wrong, this is wrong.</div>
       </div>
     </footer>
   )

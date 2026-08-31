@@ -82,7 +82,7 @@ def test_low_confidence_not_renewed_stays_open_as_a_lead(cache, transport, fake_
     layer = next(l for l in resp.entity.layers if l.layer_id == "composition")
     assert layer.term_facts.renewal_filed.value is False              # the fact is kept, cited, low
     assert resp.overall_verdict is Verdict.UNDETERMINED
-    assert "lead, not an answer" in resp.overall_headline
+    assert "lead rather than an answer" in resp.overall_headline
 
 
 def test_low_confidence_renewed_may_still_say_protected(cache, transport, fake_parallel):
