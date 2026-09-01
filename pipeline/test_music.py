@@ -80,7 +80,10 @@ def test_ambiguity_stops_before_research(cache, transport, no_parallel):
     assert len(labels) == 3 and labels[-1].startswith("Tony Bennett")   # ordered by earliest release; 1999 last
     assert resp.entity.resolution_confidence is Confidence.LOW
     assert all(c.likelihood is Confidence.LOW for c in resp.entity.alternate_candidates)
-    assert len(calls) == 1                                           # ONE search, nothing else
+    # One search plus one cached dated-performance probe per shown row -
+    # the candidate dates must not come from reissue release dates. Still
+    # no research, no rules.
+    assert len(calls) == 1 + len(labels)
     assert not any(e.stage.value in ("research", "rules") for e in em.events)
 
 
