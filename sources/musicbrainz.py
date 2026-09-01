@@ -204,15 +204,15 @@ def release_licenses(recording_mbid: str) -> Fetched:
     on the recording or work entities.
     """
     f = _mb("release", {"recording": recording_mbid, "inc": "url-rels", "limit": "25"},
-            f"mb:release-licenses:{recording_mbid}")
+            f"mb:release-licenses:{recording_mbid}:v2")
     if not f.ok:
         return f
-    urls = []
+    out = []
     for release in f.data.get("releases") or []:
-        for rel in release.get("relations") or []:
-            if rel.get("target-type") == "url" and rel.get("type") == "license":
-                urls.append(rel["url"]["resource"])
-    f.data = urls
+        urls = [rel["url"]["resource"] for rel in release.get("relations") or []
+                if rel.get("target-type") == "url" and rel.get("type") == "license"]
+        out.append({"id": release.get("id"), "licenses": urls})
+    f.data = out
     return f
 
 

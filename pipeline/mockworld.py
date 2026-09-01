@@ -29,10 +29,14 @@ OTR_WORK = "f4a81d77-0000-0000-0000-000000000005"
 CC_WORK = "9d3e5b21-0000-0000-0000-000000000006"
 CC_URI = "https://creativecommons.org/licenses/by-sa/4.0/"
 GS_WORK = "1e7c9a44-0000-0000-0000-000000000007"
+GS_WORK2 = "2f8d0b55-0000-0000-0000-000000000008"
 GS_URI = "https://creativecommons.org/licenses/by-nc-sa/3.0/"
-# Release-level licenses, keyed by recording mbid (the NIN Ghosts pattern:
-# the CC license sits on the release, not the recording or work).
-RELEASE_LICENSES = {"gs-1": [GS_URI]}
+# Release-level license sets, keyed by recording mbid: one list per release
+# on file. Ghost Signal is the NIN Ghosts pattern (every release licensed);
+# Half Signal is the Aliens Exist trap (one licensed release among plain
+# ones), which must NOT settle the layer.
+RELEASE_SETS = {"gs-1": [[GS_URI]],
+                "hs-1": [[GS_URI], [], []]}
 RIB_WORK = "60b22df4-0000-0000-0000-000000000004"
 
 
@@ -71,6 +75,7 @@ RECORDINGS = [
     # and the work. Tier 1 settles both layers with no research at all.
     rec("cc-golden", "Golden Hour", "Night Owl Static", "2019-03", CC_WORK, license=CC_URI),
     rec("gs-1", "Ghost Signal", "Night Owl Static", "2020-01", GS_WORK),
+    rec("hs-1", "Half Signal", "Night Owl Static", "2021-01", GS_WORK2, begin="2020-11-05"),
     rec("otr-garland-1993", "Over the Rainbow", "Judy Garland", "1993", OTR_WORK),
     rec("lt-studio", "Later Take", "The Guards", "1999-06", "w-latertake"),
     rec("lt-live", "Later Take", "The Guards", "2001-11", "w-latertake", "2001-06-15"),
@@ -90,6 +95,7 @@ WORKS = {
         {"target-type": "url", "type": "wikidata", "url": {"resource": "https://www.wikidata.org/wiki/Q722599"}},
     ]},
     GS_WORK: {"id": GS_WORK, "title": "Ghost Signal", "score": 100, "iswcs": [], "relations": []},
+    GS_WORK2: {"id": GS_WORK2, "title": "Half Signal", "score": 100, "iswcs": [], "relations": []},
     CC_WORK: {"id": CC_WORK, "title": "Golden Hour", "score": 100, "iswcs": [], "relations": [
         {"target-type": "url", "type": "license", "url": {"resource": CC_URI}},
     ]},
@@ -150,9 +156,10 @@ def handler(req: httpx.Request) -> httpx.Response:
         q = WD_SEARCH.get(p.get("search"))
         return httpx.Response(200, json={"search": [{"id": q, "label": p["search"], "description": "x"}] if q else []})
     if path == "/ws/2/release" and "recording" in p:
-        urls = RELEASE_LICENSES.get(p["recording"], [])
+        sets = RELEASE_SETS.get(p["recording"], [])
         releases = [{"id": f"rel-{i}", "relations": [
-            {"target-type": "url", "type": "license", "url": {"resource": u}}]} for i, u in enumerate(urls)]
+            {"target-type": "url", "type": "license", "url": {"resource": u}} for u in urls]}
+            for i, urls in enumerate(sets)]
         return httpx.Response(200, json={"releases": releases})
     if path == "/ws/2/recording" and "query" in p:
         parts = p["query"].split('"')

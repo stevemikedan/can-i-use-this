@@ -1042,15 +1042,47 @@ def stage_research_recording(run: MusicRun) -> None:
                     f"Tier 1: license relation on the recording; {tier1_label(lic_fact)} from the static table, no research")
     if recording.existing_license is None:
         # Most CC albums carry the license on the RELEASE, not the recording
-        # (NIN's Ghosts). One extra cached call covers the common case.
+        # (NIN's Ghosts). One extra cached call covers the common case - but
+        # a release-level license settles the layer ONLY when every release
+        # on file carries one. A mark on a minority of releases (a licensed
+        # compilation, a netlabel issue, a bootleg tag) does not license the
+        # master generally: on the live record, blink-182's "Aliens Exist"
+        # carried a CC relation on one release and would have read as openly
+        # licensed. Same failure class as the reissue date - a fact trusted
+        # without checking what it actually attaches to. A minority mark is
+        # disclosed as an open question, and research proceeds normally.
         rf = mb.release_licenses(sel.pick["mbid"])
         em.consulted()
-        if rf.ok:
-            lic_fact = tier1_license(rf.data, "release")
-            if lic_fact is not None:
-                recording.existing_license = lic_fact
+        if rf.ok and rf.data:
+            from rules.licenses import parse_license as _pl
+            licensed = [r for r in rf.data if any(_pl(u) for u in r["licenses"])]
+            if licensed and len(licensed) == len(rf.data):
+                lic_fact = tier1_license(licensed[0]["licenses"], "release")
+                if lic_fact is not None:
+                    recording.existing_license = lic_fact
+                    em.emit(S.RESEARCH, "progress",
+                            f"Tier 1: license relation on all {len(rf.data)} release(s); "
+                            f"{tier1_label(lic_fact)} from the static table, no research")
+            elif licensed:
+                lead = tier1_license(licensed[0]["licenses"], "release")
+                label = tier1_label(lead) if lead else "a recognized license"
+                question_ids.setdefault("recording_license", f"{RECORDING}:license")
+                questions.append(UnresolvedQuestion(
+                    question_id=f"{RECORDING}:license",
+                    question=f"Is this recording actually offered under {label}?",
+                    why_it_matters=(
+                        f"{len(licensed)} of {len(rf.data)} releases on file carry a {label} relation; the "
+                        f"rest carry none. A license on one release (a compilation, a netlabel issue, a "
+                        f"mistagged entry) does not license the master generally, so the mark is recorded "
+                        f"as a lead and the recording is determined by its term as usual."),
+                    if_yes=f"If the rights holder released it under {label}, it is usable under those conditions.",
+                    if_no="If the mark belongs to one release only, standard master licensing applies.",
+                    affects_layer_ids=[RECORDING],
+                    search_terms=[f'"{title}" {label}'],
+                    estimated_effort="minutes"))
                 em.emit(S.RESEARCH, "progress",
-                        f"Tier 1: license relation on the release; {tier1_label(lic_fact)} from the static table, no research")
+                        f"License relation on {len(licensed)} of {len(rf.data)} releases ({label}); "
+                        f"not corroborated across releases, recorded as a lead")
     sel_notes = []
     if len(sel.sessions) > 1:
         sel_notes.append(f"other dated sessions by this artist: {', '.join(sel.sessions[1:6])}")

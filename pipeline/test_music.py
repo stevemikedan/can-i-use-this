@@ -642,3 +642,18 @@ def test_run_log_rides_on_the_record(cache, transport, no_parallel):
     assert all(e.elapsed_ms >= 0 for e in resp.run_log)
     from pipeline.mockworld import normalize
     assert "run_log" not in normalize(resp)
+
+
+def test_minority_release_license_is_a_lead_not_an_answer(cache, transport, no_parallel):
+    # The Aliens Exist trap: one licensed release among plain ones. The mark
+    # must not settle the layer; it becomes an open question, and the
+    # recording is determined by its term (dated 2020 session) as usual.
+    transport(handler)
+    resp, em = run_music(q("Half Signal \u2014 Night Owl Static"))
+    layer = next(l for l in resp.entity.layers if l.layer_id == "sound_recording")
+    assert layer.existing_license is None
+    lv = next(x for x in resp.layer_verdicts if x.layer_id == "sound_recording")
+    assert lv.determination.rule_id != "license_cc_by_nc_sa"
+    qn = next(u for u in resp.unresolved if u.question_id == "sound_recording:license")
+    assert "1 of 3 releases" in qn.why_it_matters
+    assert "does not license the master generally" in qn.why_it_matters
