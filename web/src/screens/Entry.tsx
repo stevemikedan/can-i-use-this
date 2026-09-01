@@ -57,7 +57,7 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
           <h1 className="m-0 font-black text-verdict leading-none tracking-[-0.01em] uppercase max-[560px]:text-stat">
             Can I use this<span className="text-blue-on-ink">?</span>
           </h1>
-          <p className="m-0 text-title font-medium leading-[1.4] max-w-[44ch] text-pretty text-paper">
+          <p className="m-0 text-title font-medium leading-[1.4] max-w-[60ch] text-pretty text-paper">
             Researches whether a piece of music is yours to use, layer by layer, with the records to prove it.
           </p>
         </div>
