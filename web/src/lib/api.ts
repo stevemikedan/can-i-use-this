@@ -1,4 +1,4 @@
-import type { PipelineEvent, QueryParams, RightsResponse } from '../types'
+import type { ClearanceEnrichment, PipelineEvent, QueryParams, RightsResponse } from '../types'
 
 /** One query, waiting for the result. Used for control toggles on Result (warm: ~1 s). */
 export async function runQuery(p: QueryParams, signal?: AbortSignal): Promise<RightsResponse> {
@@ -13,6 +13,17 @@ export async function runQuery(p: QueryParams, signal?: AbortSignal): Promise<Ri
   })
   if (!r.ok) throw new Error(`${r.status} ${await r.text()}`)
   return (await r.json()) as RightsResponse
+}
+
+/** Rights-holder enrichment, fetched AFTER the verdict is on screen. The
+ *  verdict never waits for this: the endpoint re-runs the warm query off the
+ *  request path and the Task result is cached server-side. */
+export async function fetchClearance(p: QueryParams, signal?: AbortSignal): Promise<ClearanceEnrichment> {
+  const qs = new URLSearchParams({ title: p.title, intent: p.intent, jurisdiction: p.jurisdiction })
+  if (p.artist) qs.set('artist', p.artist)
+  const r = await fetch(`/api/clearance?${qs}`, { signal })
+  if (!r.ok) throw new Error(`${r.status} ${await r.text()}`)
+  return (await r.json()) as ClearanceEnrichment
 }
 
 export interface StreamHandlers {

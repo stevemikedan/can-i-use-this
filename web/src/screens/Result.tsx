@@ -1,7 +1,8 @@
 // Result — docs/design-system.md §5 "Result". Every value rendered here comes
 // from the RightsResponse; the screen adds no judgement of its own.
 import { useCallback, useEffect, useState } from 'react'
-import type { HandoffLink, Intent, LayerVerdict, QueryParams, ResearchedFact, RightsHolder, RightsLayer, RightsResponse, Source, UnresolvedQuestion, UserAnswerParam } from '../types'
+import type { ClearanceEnrichment, HandoffLink, Intent, LayerVerdict, QueryParams, ResearchedFact, RightsHolder, RightsLayer, RightsResponse, Source, UnresolvedQuestion, UserAnswerParam } from '../types'
+import { fetchClearance } from '../lib/api'
 import { Band, Controls, Doc, Eyebrow, SectionHead, Stamp, Tag, TextToggle, Ticks } from '../components/ui'
 import { EFFORT_LABEL, FACT_LABEL, METHOD_LABEL, VERDICT_WORD, confidenceLabel, expiryLine, factValue, pct, shortDate, sourceHref, splitQuery } from '../lib/format'
 import { VERDICT_SEVERITY, csvRow, CSV_HEADER, downloadText, safeFilename, toMarkdown } from '../lib/export'
@@ -29,7 +30,25 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
   const toggle = (k: string) => setOpenState((s) => ({ ...s, [k]: !s[k] }))
   const [copied, setCopied] = useState(false)
   const [stampKey, setStampKey] = useState(0)
+  // Rights-holder enrichment: fetched after the verdict renders, never
+  // before. On fixtures or endpoint failure it stays null and the static
+  // MLC note stands.
+  const [enrich, setEnrich] = useState<ClearanceEnrichment | null>(null)
+  const [enrichBusy, setEnrichBusy] = useState(false)
   useEffect(() => { setStampKey((k) => k + 1) }, [resp])
+  useEffect(() => {
+    setEnrich(null)
+    const needs = resp.layer_verdicts.some((l) => l.is_required && (l.verdict === 'license_required' || l.verdict === 'restricted'))
+    if (!needs || !params.title) return
+    const ac = new AbortController()
+    setEnrichBusy(true)
+    fetchClearance(params, ac.signal)
+      .then((e) => { if (!ac.signal.aborted) setEnrich(e) })
+      .catch(() => { /* fixtures or endpoint down: the static note stands */ })
+      .finally(() => { if (!ac.signal.aborted) setEnrichBusy(false) })
+    return () => ac.abort()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resp])
 
   // Cmd/Ctrl-P and the Print button both render every section expanded.
   useEffect(() => {
@@ -144,11 +163,45 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
                       {actLinks.map((l) => <LinkLine key={l.url + l.source_name} l={l} />)}
                     </div>
                   )}
-                  <div className="text-meta font-medium leading-[1.7] text-ink-70 max-w-[70ch]">
-                    We can&rsquo;t yet tell you how many parties are involved or whether one company controls
-                    everything. That data is in the MLC&rsquo;s database and we don&rsquo;t have API access yet.
-                    The links above are the manual route.
-                  </div>
+                  {toClear.map((l) => {
+                    const e = enrich?.layers?.[l.layer_id]
+                    if (!e?.holders?.length) return null
+                    return (
+                      <div key={l.layer_id + '-parties'} className="flex flex-col gap-2 pt-2 max-w-[62ch]">
+                        <Eyebrow tracking={12} className="text-ink-70">The parties — {titleOf(l).toLowerCase()}, researched</Eyebrow>
+                        {e.holders.map((h, i) => (
+                          <div key={i} className="flex gap-x-4 gap-y-1 items-baseline flex-wrap text-body leading-[1.5]">
+                            <span className="font-semibold">{h.name.value}</span>
+                            <span className="text-ink-70">{h.is_administrator ? 'administrator' : h.role}</span>
+                            {h.share_percent != null && <span className="font-mono font-medium text-meta">{h.share_percent}%</span>}
+                            {h.territory && <span className="font-mono font-medium text-meta text-ink-70">{h.territory}</span>}
+                          </div>
+                        ))}
+                        {(e.questions ?? []).map((q) => (
+                          <div key={q.question_id} className="text-body leading-[1.5] text-ink-70 border-l-2 border-ink-20 pl-3">
+                            {q.question} {q.why_it_matters}
+                          </div>
+                        ))}
+                        <div className="text-meta font-medium leading-[1.7] text-ink-70">
+                          {e.completeness_note} {e.mlc_note}
+                        </div>
+                      </div>
+                    )
+                  })}
+                  {(enrich?.ledger?.length ?? 0) > 0 && (
+                    <div className="font-mono font-medium text-meta text-ink-70 leading-[1.8]">
+                      {enrich!.ledger.map((line, i) => <div key={i}>{line}</div>)}
+                    </div>
+                  )}
+                  {!enrich && (
+                    <div className="text-meta font-medium leading-[1.7] text-ink-70 max-w-[70ch]">
+                      {enrichBusy
+                        ? 'Researching the parties (Parallel Task)\u2026'
+                        : <>We can&rsquo;t yet tell you how many parties are involved or whether one company controls
+                           everything. That data is in the MLC&rsquo;s database and we don&rsquo;t have API access yet.
+                           The links above are the manual route.</>}
+                    </div>
+                  )}
                 </>
               )}
             </div>

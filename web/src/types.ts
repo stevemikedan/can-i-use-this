@@ -183,6 +183,22 @@ export interface PipelineEvent {
   partial: Record<string, unknown> | null
 }
 
+export interface EnrichedLayer {
+  holders?: RightsHolder[]
+  clearance?: ClearanceProfile | null
+  found_share_total?: number | null
+  completeness_note?: string
+  mlc_note?: string
+  questions?: UnresolvedQuestion[]
+  error?: string
+}
+
+/** GET /api/clearance: rights-holder research, fetched after the verdict. */
+export interface ClearanceEnrichment {
+  layers: Record<string, EnrichedLayer>
+  ledger: string[]
+}
+
 export interface UserAnswerParam {
   answer: boolean
   attestation?: string | null
