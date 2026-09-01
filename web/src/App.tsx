@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PipelineEvent, QueryParams, RightsResponse } from './types'
-import { runQuery, streamQuery } from './lib/api'
+import { checkCached, runQuery, streamQuery } from './lib/api'
 import { splitQuery } from './lib/format'
 import Entry from './screens/Entry'
 import Progress from './screens/Progress'
+import Resume from './screens/Resume'
 import Result from './screens/Result'
 import Disambiguation from './screens/Disambiguation'
 import About from './screens/About'
@@ -18,7 +19,7 @@ import { Footer } from './components/ui'
 const FIXTURES = import.meta.glob<RightsResponse>('./dev/*.json', { import: 'default' })
 const fixtureNames = Object.keys(FIXTURES).map((p) => p.replace('./dev/', '').replace('.json', '')).sort()
 
-type Screen = 'entry' | 'progress' | 'result' | 'disambiguation' | 'notfound' | 'boundary' | 'error' | 'about' | 'cues'
+type Screen = 'entry' | 'progress' | 'result' | 'disambiguation' | 'notfound' | 'boundary' | 'error' | 'about' | 'cues' | 'resume'
 
 const DEFAULT_PARAMS: QueryParams = { title: '', intent: 'film_tv', jurisdiction: 'US' }
 
@@ -42,6 +43,7 @@ export default function App() {
   const [events, setEvents] = useState<PipelineEvent[]>([])
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)          // Result control toggles only
+  const [resumeAt, setResumeAt] = useState<string | null>(null)   // permalink: when the record was researched
   const stopStream = useRef<(() => void) | null>(null)
   const abort = useRef<AbortController | null>(null)
 
@@ -126,11 +128,20 @@ export default function App() {
     })
   }, [toEntry, toCues, toAbout])
 
-  // A shared permalink (/?q=...) re-opens the record by re-running the query.
+  // A shared permalink (/?q=...) re-opens the record. It auto-runs only when
+  // the record was researched recently enough that the re-run is effectively
+  // instant; otherwise the reader chooses whether to spend a research run.
   useEffect(() => {
     if (fixtureParam) return
     const p = paramsFromUrl(window.location.search)
-    if (p) research(p)
+    if (!p) return
+    setParams(p)
+    checkCached(p)
+      .then((c) => {
+        if (c.researched && c.fresh) research(p)
+        else { setResumeAt(c.researched_at); setScreen('resume') }
+      })
+      .catch(() => { setResumeAt(null); setScreen('resume') })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -145,8 +156,11 @@ export default function App() {
 
   const body = (() => {
     switch (screen) {
+      case 'resume':
+        return <Resume params={params} researchedAt={resumeAt}
+          onResearch={() => research(params)} onNewInquiry={toEntry} />
       case 'progress':
-        return <Progress params={params} events={events} />
+        return <Progress params={params} events={events} onCancel={toEntry} />
       case 'result':
         return resp && (
           <>

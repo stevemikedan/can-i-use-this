@@ -19,7 +19,7 @@ function fmt(s: number): string {
   return `${Math.floor(s / 60)}:${String(Math.floor(s) % 60).padStart(2, '0')}`
 }
 
-export default function Progress({ params, events }: { params: QueryParams; events: PipelineEvent[] }) {
+export default function Progress({ params, events, onCancel }: { params: QueryParams; events: PipelineEvent[]; onCancel?: () => void }) {
   const [t, setT] = useState(0)
   useEffect(() => {
     const t0 = Date.now()
@@ -69,7 +69,15 @@ export default function Progress({ params, events }: { params: QueryParams; even
   return (
     <>
       <Band label="Can I use this? — Research in progress" padding="pt-7 pb-10"
-        context={<Eyebrow tracking={12} className="text-paper-72">{params.jurisdiction} · {intentContext(params.intent)}</Eyebrow>}>
+        context={<>
+          <Eyebrow tracking={12} className="text-paper-72">{params.jurisdiction} · {intentContext(params.intent)}</Eyebrow>
+          {onCancel && (
+            <button type="button" onClick={onCancel}
+              className="bg-transparent border-none p-0 cursor-pointer text-meta font-semibold tracking-[0.08em] uppercase text-blue-on-ink underline decoration-[1.5px] underline-offset-[3px] hover:text-paper">
+              Cancel
+            </button>
+          )}
+        </>}>
         <div className="flex gap-y-6 gap-x-12 items-end flex-wrap">
           <div className="flex-[1_1_380px] min-w-[240px] flex flex-col gap-[10px]">
             <Eyebrow className="text-blue-on-ink">Query</Eyebrow>

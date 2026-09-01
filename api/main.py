@@ -31,6 +31,7 @@ import json
 import logging
 import os
 import time
+from datetime import datetime, timezone
 from typing import AsyncIterator, Optional
 
 from fastapi import FastAPI, HTTPException, Query
@@ -155,10 +156,55 @@ async def clearance(title: str = Query(min_length=1, max_length=200),
     return await asyncio.to_thread(enrich_response, resp)
 
 
+# How long a researched marker counts as "fresh": the shortest underlying
+# research cache (Parallel search/task, the reader) is 7 days, so beyond it a
+# re-run is no longer instant and a permalink must not auto-run.
+RECORD_FRESH_S = 7 * 24 * 3600
+
+
+def _record_key(aq: AssetQuery) -> str:
+    return f"record:{aq.raw_input.casefold().strip()}|{aq.intent.value}|{aq.jurisdiction.value}"
+
+
+def _mark_researched(aq: AssetQuery, resp: RightsResponse) -> None:
+    """A completed record (not a disambiguation stop, not a failure) marks
+    the query as researched, so a permalink can tell a warm record from a
+    stale one before deciding to spend a research run."""
+    if resp.stop_for_disambiguation or not resp.entity.layers:
+        return
+    try:
+        get_cache().set(_record_key(aq), {
+            "researched_at": datetime.now(timezone.utc).isoformat(),
+            "overall_verdict": resp.overall_verdict.value,
+        })
+    except Exception:                                    # the marker is best-effort
+        log.warning("record marker write failed", exc_info=True)
+
+
+@app.get("/api/cached")
+async def cached(title: str = Query(min_length=1, max_length=200),
+                 artist: Optional[str] = Query(None, max_length=200),
+                 intent: Intent = Intent.FILM_TV,
+                 jurisdiction: Jurisdiction = Jurisdiction.US) -> dict:
+    """Has this exact query been researched, and recently enough that a
+    re-run is effectively instant? Permalinks auto-run only on a fresh hit;
+    otherwise the user chooses whether to spend the time."""
+    _check_jurisdiction(jurisdiction)
+    aq = QueryIn(title=title, artist=artist, intent=intent, jurisdiction=jurisdiction).to_query()
+    entry = await asyncio.to_thread(get_cache().get, _record_key(aq))
+    if entry is None:
+        return {"researched": False, "researched_at": None, "fresh": False}
+    return {"researched": True,
+            "researched_at": entry.value.get("researched_at"),
+            "fresh": entry.age_s() <= RECORD_FRESH_S}
+
+
 @app.post("/api/query", response_model=RightsResponse)
 async def query(q: QueryIn) -> RightsResponse:
     _check_jurisdiction(q.jurisdiction)
-    resp, _ = await asyncio.to_thread(run_workflow, q.to_query(), reader=reader())
+    aq = q.to_query()
+    resp, _ = await asyncio.to_thread(run_workflow, aq, reader=reader())
+    await asyncio.to_thread(_mark_researched, aq, resp)
     return resp
 
 
@@ -191,6 +237,7 @@ async def _stream(q: AssetQuery) -> AsyncIterator[str]:
     async def run() -> None:
         try:
             resp, _ = await asyncio.to_thread(run_workflow, q, emitter=Emitter(on_event), reader=reader())
+            await asyncio.to_thread(_mark_researched, q, resp)
             await queue.put(("response", resp.model_dump(mode="json")))
         except Exception as e:
             log.exception("query failed")

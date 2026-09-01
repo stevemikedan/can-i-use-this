@@ -15,6 +15,16 @@ export async function runQuery(p: QueryParams, signal?: AbortSignal): Promise<Ri
   return (await r.json()) as RightsResponse
 }
 
+/** Was this exact query researched recently enough that a re-run is
+ *  effectively instant? Permalinks auto-run only when it was. */
+export async function checkCached(p: QueryParams): Promise<{ researched: boolean; researched_at: string | null; fresh: boolean }> {
+  const qs = new URLSearchParams({ title: p.title, intent: p.intent, jurisdiction: p.jurisdiction })
+  if (p.artist) qs.set('artist', p.artist)
+  const r = await fetch(`/api/cached?${qs}`)
+  if (!r.ok) throw new Error(`${r.status}`)
+  return await r.json()
+}
+
 /** Rights-holder enrichment, fetched AFTER the verdict is on screen. The
  *  verdict never waits for this: the endpoint re-runs the warm query off the
  *  request path and the Task result is cached server-side. */

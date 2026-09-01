@@ -102,3 +102,19 @@ def test_clearance_enriches_only_blocking_layers(client):
 def test_clearance_skips_a_clear_verdict(client):
     body = client.get("/api/clearance", params={"title": "Rhapsody in Blue", "artist": "Paul Whiteman"}).json()
     assert body["layers"] == {} and body["ledger"] == []
+
+
+def test_permalink_marker_written_and_read(client):
+    # Before any run: not researched. After a run: researched and fresh.
+    q = {"title": "West End Blues", "artist": "Louis Armstrong"}
+    assert client.get("/api/cached", params=q).json() == {
+        "researched": False, "researched_at": None, "fresh": False}
+    client.post("/api/query", json=q)
+    c = client.get("/api/cached", params=q).json()
+    assert c["researched"] is True and c["fresh"] is True and c["researched_at"]
+
+
+def test_disambiguation_stop_writes_no_marker(client):
+    client.post("/api/query", json={"title": "Blue Moon"})
+    c = client.get("/api/cached", params={"title": "Blue Moon"}).json()
+    assert c["researched"] is False
