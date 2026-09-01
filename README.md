@@ -43,15 +43,19 @@ flowchart TD
   end
   RC -.-> READ
   RR -.-> READ
-  RC --> RU["rules engine — deterministic terms, hand-written Python"]
-  RR --> RU
+  RC --> CO["consistency — cross-checks between facts that constrain each other"]
+  RR --> CO
+  CO --> RU["rules engine — deterministic terms, hand-written Python"]
   RU --> AS["assemble — conservative roll-up, most restrictive layer wins"]
-  AS --> OUT["verdict per layer per jurisdiction · cited evidence · open questions"]
+  AS --> OUT["verdict per layer per jurisdiction · cited evidence · the run log on the record"]
+  OUT -. "layers that need clearing, after the verdict" .-> TK["Parallel Task — rights holders, validated: capped medium, MLC supersedes"]
   OUT -- "handoff links, search prefilled" --> DEST["destinations we link to · the MLC, US Copyright Office, ASCAP/BMI"]
   DEST -- "you bring the answer back, it re-runs" --> Q
 ```
 
 The stages run as a **Google ADK agent graph** (`agent/workflow.py`) — sequential agents wrapping plain-Python stage functions, with the two research stages fanned out in parallel. The graph's one model call is the reading step, Gemini 2.5 Flash on Vertex AI. The graph reproduces the pipeline's frozen acceptance fixtures exactly; the pipeline stays canonical and testable without an agent runtime.
+
+Parallel's two endpoints do different jobs. **Search** gathers evidence on the primary request path, where latency is the budget and the reader decides what a passage actually establishes. **Task** runs structured rights-holder research after the verdict is on screen, where per-field citations matter more than speed; the answer never waits for it.
 
 **Identify stops on ambiguity.** A title with no artist and many artists in the results returns candidates instead of researching — researching an ambiguous entity produces confidently wrong output, the worst failure mode this product has.
 
@@ -65,10 +69,11 @@ The distinction is the architecture. If a fact on a record ever cited one of the
 
 | Tier | Source | What we take |
 |---|---|---|
-| 1 | License URIs | Creative Commons license relations on the MusicBrainz record, matched against a static table (`rules/licenses.py`) with no extra call and no model. A recognized license settles the layer and research stops: CC0 is clear, attribution licenses are cleared with conditions, and NC does not cover a commercial use. |
+| 1 | License URIs | Creative Commons license relations on the MusicBrainz recording, its work, or its releases, matched against a static table (`rules/licenses.py`). A license on the recording or work settles the layer and research stops; a release-level license settles it only when every release on file carries one, because a single licensed release is usually a compilation and does not license the master generally. CC0 is clear, attribution licenses are cleared with conditions, and NC does not cover a commercial use. |
 | 2 | MusicBrainz | Recordings, works, writer credits, dated performances. Cached persistently, throttled, fails soft into Tier 3. |
 | 2 | Wikidata | Publication dates, writer death years, writer-list corroboration. |
 | 3 | Parallel **Search**, read by Gemini | Web evidence for what no API holds: renewal records, original release dates, writer corroboration. On the primary request path — every query it runs is entered in the on-screen ledger. |
+| 3 | Parallel **Task**, validated | Rights-holder research after the verdict: publisher, administrator, shares, territory, one-stop status, each field cited through `output.basis`. Runs only for layers that need clearing. Capped at medium because it is research, not registry data; found shares that fall short of 100% conclude nothing about unclaimed shares; the MLC record supersedes it if access arrives. |
 
 **Destinations we link to** — never queried, because the answers live there and there is no API access. Records link to them with the search already filled in:
 
@@ -97,13 +102,15 @@ Open questions can be answered. When you settle one — a renewal record found i
 
 ## Why the provenance rules exist
 
-Three times during the build a source returned a plausible fact that had never actually been established, and each would have become a confident wrong verdict with no visible tell:
+Five times, a source returned a plausible fact that had never actually been established, and each would have become a confident wrong verdict with no visible tell:
 
 - **A reissue date read as a publication date.** MusicBrainz's `first-release-date` for the 1928 Armstrong *West End Blues* session was 1975 — a 42-year error on the one input the CLASSICS calculation depends on.
 - **An incomplete author list silently shortening a term.** MusicBrainz credited *West End Blues* to King Oliver but not Clarence Williams, and life+70 runs from the last surviving author. Oliver died 1938, Williams 1965 — a 27-year error in the direction that gets someone sued.
 - **A name search returning the wrong person.** "Clarence Williams" on Wikidata returned the actor who died in 2021, not the songwriter who died in 1965, and nothing about the result looked wrong.
+- **A writer dead before the stated publication.** Kurt Weill died in 1950; the record for *Mack the Knife* stated a 1954 US publication. The usual cause is a translation or arrangement carrying its own authors, so the derivative check blocks life+70 rather than computing it from the wrong deaths.
+- **A recording predating its own composition.** Garland's *Over the Rainbow* session is dated October 1938; Wikidata carries 1939, the film's release, as the composition's publication. Each date is defensible alone. The pair is impossible.
 
-All three are the same failure: a plausible answer built on a fact that was never actually established. That is why every fact carries sources and confidence, or isn't treated as a fact. Each became a rule — a recording's date must come from a trustworthy basis; a writer list must be corroborated before life+70 is applied, and an uncorroborated list *blocks* the determination rather than shading it; people are resolved through identifier links between databases first, with a name-search fallback that announces itself on the record. When a rule can't be met the layer is undetermined and the response names the fact that would settle it.
+All five are the same failure: a plausible answer built on a fact that was never actually established, because each fact was checked only against its own source. That is why every fact carries sources and confidence, or isn't treated as a fact. The first ones became rules — a recording's date must come from a trustworthy basis; a writer list must be corroborated before life+70 is applied, and an uncorroborated list *blocks* the determination rather than shading it; people are resolved through identifier links first, with a name-search fallback that announces itself on the record. The fifth became the generalization: a **consistency layer** (`pipeline/consistency.py`), its own stage between research and rules, cross-checking every pair of facts that constrain each other — and the rights-holder facts Task adds, where shares summing past 100% or a publisher founded after the work are the same shape. A conflict degrades confidence and opens a question naming the honest readings, instead of silently trusting one side. When a rule can't be met the layer is undetermined and the response names the fact that would settle it.
 
 ## Setup and run
 
@@ -134,12 +141,17 @@ Runtime AI is limited to Google Cloud AI services and Parallel; everything else 
 
 ## Status
 
-- **The full flow is live**: Entry → streamed research (an accession log — every source consulted entered as it returns, failures struck through, corrected never erased) → the verdict record with layer ledger, cited evidence trail, open questions with answer controls, clearance paths and handoff links → disambiguation when a title is ambiguous.
-- **Cue sheet mode** (`/cues`): paste a list, one verdict row per cue, most restrictive first, with the blocking reason per row. **Export**: CSV, Markdown to clipboard, PDF via the print stylesheet.
+- **The full flow is live**: Entry → streamed research (an accession log — every source consulted entered as it returns, failures struck through, corrected never erased) → the verdict record with layer ledger, cited evidence trail, open questions with answer controls, clearance paths and handoff links → disambiguation with candidates dated by performance relation, not reissue release dates. The run log stays on every completed record, so a warm query is legible after the fact.
+- **Tier 1 runs.** A CC license relation on the recording, the work, or unanimously across releases settles the layer statically; a minority release mark is disclosed as an open question instead. Both shapes are pinned in the acceptance world.
+- **The consistency layer runs** between research and rules. *Over the Rainbow* is its acceptance case: the 1938 session against the stated 1939 publication, both dates degraded, the question naming the honest readings.
+- **Rights-holder enrichment runs** through Parallel Task for layers that need clearing, after the verdict: parties, roles, shares and territories with a citation per field, capped at medium, unclaimed shares never inferred from a shortfall. Live it returned OKeh and Sony Music Entertainment for the 1928 *West End Blues* master.
 - **Answer and re-run**: the renewal question takes Renewed / Not renewed with an optional source attestation, and the verdict updates under the confidence policy above. Not answering is the third state; the question just stays open.
-- Both reference queries produce the expected cited two-layer verdict — *West End Blues* in ~8 s cold, *Rhapsody in Blue* in ~19 s cold, under a second warm. Over live evidence the reader resolved one of four renewal windows (Blue Moon, medium, from a publisher's notice) and declined the other three honestly.
-- 180+ tests across the rules engine, cache layer, Parallel wrappers, link registry, pipeline, reader schema, graph and API. The ADK graph reproduces the pipeline's frozen acceptance fixtures exactly.
-- Not yet built: MLC integration (access pending). Text/film shares the skeleton and was cut for the submission — see `docs/ENDGAME.md`.
+- **Cue sheet mode** (`/cues`): paste a list, one verdict row per cue, most restrictive first, with the blocking reason per row. **Export**: CSV, Markdown to clipboard, PDF via the print stylesheet.
+- **Nine distribution contexts** in the UI (documentary its own value, with festival-versus-broadcast bands), split from the usage choice that changes which layers need clearing: a re-recording drops the master, print licenses through the composition only.
+- **Permalinks ask before spending a run.** A fresh record auto-opens; a stale or unresearched link lands on a Resume screen that says when it was researched and what a re-run costs.
+- Both reference queries produce the expected cited two-layer verdict — *West End Blues* in ~10 s cold, *Rhapsody in Blue* in ~19 s cold, under a second warm. Over live evidence the reader resolved one of four renewal windows (Blue Moon, medium, from a publisher's notice) and declined the other three honestly.
+- 200+ tests across the rules engine, license table, cache layer, Parallel wrappers, holder validator, link registry, pipeline, consistency checks, reader schema, graph and API. The ADK graph reproduces the pipeline's frozen acceptance fixtures exactly.
+- Not yet built: MLC integration (access pending; Task enrichment stands in, and says so). Text/film shares the skeleton and was cut for the submission — see `docs/ENDGAME.md`.
 
 ## Known limits
 

@@ -38,6 +38,7 @@ const STAGES: [string, string][] = [
   ['Identify', 'MusicBrainz resolves the work and the earliest dated recording. An ambiguous title stops for disambiguation; researching the wrong entity is the worst failure this product can have.'],
   ['Decompose', 'The layers split before any research, so each is researched as its own work.'],
   ['Research', 'Both layers concurrently, cheapest tier first. A failed source degrades to the next tier; it never fails the run.'],
+  ['Consistency', 'Facts that constrain each other are cross-checked. Each can be defensible alone while the pair is impossible; a conflict degrades both and opens a question naming the honest readings.'],
   ['Determine', 'The rules engine computes each term per territory and records which rule fired and why.'],
   ['Assemble', 'Verdicts roll up conservatively. The most restrictive required layer sets the answer, and unknown outranks clear.'],
 ]
@@ -103,8 +104,8 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
           </div>
           <div className="mt-2 flex flex-col">
             <SourceRow tier="Tier 1" name="License URIs"
-              role="Creative Commons license relations on the MusicBrainz record, matched against a static table. No extra call, no model."
-              detail="A recognized license settles the layer outright and research for it stops. Attribution and share-alike surface as conditions (cleared with conditions, not clear), and an NC license does not cover a commercial use." />
+              role="Creative Commons license relations on the MusicBrainz recording, its work, or its releases, matched against a static table. No model."
+              detail="A license on the recording or work settles the layer outright and research for it stops. A release-level license settles it only when every release on file carries one; a single licensed release is usually a compilation, and treating it as settled would license the master generally on one issue's say-so. Attribution and share-alike surface as conditions (cleared with conditions, not clear), and an NC license does not cover a commercial use." />
             <SourceRow tier="Tier 2" name="MusicBrainz"
               role="Recordings, works, writer credits, dated performances."
               detail="The recording is selected by earliest dated session, never by first-release date, which is frequently a reissue. Calls are cached persistently, throttled, and fail soft into Tier 3." />
@@ -114,6 +115,9 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
             <SourceRow tier="Tier 3" name="Parallel Search, read by Gemini"
               role="Web evidence for what no API holds: renewal records, original release dates, writer corroboration."
               detail="Search gathers candidate passages, and each query is entered in the ledger as it runs. The reader turns a passage into a cited fact or abstains; its confidence is capped by the class of source it cites, enforced in a validator rather than a prompt." />
+            <SourceRow tier="Tier 3" name="Parallel Task, validated"
+              role="Rights-holder research after the verdict: publishers, administrators, shares, one-stop status, each field cited."
+              detail="A different job from Search: structured multi-field research rather than evidence gathering. It runs only for layers that need clearing, never on the verdict path, and its output is research rather than registry data; confidence is capped at medium, found shares that fall short of 100% conclude nothing about unclaimed shares, and the MLC record supersedes all of it if access arrives." />
           </div>
 
           <div className="mt-8 flex flex-col gap-1">
@@ -151,6 +155,8 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               ['Google ADK', 'Orchestrates the run as an agent graph: sequential stages, with the two research layers fanned out concurrently.'],
               ['Gemini 2.5 Flash', 'The reading step only, on Vertex AI. Evidence in; a cited fact or an abstention out. It never computes a term and cannot assert a fact it cannot cite.'],
               ['Parallel Search', 'On the primary request path, not a side channel. Renewal research, release research and writer corroboration run through it, and every search appears in the ledger.'],
+              ['Parallel Task', 'After the verdict, for rights-holder research: structured output with a citation per field, filling the clearance profile while the answer is already on screen. The verdict never waits for it.'],
+              ['The consistency layer', 'Cross-checks between facts that constrain each other: a recording dated before its composition, a writer implausibly long-lived for the work, shares that sum past 100%. A conflict degrades confidence and opens a question rather than trusting one side.'],
               ['The rules engine', 'Deterministic Python computes every term. Each determination records which rule fired and why, so a verdict can be audited line by line.'],
             ].map(([name, desc]) => (
               <div key={name} className="flex gap-y-1 gap-x-6 flex-wrap py-4 border-t border-dashed border-ink-20 first:border-t-0 first:pt-6">
