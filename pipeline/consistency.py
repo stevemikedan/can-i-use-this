@@ -187,3 +187,73 @@ CHECKS = [
 def run_checks(run: "MusicRun") -> None:
     for check in CHECKS:
         check(run)
+
+
+# --- holder facts (Parallel Task enrichment) ----------------------------------
+#
+# Task adds more new facts than anything else in the product - publishers,
+# administrators, shares - and every new fact is a new opportunity for a
+# contradiction nobody notices. These run over each HoldersFinding before it
+# is returned to the caller; they are pure functions, not stage checks,
+# because enrichment runs after the verdict.
+
+def check_holders(holders, raw_parties, work_year) -> list[UnresolvedQuestion]:
+    """Cross-checks over rights-holder research. Mutates confidence caps in
+    place (degrade, never block) and returns the questions to attach."""
+    questions: list[UnresolvedQuestion] = []
+
+    # Shares that sum past 100% cannot all be right.
+    total = sum(h.share_percent for h in holders if h.share_percent is not None)
+    if total > 100.001:
+        for h in holders:
+            if h.share_percent is not None:
+                _cap_low(h.name, "CONSISTENCY: reported shares sum past 100%; see the open question.")
+        questions.append(UnresolvedQuestion(
+            question_id="consistency:holder_shares_exceed_100",
+            question=f"Reported ownership shares sum to {total:g}%. Which are current?",
+            why_it_matters=(f"The shares found sum to {total:g}%, which cannot all be right at once. "
+                           f"Catalog sales and administration changes leave stale shares in web "
+                           f"sources; the MLC record is the way to settle which are current. "
+                           f"Every share here is held at low confidence."),
+            if_yes="If the larger shares are current, the smaller parties may have sold their interest.",
+            if_no="If the smaller shares are current, a catalog sale may not have been reported yet.",
+            affects_layer_ids=[COMPOSITION],
+            search_terms=[], estimated_effort="minutes"))
+
+    # The same name with different shares: surface the disagreement, cap it.
+    seen: dict[str, object] = {}
+    for h in holders:
+        key = "".join(ch for ch in h.name.value.casefold() if ch.isalnum())
+        if key in seen and seen[key].share_percent != h.share_percent:
+            first = seen[key]
+            first.name.conflicting_values.append(
+                f"{h.share_percent}% (also reported for {h.name.value})")
+            _cap_low(first.name, "CONSISTENCY: sources disagree on this party's share.")
+            _cap_low(h.name, "CONSISTENCY: sources disagree on this party's share.")
+        else:
+            seen[key] = h
+
+    # A publisher founded after the work: the same shape as an author who
+    # died before publication. (Administrators legitimately postdate old
+    # works - catalogs get bought - so only the publisher role is checked.)
+    if work_year:
+        odd = [p for p in raw_parties
+               if p.get("role") == "publisher" and not p.get("is_administrator")
+               and isinstance(p.get("founded_year"), int) and p["founded_year"] > work_year]
+        if odd:
+            names = ", ".join(f"{p['name']} (founded {p['founded_year']})" for p in odd[:3])
+            for h in holders:
+                if any(p["name"] == h.name.value for p in odd):
+                    _cap_low(h.name, "CONSISTENCY: founded after the work; see the open question.")
+            questions.append(UnresolvedQuestion(
+                question_id="consistency:publisher_postdates_work",
+                question=f"Is {odd[0]['name']} the original publisher, or a later owner of the catalog?",
+                why_it_matters=(f"{names}: a publisher founded after the {work_year} work cannot be its "
+                               f"original publisher. It may be the current owner after a catalog sale, "
+                               f"or the research may have matched the wrong company. Held at low "
+                               f"confidence until settled."),
+                if_yes="If it acquired the catalog, it is still who you license from.",
+                if_no="If it is the wrong company, the actual publisher is unidentified.",
+                affects_layer_ids=[COMPOSITION],
+                search_terms=[f'"{odd[0]["name"]}" catalog acquisition'], estimated_effort="minutes"))
+    return questions

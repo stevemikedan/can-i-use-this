@@ -203,6 +203,38 @@ class FakeParallel:
             {"url": "https://adp.library.ucsb.edu/x", "title": "DAHR", "excerpts": ["Victor 1961"]},
         ])
 
+    # --- Task API: canned rights-holder research -----------------------------
+    class _TaskRun:
+        def __init__(self, outer):
+            self.outer = outer
+
+        def create(self, **kw):
+            self.outer.task_calls.append(kw)
+            class R: run_id = "tr1"
+            return R()
+
+        def result(self, run_id, **kw):
+            class R:
+                @staticmethod
+                def model_dump():
+                    return {"run": {"run_id": "tr1"}, "output": {
+                        "content": {"parties": [
+                            {"name": "Bluebird Songs", "role": "publisher", "is_administrator": True,
+                             "share_percent": 50, "territory": "world", "founded_year": None,
+                             "evidence": "Bluebird Songs administers the catalog"}],
+                            "one_stop": None, "notes": ""},
+                        "basis": [{"field": "parties", "citations": [
+                            {"url": "https://example.com/trade", "title": "Trade press",
+                             "excerpts": ["Bluebird Songs administers the catalog"]}]}]}}
+            return R()
+
+    @property
+    def task_run(self):
+        if not hasattr(self, "_task_run"):
+            self.task_calls: list[dict] = []
+            self._task_run = self._TaskRun(self)
+        return self._task_run
+
 
 # --- the five acceptance cases --------------------------------------------------
 

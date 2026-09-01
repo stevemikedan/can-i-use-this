@@ -80,3 +80,25 @@ def test_spa_fallback_serves_client_routes(client):
     assert r.status_code == 200 and "<div id=\"root\"" in r.text
     assert client.get("/").status_code == 200
     assert client.get("/api/health").status_code == 200      # API routes win over the fallback
+
+
+def test_clearance_enriches_only_blocking_layers(client):
+    # West End Blues US/film_tv: recording license_required (enriched),
+    # composition clear (skipped). The verdict endpoint is untouched.
+    body = client.get("/api/clearance", params={"title": "West End Blues", "artist": "Louis Armstrong"}).json()
+    assert "sound_recording" in body["layers"] and "composition" not in body["layers"]
+    layer = body["layers"]["sound_recording"]
+    h = layer["holders"][0]
+    assert h["name"]["value"] == "Bluebird Songs"
+    assert h["name"]["confidence"] == "medium"                 # the ceiling
+    src = h["name"]["sources"][0]
+    assert src["method"] == "parallel_task" and src["authoritative"] is False
+    assert layer["clearance"]["unclaimed_share_percent"] is None   # never inferred
+    assert "not necessarily unclaimed" in layer["completeness_note"]
+    assert "MLC" in layer["mlc_note"]
+    assert body["ledger"][0] == "Parallel Task \u2014 rights holders (sound recording)"
+
+
+def test_clearance_skips_a_clear_verdict(client):
+    body = client.get("/api/clearance", params={"title": "Rhapsody in Blue", "artist": "Paul Whiteman"}).json()
+    assert body["layers"] == {} and body["ledger"] == []

@@ -136,6 +136,25 @@ async def health() -> dict:
     }
 
 
+@app.get("/api/clearance")
+async def clearance(title: str = Query(min_length=1, max_length=200),
+                    artist: Optional[str] = Query(None, max_length=200),
+                    intent: Intent = Intent.FILM_TV,
+                    jurisdiction: Jurisdiction = Jurisdiction.US) -> dict:
+    """
+    Rights-holder enrichment for the layers that need clearing. Runs AFTER
+    the verdict is on screen (the Result screen fetches this), so verdict
+    latency is untouched: the query re-run is warm (<1s) and the Task result
+    is cached 7 days. Only protected/license-required layers are researched;
+    a clear verdict returns an empty layers map.
+    """
+    _check_jurisdiction(jurisdiction)
+    from pipeline.clearance import enrich_response
+    q = QueryIn(title=title, artist=artist, intent=intent, jurisdiction=jurisdiction)
+    resp, _ = await asyncio.to_thread(run_workflow, q.to_query(), reader=reader())
+    return await asyncio.to_thread(enrich_response, resp)
+
+
 @app.post("/api/query", response_model=RightsResponse)
 async def query(q: QueryIn) -> RightsResponse:
     _check_jurisdiction(q.jurisdiction)

@@ -68,3 +68,42 @@ def test_ledger_names_the_task_operation():
         basis=BASIS, from_cache=True), "composition")
     assert f.ledger[0] == "Parallel Task — rights holders (composition)"
     assert "cached" in f.ledger[1]
+
+
+# --- the consistency layer over holder facts (pipeline/consistency.py) ------------
+
+def holder(name, share=None, role="publisher", conf=Confidence.MEDIUM):
+    from schemas import ResearchedFact, RightsHolder
+    return RightsHolder(name=ResearchedFact(value=name, confidence=conf, sources=[]),
+                        role=role, share_percent=share)
+
+
+def test_shares_past_100_open_a_question_and_cap():
+    from pipeline.consistency import check_holders
+    hs = [holder("A Corp", 60), holder("B Corp", 60)]
+    qs = check_holders(hs, [], 1950)
+    assert any(q.question_id == "consistency:holder_shares_exceed_100" for q in qs)
+    assert all(h.name.confidence is Confidence.LOW for h in hs)
+
+
+def test_conflicting_shares_for_one_party_surface_and_cap():
+    from pipeline.consistency import check_holders
+    hs = [holder("A Corp", 50), holder("a corp", 25)]
+    check_holders(hs, [], 1950)
+    assert hs[0].name.conflicting_values
+    assert hs[0].name.confidence is Confidence.LOW
+
+
+def test_publisher_founded_after_the_work_opens_a_question():
+    from pipeline.consistency import check_holders
+    hs = [holder("New Notes LLC")]
+    raw = [{"name": "New Notes LLC", "role": "publisher", "is_administrator": False,
+            "founded_year": 1998}]
+    qs = check_holders(hs, raw, 1934)
+    assert any(q.question_id == "consistency:publisher_postdates_work" for q in qs)
+    assert hs[0].name.confidence is Confidence.LOW
+    # an administrator postdating the work is normal (catalogs get bought)
+    hs2 = [holder("Admin Co", role="administrator")]
+    raw2 = [{"name": "Admin Co", "role": "administrator", "is_administrator": True,
+             "founded_year": 1998}]
+    assert not check_holders(hs2, raw2, 1934)

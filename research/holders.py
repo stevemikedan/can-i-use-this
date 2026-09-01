@@ -82,6 +82,7 @@ class HoldersFinding:
     completeness_note: str = ""
     mlc_note: str = MLC_NOTE
     ledger: list[str] = field(default_factory=list)
+    raw_parties: list[dict] = field(default_factory=list)   # for consistency checks (founded_year etc.)
     error: Optional[str] = None
 
     @property
@@ -188,7 +189,8 @@ def holders_from_task(outcome: TaskOutcome, layer_id: str) -> HoldersFinding:
         f"{len(outcome.basis or [])} cited field{'s' if len(outcome.basis or []) != 1 else ''}{cached}",
     ]
     return HoldersFinding(holders=holders, clearance=clearance, found_share_total=found_total,
-                          completeness_note=completeness, ledger=ledger)
+                          completeness_note=completeness, ledger=ledger,
+                          raw_parties=[p for p in parties if isinstance(p, dict)])
 
 
 def research_holders(layer_id: str, title: str, names: list[str],
