@@ -12,7 +12,7 @@ const SHOW = 5
 
 function parseCandidate(c: Candidate): { artist: string; year: string; note: string; count: string } {
   const artist = c.label.split(' — ')[0]
-  const year = c.disambiguator.match(/earliest release on file (\d{4})/)?.[1] ?? '—'
+  const year = c.disambiguator.match(/(?:recorded|earliest release on file) (\d{4})/)?.[1] ?? '—'
   const count = c.disambiguator.match(/(\d+) recording entit/)?.[1] ?? ''
   return { artist, year, note: c.disambiguator, count: count ? `${count} rec.` : '' }
 }

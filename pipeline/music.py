@@ -121,7 +121,7 @@ def _search_and_gate(query: AssetQuery, title: str, artist: Optional[str], em: E
                 c0 = min(cs, key=lambda c: c["date"] or "9999")
                 candidates.append(Candidate(
                     label=f"{a} — {c0['title']}",
-                    disambiguator=(f"earliest release on file {earliest}" if earliest else "no release date on file")
+                    disambiguator=_candidate_when(c0, earliest, em)
                                   + f"; {len(cs)} recording entit{'y' if len(cs) == 1 else 'ies'}",
                     identifiers=[Identifier(scheme="musicbrainz_recording", value=c0["mbid"],
                                             layer_id=RECORDING, confidence=Confidence.LOW)],
@@ -548,6 +548,25 @@ def _research_composition(sel: Selection, em: Emitter) -> CompositionFacts:
                             year_sources, qid, iswcs, title, notes, sibling_extra, licenses=licenses)
 
 
+def _candidate_when(c0: dict, earliest: Optional[str], em: Optional[Emitter] = None) -> str:
+    """
+    The date on a candidate row, done the way selection does it: a dated
+    performance relation beats first-release-date, which is frequently a
+    reissue (Armstrong's 1928 Hot Five side reads "1992" by release date).
+    One cached lookup per shown row; the fallback wording names its own
+    weakness, so "recorded 1928" vs "earliest release on file 1992" reads
+    without explanation.
+    """
+    f = mb.recording_works(c0["mbid"])
+    if em is not None:
+        em.consulted()
+    if f.ok:
+        begins = sorted(w["begin"] for w in f.data.get("works", []) if w.get("begin"))
+        if begins:
+            return f"recorded {begins[0][:4]}"
+    return f"earliest release on file {earliest}" if earliest else "no release date on file"
+
+
 def _suggestion_candidates(hits: list[dict], limit: int = 5) -> list[Candidate]:
     """
     "Did you mean" rows from real MusicBrainz hits, grouped by artist credit,
@@ -576,7 +595,7 @@ def _suggestion_candidates(hits: list[dict], limit: int = 5) -> list[Candidate]:
         c0 = min(cs, key=lambda c: c["date"] or "9999")
         out.append(Candidate(
             label=f"{a} — {c0['title']}",
-            disambiguator=(f"earliest release on file {earliest}" if earliest else "no release date on file")
+            disambiguator=_candidate_when(c0, earliest)
                           + f"; {len(cs)} recording entit{'y' if len(cs) == 1 else 'ies'}",
             identifiers=[Identifier(scheme="musicbrainz_recording", value=c0["mbid"],
                                     layer_id=RECORDING, confidence=Confidence.LOW)],

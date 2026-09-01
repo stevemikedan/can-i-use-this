@@ -657,3 +657,16 @@ def test_minority_release_license_is_a_lead_not_an_answer(cache, transport, no_p
     qn = next(u for u in resp.unresolved if u.question_id == "sound_recording:license")
     assert "1 of 3 releases" in qn.why_it_matters
     assert "does not license the master generally" in qn.why_it_matters
+
+
+def test_candidate_rows_prefer_the_dated_performance(cache, transport, no_parallel):
+    # A reissue-dated entity must not make a 1920s recording read as modern:
+    # the row says "recorded 1961" when a performance relation exists, and
+    # falls back to the self-describing release wording when none does.
+    transport(handler)
+    resp, em = run_music(q("Blue Moon"))
+    assert resp.stop_for_disambiguation
+    by_artist = {c.label.split(" ")[0] + " " + c.label.split(" ")[1]: c.disambiguator
+                 for c in resp.entity.alternate_candidates}
+    assert any(d.startswith("recorded 1961") for d in by_artist.values())
+    assert any(d.startswith("earliest release on file") for d in by_artist.values())
