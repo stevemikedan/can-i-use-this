@@ -25,6 +25,7 @@ import httpx
 WEB_WORK = "a97c426c-0000-0000-0000-000000000001"
 WEB_WORK2 = "ec12be9a-0000-0000-0000-000000000003"   # sibling: same title, Oliver + Clarence Williams
 BM_WORK = "3c339d3d-0000-0000-0000-000000000002"
+OTR_WORK = "f4a81d77-0000-0000-0000-000000000005"
 RIB_WORK = "60b22df4-0000-0000-0000-000000000004"
 
 
@@ -53,6 +54,11 @@ RECORDINGS = [
     # "Later Take": studio original released 1999-06, undated; a 2001 live take
     # carries the only dated performance relation. The selection guard must
     # fall to the release-date path, not crown the live take the original.
+    # "Over the Rainbow": Garland's session is dated October 1938; the film
+    # released August 1939 and Wikidata carries 1939 as P577. Both defensible,
+    # the pair impossible - the consistency layer's acceptance case.
+    rec("otr-garland", "Over the Rainbow", "Judy Garland", "1939-09", OTR_WORK, "1938-10-07"),
+    rec("otr-garland-1993", "Over the Rainbow", "Judy Garland", "1993", OTR_WORK),
     rec("lt-studio", "Later Take", "The Guards", "1999-06", "w-latertake"),
     rec("lt-live", "Later Take", "The Guards", "2001-11", "w-latertake", "2001-06-15"),
 ]
@@ -69,6 +75,11 @@ WORKS = {
     RIB_WORK: {"id": RIB_WORK, "title": "Rhapsody in Blue", "score": 100, "iswcs": [], "relations": [
         {"target-type": "artist", "type": "composer", "begin": "1924", "artist": {"id": "a-gershwin", "name": "George Gershwin"}},
         {"target-type": "url", "type": "wikidata", "url": {"resource": "https://www.wikidata.org/wiki/Q722599"}},
+    ]},
+    OTR_WORK: {"id": OTR_WORK, "title": "Over the Rainbow", "score": 100, "iswcs": [], "relations": [
+        {"target-type": "artist", "type": "composer", "begin": "1939", "artist": {"id": "a-arlen", "name": "Harold Arlen"}},
+        {"target-type": "artist", "type": "lyricist", "begin": "1939", "artist": {"id": "a-harburg", "name": "Yip Harburg"}},
+        {"target-type": "url", "type": "wikidata", "url": {"resource": "https://www.wikidata.org/wiki/Q898765"}},
     ]},
     BM_WORK: {"id": BM_WORK, "title": "Blue Moon", "score": 100, "iswcs": ["T-070.011.746-9"], "relations": [
         {"target-type": "artist", "type": "composer", "begin": "1934", "artist": {"id": "a-rodgers", "name": "Richard Rodgers"}},
@@ -97,12 +108,17 @@ WD = {
     "Q123829": {"id": "Q123829", "labels": {"en": {"value": "George Gershwin"}}, "claims": {"P570": [wd_time(1937)]}},
     "Q269094": {"id": "Q269094", "labels": {"en": {"value": "Richard Rodgers"}}, "claims": {"P570": [wd_time(1979)]}},
     "Q725828": {"id": "Q725828", "labels": {"en": {"value": "Lorenz Hart"}}, "claims": {"P570": [wd_time(1943)]}},
+    "Q898765": {"id": "Q898765", "labels": {"en": {"value": "Over the Rainbow"}},
+                "claims": {"P577": [wd_time(1939)], "P86": [wd_item("Q315011")], "P676": [wd_item("Q551819")]}},
+    "Q315011": {"id": "Q315011", "labels": {"en": {"value": "Harold Arlen"}}, "claims": {"P570": [wd_time(1986)]}},
+    "Q551819": {"id": "Q551819", "labels": {"en": {"value": "Yip Harburg"}}, "claims": {"P570": [wd_time(1981)]}},
 }
 
 # MusicBrainz artist -> Wikidata link (the exact person). The name search
 # deliberately returns the WRONG Clarence Williams so tests prove the link is used.
 ARTIST_WD = {"a-oliver": "Q313368", "a-williams": "Q2977727", "a-gershwin": "Q123829",
-             "a-rodgers": "Q269094", "a-hart": "Q725828"}
+             "a-rodgers": "Q269094", "a-hart": "Q725828",
+             "a-arlen": "Q315011", "a-harburg": "Q551819"}
 WD_SEARCH = {"King Oliver": "Q313368", "George Gershwin": "Q123829", "Richard Rodgers": "Q269094",
              "Lorenz Hart": "Q725828", "Clarence Williams": "Q-actor"}
 
@@ -177,6 +193,7 @@ CASES = {
     "stop": {"raw_input": "Blue Moon", "jurisdiction": "US", "intent": "film_tv"},
     "reissue": {"raw_input": "Blue Moon — The Marcels", "jurisdiction": "US", "intent": "film_tv"},
     "renewal": {"raw_input": "Blue Moon — Ella Fitzgerald", "jurisdiction": "US", "intent": "film_tv"},
+    "rainbow": {"raw_input": "Over the Rainbow — Judy Garland", "jurisdiction": "US", "intent": "film_tv"},
 }
 
 VOLATILE_KEYS = {"generated_at", "retrieved_at"}

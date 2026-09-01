@@ -461,3 +461,82 @@ def test_user_answer_renewed_bare_protected_low(cache, transport, no_parallel):
     assert comp.confidence is Confidence.LOW
     qn = next(u for u in resp.unresolved if u.question_id == "composition:renewal")
     assert "You answered" in qn.why_it_matters
+
+
+# --- the consistency layer (pipeline/consistency.py) ------------------------------
+#
+# Two facts that constrain each other, each defensible alone, cannot be
+# silently co-trusted. Conflicts degrade confidence and open a question.
+
+def test_rainbow_recording_predates_composition(cache, transport, fake_parallel):
+    # Garland's session is dated 1938; Wikidata says the composition was
+    # published 1939. The pair is impossible as first-publication facts.
+    transport(handler)
+    resp, em = run_music(q("Over the Rainbow \u2014 Judy Garland"))
+    qn = next(u for u in resp.unresolved if u.question_id == "consistency:recording_predates_composition")
+    assert "1938" in qn.why_it_matters and "1939" in qn.why_it_matters
+    assert "session" in qn.why_it_matters and "release" in qn.why_it_matters
+    assert set(qn.affects_layer_ids) == {"composition", "sound_recording"}
+    comp = next(l for l in resp.entity.layers if l.layer_id == "composition")
+    rec_l = next(l for l in resp.entity.layers if l.layer_id == "sound_recording")
+    assert comp.term_facts.first_publication_year.confidence is Confidence.LOW
+    assert rec_l.term_facts.recording_first_published_year.confidence is Confidence.LOW
+    assert "CONSISTENCY" in comp.term_facts.first_publication_year.reasoning
+    # degrade, not block: the recording is still protected (the safe
+    # direction), just at low confidence
+    rec_us = det(resp, "sound_recording", Jurisdiction.US)
+    assert rec_us.status is DeterminationStatus.PROTECTED and rec_us.confidence is Confidence.LOW
+
+
+def test_consistency_invariant_across_cases(cache, transport, fake_parallel):
+    # The invariant, run against every acceptance case: a recording dated
+    # before its composition never passes without an open consistency
+    # question. Modeled on blocked-implies-question.
+    from pipeline.mockworld import CASES
+    transport(handler)
+    for name, kw in CASES.items():
+        resp, em = run_music(AssetQuery(raw_input=kw["raw_input"], intent=Intent.FILM_TV,
+                                        jurisdiction=Jurisdiction.US, asset_type_hint=AssetType.MUSIC))
+        if resp.stop_for_disambiguation or not resp.entity.layers or resp.entity.layers[0] is None:
+            continue
+        comp = next((l for l in resp.entity.layers if l and l.layer_id == "composition"), None)
+        rec_l = next((l for l in resp.entity.layers if l and l.layer_id == "sound_recording"), None)
+        cy = comp.term_facts.first_publication_year if comp else None
+        ry = rec_l.term_facts.recording_first_published_year if rec_l else None
+        if cy is not None and ry is not None and ry.value < cy.value:
+            assert any(u.question_id == "consistency:recording_predates_composition"
+                       for u in resp.unresolved), f"case {name}: impossible pair passed silently"
+
+
+def test_consistency_death_year_implausible():
+    from types import SimpleNamespace
+    from pipeline.consistency import check_death_year_plausible
+    from pipeline.music import Emitter
+    from schemas import RightsLayer, RightsLayerKind
+    layer = RightsLayer(layer_id="composition", kind=RightsLayerKind.COMPOSITION, label="Composition")
+    w = SimpleNamespace(name="Clarence Williams", death_year=2021)
+    run = SimpleNamespace(cf=SimpleNamespace(year=1900, writers=[w], title="X"), title="X",
+                          composition=layer, comp_questions=[], comp_question_ids={}, em=Emitter())
+    check_death_year_plausible(run)
+    assert run.comp_questions and run.comp_questions[0].question_id == "consistency:death_year_implausible"
+    assert "2021" in run.comp_questions[0].why_it_matters
+
+
+def test_consistency_country_and_conflict_cap():
+    from types import SimpleNamespace
+    from pipeline.consistency import check_conflicting_values_cap, check_publication_country
+    from pipeline.music import Emitter
+    from schemas import ResearchedFact, ResearchMethod, RightsLayer, RightsLayerKind, Source
+    from datetime import datetime, timezone
+    src = Source(name="x", method=ResearchMethod.DIRECT_API, retrieved_at=datetime.now(timezone.utc))
+    comp = RightsLayer(layer_id="composition", kind=RightsLayerKind.COMPOSITION, label="Composition")
+    comp.term_facts.first_publication_country = ResearchedFact(value="DE", confidence=Confidence.MEDIUM, sources=[src])
+    comp.term_facts.first_publication_year = ResearchedFact(
+        value=1930, confidence=Confidence.HIGH, sources=[src], conflicting_values=["1929 (per X)"])
+    run = SimpleNamespace(cf=SimpleNamespace(title="X"), title="X", composition=comp, recording=None,
+                          comp_questions=[], comp_question_ids={}, em=Emitter())
+    check_publication_country(run)
+    assert any(u.question_id == "consistency:publication_country" for u in run.comp_questions)
+    check_conflicting_values_cap(run)
+    assert comp.term_facts.first_publication_year.confidence is Confidence.MEDIUM
+    assert "disagreed" in comp.term_facts.first_publication_year.reasoning

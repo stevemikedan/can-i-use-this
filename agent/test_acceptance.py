@@ -19,7 +19,8 @@ from .workflow import build_graph, run_workflow
 
 CASES = sorted(mockworld.CASES)
 EXPECTED_VERDICT = {"blocked": "license_required", "clean": "clear", "stop": "undetermined",
-                    "reissue": "undetermined", "renewal": "undetermined"}
+                    "reissue": "undetermined", "renewal": "undetermined",
+                    "rainbow": "undetermined"}
 
 
 def load(name: str) -> dict:
@@ -59,7 +60,7 @@ def test_graph_matches_fixture(name):
 def test_graph_is_the_documented_shape():
     g = build_graph()
     names = [a.name for a in g.sub_agents]
-    assert names == ["classify", "identify", "decompose", "research", "rules", "assemble"]
+    assert names == ["classify", "identify", "decompose", "research", "consistency", "rules", "assemble"]
     research = g.sub_agents[3]
     assert type(research).__name__ == "ParallelAgent"
     assert [a.name for a in research.sub_agents] == list(PARALLEL_STAGES)

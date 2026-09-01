@@ -38,6 +38,7 @@ from sources import wikidata as wd
 from sources.http import as_source, plain_error
 
 from .assemble import assemble, failed_response, stop_response
+from .consistency import run_checks as run_consistency_checks
 from .user_facts import answered_fact
 from .determine import determine_all
 from .events import Emitter
@@ -1028,6 +1029,12 @@ def stage_research_recording(run: MusicRun) -> None:
             questions.append(recording_question(title, sel.pick["artist"], sel.pick["date"], links, lead=fact))
 
 
+def stage_consistency(run: MusicRun) -> None:
+    """Cross-checks between facts that constrain each other; see
+    pipeline/consistency.py for the five instances that motivated it."""
+    run_consistency_checks(run)
+
+
 def stage_rules(run: MusicRun) -> None:
     em = run.em
     # §101 publication floor — both research stages are done, so the
@@ -1080,6 +1087,7 @@ STAGES: list[tuple[str, Callable[[MusicRun], None]]] = [
     ("decompose", stage_decompose),
     ("research_composition", stage_research_composition),
     ("research_recording", stage_research_recording),
+    ("consistency", stage_consistency),
     ("rules", stage_rules),
     ("assemble", stage_assemble),
 ]

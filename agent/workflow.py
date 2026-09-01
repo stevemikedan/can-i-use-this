@@ -57,6 +57,8 @@ DESCRIPTIONS = {
                             "death years); Parallel Search for the year-28 renewal window, read by the reader.",
     "research_recording": "Recording date from the dated session; Parallel Search for the original release "
                           "when only a reissue date is on file, read by the reader.",
+    "consistency": "Cross-checks between facts that constrain each other; a conflict degrades "
+                   "confidence and opens a question rather than silently trusting one side.",
     "rules": "The deterministic rules engine: a determination per layer per jurisdiction.",
     "assemble": "Verdicts, conservative roll-up, unresolved questions, handoff links.",
 }

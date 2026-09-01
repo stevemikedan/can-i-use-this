@@ -1,0 +1,735 @@
+{
+  "all_determinations": [
+    {
+      "blocked_by": [
+        "composition:renewal"
+      ],
+      "confidence": "none",
+      "depends_on_facts": [
+        "first_publication_year",
+        "renewal_filed"
+      ],
+      "expiry_year": null,
+      "jurisdiction": "US",
+      "layer_id": "composition",
+      "rule_explanation": "Published 1939 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.",
+      "rule_id": "us_renewal_unknown",
+      "status": "undetermined"
+    },
+    {
+      "blocked_by": [],
+      "confidence": "high",
+      "depends_on_facts": [
+        "author_death_year",
+        "writer_list_corroborated"
+      ],
+      "expiry_year": 2057,
+      "jurisdiction": "UK",
+      "layer_id": "composition",
+      "rule_explanation": "Last surviving author died 1986. Protected until 1 January 2057.",
+      "rule_id": "uk_life_plus_70",
+      "status": "protected"
+    },
+    {
+      "blocked_by": [],
+      "confidence": "high",
+      "depends_on_facts": [
+        "author_death_year",
+        "writer_list_corroborated"
+      ],
+      "expiry_year": 2057,
+      "jurisdiction": "EU",
+      "layer_id": "composition",
+      "rule_explanation": "Last surviving author died 1986. Protected until 1 January 2057.",
+      "rule_id": "eu_life_plus_70",
+      "status": "protected"
+    },
+    {
+      "blocked_by": [],
+      "confidence": "low",
+      "depends_on_facts": [
+        "recording_first_published_year",
+        "recording_date_basis"
+      ],
+      "expiry_year": 2039,
+      "jurisdiction": "US",
+      "layer_id": "sound_recording",
+      "rule_explanation": "Published 1938. The CLASSICS Act protects it until 1 January 2039.",
+      "rule_id": "us_sr_mma_1923_1946",
+      "status": "protected"
+    },
+    {
+      "blocked_by": [
+        "consistency:recording_predates_composition"
+      ],
+      "confidence": "none",
+      "depends_on_facts": [
+        "recording_first_published_year",
+        "recording_date_basis"
+      ],
+      "expiry_year": null,
+      "jurisdiction": "UK",
+      "layer_id": "sound_recording",
+      "rule_explanation": "Published 1938. The 50-year term expired 1 January 1989, before the 2013 extension to 70 years, which did not revive expired recordings. That outcome rests on low-confidence evidence, and low-confidence evidence may support 'protected' but never 'public domain' (rule uk_sr_pre_1963 withheld). Treat the evidence as a lead and verify it.",
+      "rule_id": "public_domain_withheld_low_confidence",
+      "status": "undetermined"
+    },
+    {
+      "blocked_by": [
+        "consistency:recording_predates_composition"
+      ],
+      "confidence": "none",
+      "depends_on_facts": [
+        "recording_first_published_year",
+        "recording_date_basis"
+      ],
+      "expiry_year": null,
+      "jurisdiction": "EU",
+      "layer_id": "sound_recording",
+      "rule_explanation": "Published 1938. The 50-year term expired 1 January 1989, before the 2013 extension to 70 years, which did not revive expired recordings. That outcome rests on low-confidence evidence, and low-confidence evidence may support 'protected' but never 'public domain' (rule eu_sr_pre_1963 withheld). Treat the evidence as a lead and verify it.",
+      "rule_id": "public_domain_withheld_low_confidence",
+      "status": "undetermined"
+    }
+  ],
+  "alternatives": [],
+  "boundary_note": null,
+  "cache_key": "music:f4a81d77-0000-0000-0000-000000000005:otr-garland",
+  "disagreements": [],
+  "disclaimer": "Research, not legal advice. Where the public record is wrong, this is wrong. Have a professional confirm before you rely on it.",
+  "entity": {
+    "alternate_candidates": [],
+    "asset_type": "music",
+    "canonical_title": "Over the Rainbow",
+    "creators": [
+      {
+        "confidence": "high",
+        "conflicting_values": [],
+        "reasoning": null,
+        "sources": [
+          {
+            "authoritative": false,
+            "excerpt": null,
+            "method": "direct_api",
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/work/f4a81d77-0000-0000-0000-000000000005?inc=artist-rels%2Burl-rels&fmt=json"
+          },
+          {
+            "authoritative": false,
+            "excerpt": "artist linked to Wikidata Q315011",
+            "method": "direct_api",
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/artist/a-arlen?inc=url-rels&fmt=json"
+          },
+          {
+            "authoritative": false,
+            "excerpt": "P570 = 1986",
+            "method": "direct_api",
+            "name": "Wikidata",
+            "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q315011%7CQ551819&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+          }
+        ],
+        "value": "Harold Arlen"
+      },
+      {
+        "confidence": "high",
+        "conflicting_values": [],
+        "reasoning": null,
+        "sources": [
+          {
+            "authoritative": false,
+            "excerpt": null,
+            "method": "direct_api",
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/work/f4a81d77-0000-0000-0000-000000000005?inc=artist-rels%2Burl-rels&fmt=json"
+          },
+          {
+            "authoritative": false,
+            "excerpt": "artist linked to Wikidata Q551819",
+            "method": "direct_api",
+            "name": "MusicBrainz",
+            "url": "https://musicbrainz.org/ws/2/artist/a-harburg?inc=url-rels&fmt=json"
+          },
+          {
+            "authoritative": false,
+            "excerpt": "P570 = 1981",
+            "method": "direct_api",
+            "name": "Wikidata",
+            "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q315011%7CQ551819&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+          }
+        ],
+        "value": "Yip Harburg"
+      }
+    ],
+    "layers": [
+      {
+        "claimed_statuses": [],
+        "clearance": {
+          "difficulty": "moderate",
+          "difficulty_reasoning": null,
+          "is_one_stop": null,
+          "party_count": null,
+          "unclaimed_share_percent": null
+        },
+        "existing_license": null,
+        "holders": [
+          {
+            "contact_path": null,
+            "enforcement_evidence": [],
+            "enforcement_posture": "unknown",
+            "is_administrator": false,
+            "name": {
+              "confidence": "high",
+              "conflicting_values": [],
+              "reasoning": "credited by MB+WD",
+              "sources": [
+                {
+                  "authoritative": false,
+                  "excerpt": null,
+                  "method": "direct_api",
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/work/f4a81d77-0000-0000-0000-000000000005?inc=artist-rels%2Burl-rels&fmt=json"
+                },
+                {
+                  "authoritative": false,
+                  "excerpt": "artist linked to Wikidata Q315011",
+                  "method": "direct_api",
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/artist/a-arlen?inc=url-rels&fmt=json"
+                },
+                {
+                  "authoritative": false,
+                  "excerpt": "P570 = 1986",
+                  "method": "direct_api",
+                  "name": "Wikidata",
+                  "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q315011%7CQ551819&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+                }
+              ],
+              "value": "Harold Arlen"
+            },
+            "role": "author",
+            "share_percent": null,
+            "territory": null
+          },
+          {
+            "contact_path": null,
+            "enforcement_evidence": [],
+            "enforcement_posture": "unknown",
+            "is_administrator": false,
+            "name": {
+              "confidence": "high",
+              "conflicting_values": [],
+              "reasoning": "credited by MB+WD",
+              "sources": [
+                {
+                  "authoritative": false,
+                  "excerpt": null,
+                  "method": "direct_api",
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/work/f4a81d77-0000-0000-0000-000000000005?inc=artist-rels%2Burl-rels&fmt=json"
+                },
+                {
+                  "authoritative": false,
+                  "excerpt": "artist linked to Wikidata Q551819",
+                  "method": "direct_api",
+                  "name": "MusicBrainz",
+                  "url": "https://musicbrainz.org/ws/2/artist/a-harburg?inc=url-rels&fmt=json"
+                },
+                {
+                  "authoritative": false,
+                  "excerpt": "P570 = 1981",
+                  "method": "direct_api",
+                  "name": "Wikidata",
+                  "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q315011%7CQ551819&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+                }
+              ],
+              "value": "Yip Harburg"
+            },
+            "role": "author",
+            "share_percent": null,
+            "territory": null
+          }
+        ],
+        "identifiers": [
+          {
+            "confidence": "medium",
+            "is_primary": true,
+            "layer_id": "composition",
+            "scheme": "musicbrainz_work",
+            "source": null,
+            "value": "f4a81d77-0000-0000-0000-000000000005"
+          },
+          {
+            "confidence": "medium",
+            "is_primary": false,
+            "layer_id": "composition",
+            "scheme": "wikidata",
+            "source": null,
+            "value": "Q898765"
+          }
+        ],
+        "kind": "composition",
+        "label": "Composition (1939)",
+        "layer_id": "composition",
+        "term_facts": {
+          "author_death_year": {
+            "confidence": "high",
+            "conflicting_values": [],
+            "reasoning": "Last surviving author: Harold Arlen d. 1986, Yip Harburg d. 1981",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/f4a81d77-0000-0000-0000-000000000005?inc=artist-rels%2Burl-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "artist linked to Wikidata Q315011",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/a-arlen?inc=url-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "P570 = 1986",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q315011%7CQ551819&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/f4a81d77-0000-0000-0000-000000000005?inc=artist-rels%2Burl-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "artist linked to Wikidata Q551819",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/a-harburg?inc=url-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "P570 = 1981",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q315011%7CQ551819&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              }
+            ],
+            "value": 1986
+          },
+          "copyright_notice_present": null,
+          "creation_year": null,
+          "first_publication_country": null,
+          "first_publication_year": {
+            "confidence": "low",
+            "conflicting_values": [],
+            "reasoning": "Wikidata P577_publication corroborated by MusicBrainz composer-relation date CONSISTENCY: the recording is dated 1938, before this composition's stated 1939 publication; see the open question (consistency:recording_predates_composition).",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": "P577_publication = 1939",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q898765&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/f4a81d77-0000-0000-0000-000000000005?inc=artist-rels%2Burl-rels&fmt=json"
+              }
+            ],
+            "value": 1939
+          },
+          "is_anonymous_or_pseudonymous": null,
+          "is_derivative": null,
+          "is_work_for_hire": null,
+          "recording_date_basis": null,
+          "recording_first_published_year": null,
+          "recording_fixed_before_feb_1972": null,
+          "renewal_filed": null,
+          "underlying_work_ref": null,
+          "writer_list_corroborated": true
+        }
+      },
+      {
+        "claimed_statuses": [],
+        "clearance": {
+          "difficulty": "moderate",
+          "difficulty_reasoning": null,
+          "is_one_stop": null,
+          "party_count": null,
+          "unclaimed_share_percent": null
+        },
+        "existing_license": null,
+        "holders": [],
+        "identifiers": [
+          {
+            "confidence": "medium",
+            "is_primary": true,
+            "layer_id": "sound_recording",
+            "scheme": "musicbrainz_recording",
+            "source": {
+              "authoritative": false,
+              "excerpt": "performance relation dated 1938-10-07; earliest release on file 1939-09",
+              "method": "direct_api",
+              "name": "MusicBrainz",
+              "url": "https://musicbrainz.org/recording/otr-garland"
+            },
+            "value": "otr-garland"
+          }
+        ],
+        "kind": "sound_recording",
+        "label": "Sound recording (1938)",
+        "layer_id": "sound_recording",
+        "term_facts": {
+          "author_death_year": null,
+          "copyright_notice_present": null,
+          "creation_year": null,
+          "first_publication_country": null,
+          "first_publication_year": null,
+          "is_anonymous_or_pseudonymous": null,
+          "is_derivative": null,
+          "is_work_for_hire": null,
+          "recording_date_basis": "dated_performance",
+          "recording_first_published_year": {
+            "confidence": "low",
+            "conflicting_values": [],
+            "reasoning": "Dated performance relation in MusicBrainz; earliest release on file is contemporaneous; 1 undated recording entities not used CONSISTENCY: the recording is dated 1938, before this composition's stated 1939 publication; see the open question (consistency:recording_predates_composition).",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": "performance relation dated 1938-10-07; earliest release on file 1939-09",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/recording/otr-garland"
+              }
+            ],
+            "value": 1938
+          },
+          "recording_fixed_before_feb_1972": null,
+          "renewal_filed": null,
+          "underlying_work_ref": null,
+          "writer_list_corroborated": false
+        }
+      }
+    ],
+    "resolution_confidence": "medium",
+    "year": {
+      "confidence": "low",
+      "conflicting_values": [],
+      "reasoning": "Wikidata P577_publication corroborated by MusicBrainz composer-relation date CONSISTENCY: the recording is dated 1938, before this composition's stated 1939 publication; see the open question (consistency:recording_predates_composition).",
+      "sources": [
+        {
+          "authoritative": false,
+          "excerpt": "P577_publication = 1939",
+          "method": "direct_api",
+          "name": "Wikidata",
+          "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q898765&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+        },
+        {
+          "authoritative": false,
+          "excerpt": null,
+          "method": "direct_api",
+          "name": "MusicBrainz",
+          "url": "https://musicbrainz.org/ws/2/work/f4a81d77-0000-0000-0000-000000000005?inc=artist-rels%2Burl-rels&fmt=json"
+        }
+      ],
+      "value": 1939
+    }
+  },
+  "handoff_links": [
+    {
+      "description": "The recording entity this determination is based on",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "verify",
+      "source_name": "MusicBrainz recording",
+      "tier": "deep_link",
+      "url": "https://musicbrainz.org/recording/otr-garland"
+    },
+    {
+      "description": "The composition (work) entity, with writer credits and ISWCs",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "verify",
+      "source_name": "MusicBrainz work",
+      "tier": "deep_link",
+      "url": "https://musicbrainz.org/work/f4a81d77-0000-0000-0000-000000000005"
+    },
+    {
+      "description": "Wikidata item for the work (publication date, composer, lyricist)",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "verify",
+      "source_name": "Wikidata",
+      "tier": "deep_link",
+      "url": "https://www.wikidata.org/wiki/Q898765"
+    },
+    {
+      "description": "Publishers, administrators and ownership shares for \"Over the Rainbow\"",
+      "navigation_hint": null,
+      "paste_string": null,
+      "purpose": "license",
+      "source_name": "MLC public search",
+      "tier": "prefilled_search",
+      "url": "https://portal.themlc.com/search?query=Over+the+Rainbow"
+    },
+    {
+      "description": "Writer and publisher credits",
+      "navigation_hint": "Search the repertory by title",
+      "paste_string": "Over the Rainbow",
+      "purpose": "license",
+      "source_name": "ASCAP repertory",
+      "tier": "guided_manual",
+      "url": "https://www.ascap.com/repertory"
+    },
+    {
+      "description": "Writer and publisher credits for BMI-affiliated writers",
+      "navigation_hint": "Search the repertoire by title",
+      "paste_string": "Over the Rainbow",
+      "purpose": "license",
+      "source_name": "BMI repertoire",
+      "tier": "guided_manual",
+      "url": "https://repertoire.bmi.com/"
+    },
+    {
+      "description": "Renewal registrations in the Copyright Office catalog scans on the Internet Archive",
+      "navigation_hint": "Catalog of Copyright Entries, Third Series, Music; renewals volume for 1966",
+      "paste_string": "Over the Rainbow",
+      "purpose": "resolve",
+      "source_name": "Catalog of Copyright Entries (scans)",
+      "tier": "guided_manual",
+      "url": "https://archive.org/details/copyrightrecords"
+    },
+    {
+      "description": "UCSB discography of early recordings, with matrix numbers and session and release dates",
+      "navigation_hint": "Search by title, then filter by artist Judy Garland",
+      "paste_string": "Over the Rainbow",
+      "purpose": "resolve",
+      "source_name": "DAHR — Discography of American Historical Recordings",
+      "tier": "guided_manual",
+      "url": "https://adp.library.ucsb.edu/"
+    }
+  ],
+  "layer_verdicts": [
+    {
+      "clearance": {
+        "difficulty": "moderate",
+        "difficulty_reasoning": null,
+        "is_one_stop": null,
+        "party_count": null,
+        "unclaimed_share_percent": null
+      },
+      "cost_band": null,
+      "determination": {
+        "blocked_by": [
+          "composition:renewal"
+        ],
+        "confidence": "none",
+        "depends_on_facts": [
+          "first_publication_year",
+          "renewal_filed"
+        ],
+        "expiry_year": null,
+        "jurisdiction": "US",
+        "layer_id": "composition",
+        "rule_explanation": "Published 1939 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.",
+        "rule_id": "us_renewal_unknown",
+        "status": "undetermined"
+      },
+      "headline": "Undetermined. Its year-28 renewal status is unknown",
+      "holders": [
+        {
+          "contact_path": null,
+          "enforcement_evidence": [],
+          "enforcement_posture": "unknown",
+          "is_administrator": false,
+          "name": {
+            "confidence": "high",
+            "conflicting_values": [],
+            "reasoning": "credited by MB+WD",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/f4a81d77-0000-0000-0000-000000000005?inc=artist-rels%2Burl-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "artist linked to Wikidata Q315011",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/a-arlen?inc=url-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "P570 = 1986",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q315011%7CQ551819&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              }
+            ],
+            "value": "Harold Arlen"
+          },
+          "role": "author",
+          "share_percent": null,
+          "territory": null
+        },
+        {
+          "contact_path": null,
+          "enforcement_evidence": [],
+          "enforcement_posture": "unknown",
+          "is_administrator": false,
+          "name": {
+            "confidence": "high",
+            "conflicting_values": [],
+            "reasoning": "credited by MB+WD",
+            "sources": [
+              {
+                "authoritative": false,
+                "excerpt": null,
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/work/f4a81d77-0000-0000-0000-000000000005?inc=artist-rels%2Burl-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "artist linked to Wikidata Q551819",
+                "method": "direct_api",
+                "name": "MusicBrainz",
+                "url": "https://musicbrainz.org/ws/2/artist/a-harburg?inc=url-rels&fmt=json"
+              },
+              {
+                "authoritative": false,
+                "excerpt": "P570 = 1981",
+                "method": "direct_api",
+                "name": "Wikidata",
+                "url": "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=Q315011%7CQ551819&props=claims%7Clabels%7Cdescriptions&languages=en&format=json"
+              }
+            ],
+            "value": "Yip Harburg"
+          },
+          "role": "author",
+          "share_percent": null,
+          "territory": null
+        }
+      ],
+      "intent_note": null,
+      "is_required": true,
+      "layer_id": "composition",
+      "layer_label": "Composition (1939)",
+      "licensing_path": null,
+      "reasoning": "Published 1939 in the US. Works published between 1931 and 1963 required renewal in year 28. Renewal status could not be determined.",
+      "verdict": "undetermined"
+    },
+    {
+      "clearance": {
+        "difficulty": "moderate",
+        "difficulty_reasoning": null,
+        "is_one_stop": null,
+        "party_count": null,
+        "unclaimed_share_percent": null
+      },
+      "cost_band": "$500–$5,000 master use fee for an indie film; often matched to the sync fee",
+      "determination": {
+        "blocked_by": [],
+        "confidence": "low",
+        "depends_on_facts": [
+          "recording_first_published_year",
+          "recording_date_basis"
+        ],
+        "expiry_year": 2039,
+        "jurisdiction": "US",
+        "layer_id": "sound_recording",
+        "rule_explanation": "Published 1938. The CLASSICS Act protects it until 1 January 2039.",
+        "rule_id": "us_sr_mma_1923_1946",
+        "status": "protected"
+      },
+      "headline": "Protected in the US until 1 January 2039",
+      "holders": [],
+      "intent_note": null,
+      "is_required": true,
+      "layer_id": "sound_recording",
+      "layer_label": "Sound recording (1938)",
+      "licensing_path": "You need a master use license from the label or whoever currently holds the rights",
+      "reasoning": "Published 1938. The CLASSICS Act protects it until 1 January 2039.",
+      "verdict": "license_required"
+    }
+  ],
+  "overall_confidence": "none",
+  "overall_headline": "The composition layer is blocked. Its year-28 renewal status is unknown.",
+  "overall_verdict": "undetermined",
+  "permalink": null,
+  "query": {
+    "asset_type_hint": "music",
+    "disambiguation_choice": null,
+    "intent": "film_tv",
+    "jurisdiction": "US",
+    "raw_input": "Over the Rainbow — Judy Garland",
+    "user_answers": {}
+  },
+  "served_from_cache": false,
+  "stop_for_disambiguation": false,
+  "unresolved": [
+    {
+      "affects_layer_ids": [
+        "composition"
+      ],
+      "estimated_effort": "hours",
+      "if_no": "Entered the public domain 1 January 1968.",
+      "if_yes": "Protected until 1 January 2035.",
+      "question": "Was the 1939 US copyright in \"Over the Rainbow\" renewed in 1966–1967?",
+      "question_id": "composition:renewal",
+      "resolution_links": [
+        {
+          "description": "Search hit for the 1966-1967 renewal of \"Over the Rainbow\"",
+          "navigation_hint": null,
+          "paste_string": null,
+          "purpose": "resolve",
+          "source_name": "CCE 1962 renewals",
+          "tier": "deep_link",
+          "url": "https://archive.org/details/cce-1962"
+        },
+        {
+          "description": "Search hit for the 1966-1967 renewal of \"Over the Rainbow\"",
+          "navigation_hint": null,
+          "paste_string": null,
+          "purpose": "resolve",
+          "source_name": "DAHR",
+          "tier": "deep_link",
+          "url": "https://adp.library.ucsb.edu/x"
+        }
+      ],
+      "search_terms": [
+        "\"Over the Rainbow\" renewal 1966",
+        "\"Over the Rainbow\" renewal 1967"
+      ],
+      "why_it_matters": "Works published 1931–1963 lost protection after 28 years unless renewed. Renewal records are scanned catalogs, not a queryable database. Search found renewal-style registration numbers ['R290123']. Check them."
+    },
+    {
+      "affects_layer_ids": [
+        "composition",
+        "sound_recording"
+      ],
+      "estimated_effort": "minutes",
+      "if_no": "If the recording was first published in 1938, the composition had been published by then too, and both terms start earlier than the record states.",
+      "if_yes": "If the composition was published in 1939, the recording's 1938 date is its session and the recording term runs from first release instead.",
+      "question": "Is 1939 the publication of \"Over the Rainbow\", or a release date after its 1938 recording?",
+      "question_id": "consistency:recording_predates_composition",
+      "resolution_links": [],
+      "search_terms": [
+        "\"Over the Rainbow\" copyright 1939",
+        "\"Over the Rainbow\" first published"
+      ],
+      "why_it_matters": "The recording is dated 1938 and the composition's stated publication is 1939: a recording cannot predate the song it embodies. Each date can be defensible on its own (a session recorded months before release; a publication year taken from a film's release) and the pair still cannot both be first-publication facts. The honest readings: the composition date is a release date rather than the song's publication, or the recording date is its session rather than its first publication. Until one is settled, both dates are held at low confidence."
+    }
+  ]
+}
