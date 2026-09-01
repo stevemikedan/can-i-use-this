@@ -87,11 +87,11 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
               {busy ? 'Opening the record…' : 'Begin research'}
             </button>
           </div>
-          <p className="text-body leading-[1.55] text-ink-70 mt-6 mb-0 max-w-[62ch]">
+          <p className="text-body leading-[1.55] text-ink-70 mt-6 mb-0 max-w-[80ch]">
             Research runs 10–90 seconds against the public record. You’ll watch it happen, source by source.
             {' '}<a href="/cues" onClick={(e) => { e.preventDefault(); onCues() }}>Clearing a full cue sheet? →</a>
           </p>
-          {error && <p className="text-body leading-[1.55] mt-4 mb-0 max-w-[62ch]">Could not start the research: {error}</p>}
+          {error && <p className="text-body leading-[1.55] mt-4 mb-0 max-w-[80ch]">Could not start the research: {error}</p>}
         </section>
 
         <section className="mt-16">
@@ -108,7 +108,7 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
                   <div className={`ml-auto font-bold text-body uppercase tracking-[0.04em] whitespace-nowrap ${ex.color}`}>{ex.stamp}</div>
                 </div>
                 <div className="flex gap-y-2 gap-x-4 items-baseline flex-wrap">
-                  <div className="text-body leading-[1.5] text-ink-70 flex-[1_1_320px] max-w-[66ch]">{ex.note}</div>
+                  <div className="text-body leading-[1.5] text-ink-70 flex-[1_1_320px] max-w-[80ch]">{ex.note}</div>
                   <div className="font-semibold text-body text-blue whitespace-nowrap">Open the record →</div>
                 </div>
               </a>
@@ -118,7 +118,7 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
 
         <section className="mt-16 border-t-2 border-dashed border-ink-20 pt-5 flex flex-col gap-2">
           <Eyebrow className="text-ink-70">Scope of the register</Eyebrow>
-          <p className="m-0 text-body leading-[1.55] text-ink-70 max-w-[66ch]">
+          <p className="m-0 text-body leading-[1.55] text-ink-70 max-w-[80ch]">
             Music only: compositions and sound recordings, researched separately. Books, film and images are
             recognized but not researched. Territories: US, UK, EU.
             {' '}<a href="/about" onClick={(e) => { e.preventDefault(); onAbout() }}>How the register works, and its limits →</a>
