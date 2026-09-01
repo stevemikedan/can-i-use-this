@@ -55,7 +55,7 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
         context={<Eyebrow tracking={12} className="text-paper-72">Music — compositions & recordings</Eyebrow>}>
         <div className="flex flex-col gap-5 -mt-4">
           <h1 className="m-0 font-black text-verdict leading-none tracking-[-0.01em] uppercase max-[560px]:text-stat">
-            Can I use this?<span className="text-blue-on-ink">_</span>
+            Can I use this<span className="text-blue-on-ink">?</span>
           </h1>
           <p className="m-0 text-title font-medium leading-[1.4] max-w-[44ch] text-pretty text-paper">
             Researches whether a piece of music is yours to use, layer by layer, with the records to prove it.
@@ -76,8 +76,8 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
             aria-label="Subject of inquiry"
             className="w-full box-border bg-ink-04 rounded-t-6 border-0 border-b-[3px] border-ink px-3 pt-3 pb-4 text-stat max-[560px]:text-headline font-bold text-ink outline-none focus:border-blue placeholder:font-medium placeholder:text-title"
           />
-          <div className="mt-2 font-mono font-medium text-meta text-ink-70">
-            title — artist works best · “Aliens Exist — blink-182” · title alone lists who recorded it
+          <div className="mt-2 font-medium text-meta text-ink-70">
+            Title and artist works best, as in <span className="font-mono">“Aliens Exist — blink-182”</span>; a title alone lists who recorded it.
           </div>
           <div className="mt-8">
             <Controls intent={intent} jurisdiction={jurisdiction} onIntent={setIntent} onJurisdiction={setJurisdiction} />
@@ -88,7 +88,7 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
             </button>
           </div>
           <p className="text-body leading-[1.55] text-ink-70 mt-6 mb-0 max-w-[62ch]">
-            Research runs 30–90 seconds against the public record. You’ll watch it happen, source by source.
+            Research runs 10–90 seconds against the public record. You’ll watch it happen, source by source.
             {' '}<a href="/cues" onClick={(e) => { e.preventDefault(); onCues() }}>Clearing a full cue sheet? →</a>
           </p>
           {error && <p className="text-body leading-[1.55] mt-4 mb-0 max-w-[62ch]">Could not start the research: {error}</p>}
