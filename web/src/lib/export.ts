@@ -3,7 +3,7 @@
 // pasted cue list land in the same columns. The permalink re-opens (re-runs)
 // the record; the researched date is there because rights lists go stale.
 import type { Intent, Jurisdiction, LayerVerdict, QueryParams, RightsResponse, Verdict } from '../types'
-import { EFFORT_LABEL, FACT_LABEL, TIER_LABEL, VERDICT_WORD, confidenceLabel, expiryLine, factValue, shortDate, sourceHref, splitQuery } from './format'
+import { EFFORT_LABEL, FACT_LABEL, VERDICT_WORD, confidenceLabel, expiryLine, factValue, shortDate, sourceHref, splitQuery } from './format'
 
 export const VERDICT_SEVERITY: Record<Verdict, number> = {
   clear: 0, clear_with_conditions: 1, license_required: 2, restricted: 3, undetermined: 4,
@@ -124,14 +124,14 @@ export function toMarkdown(resp: RightsResponse, params: QueryParams): string {
       push(`- If yes: ${q.if_yes}`)
       push(`- If no: ${q.if_no}`)
       if (q.search_terms.length) push(`- Search: ${q.search_terms.map((t) => `\`${t}\``).join(' · ')}`)
-      for (const l of q.resolution_links) push(`- [${l.source_name}](${l.url}) (${TIER_LABEL[l.tier]})${l.navigation_hint ? ` — ${l.navigation_hint}` : ''}`)
+      for (const l of q.resolution_links) push(`- [${l.source_name}](${l.url})${l.navigation_hint ? ` — ${l.navigation_hint}` : ''}`)
     }
   }
   if (resp.handoff_links.length) {
     push()
     push('## Records')
     for (const l of resp.handoff_links) {
-      push(`- [${l.source_name}](${l.url}) (${TIER_LABEL[l.tier]}) — ${l.description}${l.paste_string ? ` Paste: \`${l.paste_string}\`` : ''}`)
+      push(`- [${l.source_name}](${l.url}) — ${linkNote(l)}`)
     }
   }
   push()
@@ -140,6 +140,105 @@ export function toMarkdown(resp: RightsResponse, params: QueryParams): string {
   push(`_${resp.disclaimer}_`)
   push()
   return lines.join('\n')
+}
+
+/** The same treatment the LinkLine component got: instruction sentences, no
+ *  tier enums, no field-name prefixes. */
+function linkNote(l: { description: string | null; navigation_hint: string | null; tier: string; paste_string: string | null }): string {
+  const parts = [l.description, l.navigation_hint].filter(Boolean) as string[]
+  if (l.tier === 'prefilled_search') parts.push('Opens a search already filled in')
+  let note = parts.join('. ')
+  if (note && !note.endsWith('.')) note += '.'
+  if (l.paste_string) note += ` Copy \`${l.paste_string}\`.`
+  return note
+}
+
+// --- the print memo ----------------------------------------------------------------
+//
+// The PDF is generated from the export template, not the screen: plain
+// typographic hierarchy, black on white, URLs printed after their links,
+// breaks where a paged document breaks. A research memo, not a screenshot.
+
+function hx(v: unknown): string {
+  return String(v ?? '').split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;')
+}
+
+const MEMO_CSS = `
+  @page { margin: 20mm; }
+  body { font: 11pt/1.5 Georgia, 'Times New Roman', serif; color: #000; background: #fff; margin: 0; }
+  h1 { font-size: 17pt; line-height: 1.2; margin: 0; }
+  .verdict { font-size: 12pt; margin: 8pt 0 2pt; }
+  .meta { font-size: 9pt; color: #333; margin: 0 0 6pt; }
+  h2 { font-size: 12.5pt; border-bottom: 1pt solid #000; padding-bottom: 2pt; margin: 16pt 0 6pt; break-after: avoid; }
+  h3 { font-size: 11pt; margin: 10pt 0 3pt; break-after: avoid; }
+  ul { margin: 3pt 0; padding-left: 14pt; }
+  li { margin: 2pt 0; break-inside: avoid; }
+  .src { font-size: 9pt; color: #333; }
+  .why { margin: 3pt 0; }
+  a { color: #000; text-decoration: none; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #444; word-break: break-all; }
+  .disclaimer { font-size: 9pt; color: #333; border-top: 1pt solid #000; margin-top: 16pt; padding-top: 6pt; }
+`
+
+export function toPrintHtml(resp: RightsResponse, params: QueryParams): string {
+  const layerOf = (id: string) => resp.entity.layers.find((l) => l.layer_id === id)
+  const out: string[] = []
+  const w = (s: string) => out.push(s)
+  const title = `${params.title}${params.artist ? ` — ${params.artist}` : ''}`
+
+  w(`<!doctype html><html><head><meta charset="utf-8"><title>${hx(title)} — rights record</title><style>${MEMO_CSS}</style></head><body>`)
+  w(`<h1>${hx(title)}</h1>`)
+  w(`<p class="verdict"><strong>${hx(VERDICT_WORD[resp.overall_verdict].toUpperCase())}.</strong> ${hx(resp.overall_headline)}</p>`)
+  w(`<p class="meta">${hx(params.jurisdiction)} · ${hx(params.intent)} · ${hx(confidenceLabel(resp.overall_confidence))} · researched ${hx(shortDate(resp.generated_at))} · ${hx(permalinkFor(params))}</p>`)
+
+  w('<h2>Rights layers</h2>')
+  for (const lv of resp.layer_verdicts) {
+    w(`<h3>${hx(layerTitle(lv))} — ${hx(VERDICT_WORD[lv.verdict])}${lv.is_required ? '' : ' (not required for this purpose)'}</h3>`)
+    w('<ul>')
+    w(`<li>${hx(expiryLine(lv.determination))} · ${hx(confidenceLabel(lv.determination.confidence))}</li>`)
+    w(`<li>${hx(lv.reasoning)}${lv.intent_note ? ' ' + hx(lv.intent_note) : ''}</li>`)
+    if (lv.licensing_path) w(`<li>Licensing: ${hx(lv.licensing_path)}.${lv.cost_band ? ` ${hx(lv.cost_band)}.` : ''}</li>`)
+    const tf = layerOf(lv.layer_id)?.term_facts
+    if (tf) {
+      for (const [key, label] of Object.entries(FACT_LABEL)) {
+        const fact = (tf as unknown as Record<string, { value: unknown; confidence: string; reasoning: string | null; sources: { name: string; url: string | null; retrieved_at: string; excerpt: string | null }[] } | null>)[key]
+        if (!fact) continue
+        w(`<li>${hx(label)}: <strong>${hx(factValue(key, fact.value))}</strong> (${hx(fact.confidence)})${fact.reasoning ? ` — ${hx(fact.reasoning)}` : ''}<ul>`)
+        for (const s of fact.sources) {
+          const href = sourceHref(s as never)
+          w(`<li class="src">${href ? `<a href="${hx(href)}">${hx(s.name)}</a>` : hx(s.name)}, retrieved ${hx(shortDate(s.retrieved_at))}${s.excerpt ? ` — “${hx(s.excerpt)}”` : ''}</li>`)
+        }
+        w('</ul></li>')
+      }
+    }
+    w('</ul>')
+  }
+
+  if (resp.unresolved.length) {
+    w(`<h2>Open questions — ${resp.unresolved.length}</h2>`)
+    for (const q of resp.unresolved) {
+      w(`<h3>${hx(q.question)} (effort: ${hx(EFFORT_LABEL[q.estimated_effort] ?? q.estimated_effort)})</h3>`)
+      w(`<p class="why">${hx(q.why_it_matters)}</p>`)
+      w('<ul>')
+      w(`<li>If yes: ${hx(q.if_yes)}</li>`)
+      w(`<li>If no: ${hx(q.if_no)}</li>`)
+      if (q.search_terms.length) w(`<li>Search: ${q.search_terms.map((t) => hx(t)).join(' · ')}</li>`)
+      for (const l of q.resolution_links) w(`<li><a href="${hx(l.url)}">${hx(l.source_name)}</a>${l.navigation_hint ? ` — ${hx(l.navigation_hint)}` : ''}</li>`)
+      w('</ul>')
+    }
+  }
+
+  if (resp.handoff_links.length) {
+    w('<h2>Records</h2><ul>')
+    for (const l of resp.handoff_links) {
+      w(`<li><a href="${hx(l.url)}">${hx(l.source_name)}</a> — ${hx(linkNote(l).split('\`').join(''))}</li>`)
+    }
+    w('</ul>')
+  }
+
+  w(`<p class="disclaimer">${hx(resp.disclaimer)}</p>`)
+  w('</body></html>')
+  return out.join('\n')
 }
 
 // --- delivery ----------------------------------------------------------------------

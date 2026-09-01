@@ -5,7 +5,7 @@ import type { ClearanceEnrichment, HandoffLink, Intent, LayerVerdict, QueryParam
 import { fetchClearance } from '../lib/api'
 import { Band, Controls, Doc, Eyebrow, SectionHead, Stamp, Tag, TextToggle, Ticks } from '../components/ui'
 import { EFFORT_LABEL, FACT_LABEL, METHOD_LABEL, VERDICT_WORD, confidenceLabel, expiryLine, factValue, pct, shortDate, sourceHref, splitQuery } from '../lib/format'
-import { VERDICT_SEVERITY, csvRow, CSV_HEADER, downloadText, safeFilename, toMarkdown } from '../lib/export'
+import { VERDICT_SEVERITY, csvRow, CSV_HEADER, downloadText, safeFilename, toMarkdown, toPrintHtml } from '../lib/export'
 
 const ORDER = VERDICT_SEVERITY
 
@@ -59,9 +59,16 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
     return () => { window.removeEventListener('beforeprint', before); window.removeEventListener('afterprint', after) }
   }, [])
   const printPdf = useCallback(() => {
-    setPrinting(true)
-    setTimeout(() => window.print(), 60)
-  }, [])
+    // The PDF comes from the export template, not the screen: a research
+    // memo in a fresh document, black on white, paged breaks. The screen's
+    // print stylesheet still serves a plain Ctrl+P.
+    const win = window.open('', '_blank')
+    if (!win) { setPrinting(true); setTimeout(() => window.print(), 60); return }
+    win.document.write(toPrintHtml(resp, params))
+    win.document.close()
+    win.focus()
+    setTimeout(() => win.print(), 200)
+  }, [resp, params])
   const exportCsv = useCallback(() => {
     downloadText(`${safeFilename(params.title)}.csv`, CSV_HEADER.join(',') + '\r\n' + csvRow(resp, params) + '\r\n', 'text/csv')
   }, [resp, params])
