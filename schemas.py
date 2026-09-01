@@ -757,6 +757,13 @@ class RightsResponse(BaseModel):
     )
     served_from_cache: bool = False
     permalink: HttpUrl | None = None
+    run_log: list[PipelineEvent] = Field(
+        default_factory=list,
+        description="The accession log of the run that produced this record. "
+                    "Kept on the record so a warm query stays legible after "
+                    "the fact: which tier answered, what Parallel ran, what "
+                    "was cached. Volatile (timings differ run to run) and "
+                    "excluded from fixture comparison.")
 
 
 # ---------------------------------------------------------------------------

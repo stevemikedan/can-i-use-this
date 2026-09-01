@@ -81,6 +81,14 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
   const toClear = required.filter((l) => l.verdict === 'license_required')
   const actLinks = resp.handoff_links.filter((l) => l.purpose === 'license')
   const derivative = resp.unresolved.some((u) => u.question_id === 'composition:derivative')
+  // The enrichment stage reads as a deliberate skip, a run, or a failure -
+  // never as silence.
+  const needsEnrich = required.some((l) => l.verdict === 'license_required' || l.verdict === 'restricted')
+  const enrichmentLine = !needsEnrich
+    ? 'Rights-holder enrichment skipped: nothing to clear for this verdict.'
+    : enrichBusy ? 'Rights-holder enrichment running (Parallel Task)\u2026'
+      : enrich ? 'Rights-holder enrichment complete (Parallel Task); the parties are under Clearance.'
+        : 'Rights-holder enrichment did not return; Clearance shows the manual route.'
 
   return (
     <>
@@ -269,6 +277,43 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
             </div>
           )}
         </section>
+
+        {/* The run - the accession log kept on the record, so a warm query
+            stays legible after the fact. Every query in a demo is warm. */}
+        {(resp.run_log?.length ?? 0) > 0 && (
+          <section className="mt-16">
+            <SectionHead title="The run"
+              sub={`${(resp.run_log[resp.run_log.length - 1].elapsed_ms / 1000).toFixed(1)}s \u00b7 ${resp.run_log[resp.run_log.length - 1].sources_consulted} sources consulted \u00b7 what ran, which tier answered, what was cached`} />
+            <TextToggle open={!!open['run']} closed="Show the log" opened="Close" onClick={() => toggle('run')} className="mt-3" />
+            {open['run'] && (
+              <div className="mt-2 flex flex-col">
+                {resp.run_log.map((ev, i) => (
+                  <div key={i} className="flex gap-x-[14px] gap-y-1 items-baseline flex-wrap py-[7px] border-t border-dashed border-ink-20 first:border-t-0">
+                    <div className="font-mono font-medium text-meta text-ink-70 flex-[0_0_52px]">{(ev.elapsed_ms / 1000).toFixed(1)}s</div>
+                    <div className={`text-body leading-[1.5] flex-[1_1_320px] min-w-[220px] ${ev.status === 'failed' || ev.degraded ? 'line-through text-ink-70' : ''}`}>
+                      {ev.message}
+                      {ev.detail && <span className="font-mono font-medium text-meta text-ink-70"> {ev.detail}</span>}
+                      {ev.error_message && <span className="text-ink-70"> {ev.error_message}</span>}
+                    </div>
+                    <div className="font-mono font-medium text-meta text-ink-70 uppercase whitespace-nowrap">{ev.stage}</div>
+                  </div>
+                ))}
+                <div className="flex gap-x-[14px] gap-y-1 items-baseline flex-wrap py-[7px] border-t border-dashed border-ink-20">
+                  <div className="font-mono font-medium text-meta text-ink-70 flex-[0_0_52px]">after</div>
+                  <div className="text-body leading-[1.5] flex-[1_1_320px] min-w-[220px]">{enrichmentLine}</div>
+                  <div className="font-mono font-medium text-meta text-ink-70 uppercase whitespace-nowrap">clearance</div>
+                </div>
+                {(enrich?.ledger ?? []).map((line, i) => (
+                  <div key={`e${i}`} className="flex gap-x-[14px] gap-y-1 items-baseline flex-wrap py-[7px] border-t border-dashed border-ink-20">
+                    <div className="font-mono font-medium text-meta text-ink-70 flex-[0_0_52px]"></div>
+                    <div className="text-body leading-[1.5] flex-[1_1_320px] min-w-[220px]">{line}</div>
+                    <div className="font-mono font-medium text-meta text-ink-70 uppercase whitespace-nowrap">clearance</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         <p className="mt-14 mb-0 text-meta font-medium leading-[1.7] text-ink-70 max-w-[78ch]">{resp.disclaimer}</p>
       </Doc>

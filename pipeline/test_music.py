@@ -629,3 +629,16 @@ def test_documentary_has_its_own_bands_and_note(cache, transport, no_parallel):
     assert rec.verdict is Verdict.LICENSE_REQUIRED
     assert "festival" in rec.cost_band
     assert "fair use" in rec.intent_note and "attorney" in rec.intent_note
+
+
+def test_run_log_rides_on_the_record(cache, transport, no_parallel):
+    # The accession log stays on the record: a warm query is legible after
+    # the fact. Volatile timings keep it out of fixture comparison.
+    transport(handler)
+    resp, em = run_music(q("Golden Hour \u2014 Night Owl Static"))
+    assert resp.run_log
+    msgs = " | ".join(e.message for e in resp.run_log)
+    assert "Tier 1" in msgs and "Consulted" in msgs
+    assert all(e.elapsed_ms >= 0 for e in resp.run_log)
+    from pipeline.mockworld import normalize
+    assert "run_log" not in normalize(resp)

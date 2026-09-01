@@ -169,6 +169,7 @@ export interface RightsResponse {
   disclaimer: string
   generated_at: string
   served_from_cache: boolean
+  run_log: PipelineEvent[]
 }
 
 export interface PipelineEvent {

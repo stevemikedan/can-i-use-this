@@ -214,6 +214,7 @@ def assemble(query: AssetQuery, entity: ResolvedEntity, dets: list[Determination
         overall_verdict=verdict, overall_headline=headline, overall_confidence=overall_confidence(lvs),
         layer_verdicts=lvs, all_determinations=dets, unresolved=questions, handoff_links=links,
         generated_at=datetime.now(timezone.utc), cache_key=cache_key(entity),
+        run_log=list(em.events),
     )
 
 

@@ -251,7 +251,8 @@ CASES = {
     "cc": {"raw_input": "Golden Hour — Night Owl Static", "jurisdiction": "US", "intent": "film_tv"},
 }
 
-VOLATILE_KEYS = {"generated_at", "retrieved_at"}
+# run_log timings differ run to run; the log is real but not comparable.
+VOLATILE_KEYS = {"generated_at", "retrieved_at", "run_log"}
 
 
 def normalize(obj: Any) -> Any:

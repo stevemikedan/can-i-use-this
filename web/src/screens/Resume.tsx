@@ -15,7 +15,7 @@ export default function Resume({ params, researchedAt, onResearch, onNewInquiry 
 }) {
   return (
     <>
-      <Band label="Can I use this? — Saved record" padding="pt-7 pb-10"
+      <Band label={`Can I use this? — ${researchedAt ? 'Saved record' : 'Saved inquiry'}`} padding="pt-7 pb-10"
         context={<Eyebrow tracking={12} className="text-paper-72">{params.jurisdiction} · {intentContext(params.intent)}</Eyebrow>}>
         <div className="flex flex-col gap-[10px]">
           <Eyebrow className="text-blue-on-ink">Query</Eyebrow>
