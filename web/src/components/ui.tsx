@@ -1,7 +1,8 @@
 // Shared primitives — docs/design-system.md §5 "Shared".
 import type { ReactNode } from 'react'
+import { useEffect, useState } from 'react'
 import type { Confidence, Intent, Jurisdiction, Verdict } from '../types'
-import { INTENT_OPTIONS, JURISDICTIONS, TICKS, VERDICT_COLOR, VERDICT_UNDERLINE, VERDICT_WORD, confidenceLabel } from '../lib/format'
+import { CONTEXT_OPTIONS, DEFAULT_CONTEXT, JURISDICTIONS, TICKS, VERDICT_COLOR, VERDICT_UNDERLINE, VERDICT_WORD, confidenceLabel } from '../lib/format'
 import { nav } from '../lib/nav'
 
 export function Eyebrow({ children, className = '', tracking = 14 }: { children: ReactNode; className?: string; tracking?: 12 | 14 }) {
@@ -64,19 +65,44 @@ export function TextToggle({ open, closed, opened, onClick, className = '' }:
   )
 }
 
-/** Purpose and territory selectors. Same component on paper and on the band (wrap the band in .on-ink). */
+/** Purpose and territory selectors. Same component on paper and on the band (wrap the band in .on-ink).
+ *
+ *  One Intent enum, two visual groups: WHAT YOU'RE MAKING is the distribution
+ *  context (cost band, licensing path); HOW YOU'RE USING IT changes which
+ *  layers need clearing at all (a re-recording drops the master). Picking a
+ *  context implies the original recording; the last context is remembered so
+ *  toggling usage back restores it. */
 export function Controls({ intent, jurisdiction, onIntent, onJurisdiction, onInk = false, busy = false }:
   { intent: Intent; jurisdiction: Jurisdiction; onIntent: (i: Intent) => void; onJurisdiction: (j: Jurisdiction) => void; onInk?: boolean; busy?: boolean }) {
   const labelCls = onInk ? 'text-paper-72' : 'text-ink-70'
+  const rerecord = intent === 'rerecord'
+  const [lastContext, setLastContext] = useState<Intent>(rerecord ? DEFAULT_CONTEXT : intent)
+  useEffect(() => { if (intent !== 'rerecord') setLastContext(intent) }, [intent])
+  const context = rerecord ? lastContext : intent
   return (
     <div className="flex flex-col gap-[22px]" aria-busy={busy}>
       <div className="flex flex-col gap-[10px]">
-        <Eyebrow className={labelCls}>Purpose of use</Eyebrow>
-        <div className="flex gap-2 flex-wrap" role="group" aria-label="Purpose of use">
-          {INTENT_OPTIONS.map((o) => (
-            <button key={o.value} type="button" className="control" aria-pressed={intent === o.value} onClick={() => onIntent(o.value)}>{o.label}</button>
-          ))}
+        <Eyebrow className={labelCls}>What you&rsquo;re making</Eyebrow>
+        <select className="control control-select self-start" aria-label="What you're making"
+          value={context} onChange={(e) => onIntent(e.target.value as Intent)}>
+          {CONTEXT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+      </div>
+      <div className="flex flex-col gap-[10px]">
+        <Eyebrow className={labelCls}>How you&rsquo;re using it</Eyebrow>
+        <div className="flex gap-2 flex-wrap" role="group" aria-label="How you're using it">
+          <button type="button" className="control" aria-pressed={!rerecord} onClick={() => onIntent(context)}>
+            Using the original recording
+          </button>
+          <button type="button" className="control" aria-pressed={rerecord} onClick={() => onIntent('rerecord')}>
+            Re-recording it yourself
+          </button>
         </div>
+        {rerecord && (
+          <div className={`text-meta font-medium ${labelCls} max-w-[52ch] leading-[1.5]`}>
+            A re-recording clears the composition only; the master stops mattering.
+          </div>
+        )}
       </div>
       <div className="flex flex-col gap-[10px]">
         <Eyebrow className={labelCls}>Territory</Eyebrow>

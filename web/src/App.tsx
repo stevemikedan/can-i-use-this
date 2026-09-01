@@ -21,7 +21,7 @@ const fixtureNames = Object.keys(FIXTURES).map((p) => p.replace('./dev/', '').re
 
 type Screen = 'entry' | 'progress' | 'result' | 'disambiguation' | 'notfound' | 'boundary' | 'error' | 'about' | 'cues' | 'resume'
 
-const DEFAULT_PARAMS: QueryParams = { title: '', intent: 'film_tv', jurisdiction: 'US' }
+const DEFAULT_PARAMS: QueryParams = { title: '', intent: 'documentary', jurisdiction: 'US' }
 
 function routeFor(resp: RightsResponse): Screen {
   if (resp.stop_for_disambiguation) return 'disambiguation'

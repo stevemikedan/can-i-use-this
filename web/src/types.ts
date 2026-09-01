@@ -4,7 +4,7 @@
 export type Verdict = 'clear' | 'clear_with_conditions' | 'license_required' | 'restricted' | 'undetermined'
 export type Confidence = 'high' | 'medium' | 'low' | 'none'
 export type Jurisdiction = 'US' | 'UK' | 'EU'
-export type Intent = 'film_tv' | 'commercial' | 'rerecord' | 'personal' | 'education' | 'social_video' | 'podcast' | 'game' | 'print'
+export type Intent = 'documentary' | 'film_tv' | 'commercial' | 'rerecord' | 'personal' | 'education' | 'social_video' | 'podcast' | 'game' | 'print'
 export type LinkTier = 'deep_link' | 'prefilled_search' | 'guided_manual'
 export type DeterminationStatus = 'public_domain' | 'protected' | 'no_copyright_other_restrictions' | 'undetermined'
 export type ResearchMethod = 'rights_uri' | 'direct_api' | 'parallel_task' | 'parallel_search' | 'parallel_extract' | 'rules_engine' | 'user_provided'

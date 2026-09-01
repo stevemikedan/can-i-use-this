@@ -25,6 +25,10 @@ from .events import Emitter
 _RANK = {Confidence.HIGH: 3, Confidence.MEDIUM: 2, Confidence.LOW: 1, Confidence.NONE: 0}
 
 COST_BANDS = {
+    Intent.DOCUMENTARY: {"composition": "$300–$3,000 sync for a festival-only run; $1,000–$10,000 once "
+                                        "broadcast or streaming distribution attaches",
+                         "sound_recording": "$300–$3,000 master for a festival-only run, typically matched to "
+                                            "the sync fee at broadcast rates"},
     Intent.FILM_TV: {"composition": "$500–$5,000 sync fee for an indie film; more for major releases",
                      "sound_recording": "$500–$5,000 master use fee for an indie film; often matched to the sync fee"},
     Intent.COMMERCIAL: {"composition": "$5,000–$50,000+ sync fee for advertising, by reach and term",
@@ -35,7 +39,29 @@ COST_BANDS = {
                      "sound_recording": "Low hundreds of dollars per episode; labels rarely license single episodes"},
     Intent.GAME: {"composition": "$1,000–$10,000+ sync for an indie game, by territory and term",
                   "sound_recording": "$1,000–$10,000+ master fee for an indie game"},
-    Intent.RERECORD: {"composition": "Compulsory mechanical (statutory rate) for audio; sync still negotiated for video"},
+    Intent.RERECORD: {"composition": "Compulsory mechanical (statutory rate) for audio; sync still negotiated "
+                                     "for video. Rates vary with where the re-recording is distributed."},
+    Intent.PRINT: {"composition": "$50–$500 to reprint lyrics or sheet music, by print run; publishers handle "
+                                  "these directly"},
+    Intent.PERSONAL: {"composition": "Rarely licensed formally; truly private use sits outside the licensing market",
+                      "sound_recording": "Rarely licensed formally; truly private use sits outside the licensing market"},
+    Intent.EDUCATION: {"composition": "$0–$250; classroom use is often covered by statutory exemptions or the "
+                                      "institution's blanket licenses",
+                       "sound_recording": "$0–$250; check the institution's blanket licenses before negotiating"},
+}
+
+# Where the practical path differs from the generic one, by (intent, layer).
+INTENT_LICENSING_PATH = {
+    (Intent.SOCIAL_VIDEO, "composition"):
+        "A micro-licensing service covers most creator uploads; otherwise a sync license from the publisher",
+    (Intent.SOCIAL_VIDEO, "sound_recording"):
+        "A micro-licensing service or the platform's own music library is the usual route; a master license "
+        "from the label is the formal one",
+    (Intent.PODCAST, "composition"):
+        "You need a sync license from the publisher; per-episode or blanket production-music deals are common",
+    (Intent.PODCAST, "sound_recording"):
+        "You need a master use license from the label directly; production-music libraries are the practical "
+        "alternative",
 }
 
 UNDETERMINED_WHY = {
@@ -100,11 +126,27 @@ def layer_verdicts(entity: ResolvedEntity, dets: list[Determination], jurisdicti
         note = None
         if not is_required and intent is Intent.RERECORD and layer.layer_id == "sound_recording":
             note = "Not required for a re-recording; you would license the composition only."
+        elif not is_required and intent is Intent.PRINT and layer.layer_id == "sound_recording":
+            note = "Not required for print; lyrics and sheet music license through the composition only."
+        elif layer.layer_id == "sound_recording" and verdict is Verdict.LICENSE_REQUIRED:
+            # Two contexts carry real information beyond a cost band.
+            if intent is Intent.SOCIAL_VIDEO:
+                note = ("On platforms with Content ID, a protected recording is usually claimed "
+                        "automatically: revenue redirects to the rights holder rather than the video "
+                        "coming down. A claim is not a license, and it does not cover use off-platform.")
+            elif intent is Intent.PODCAST:
+                note = ("Podcasts have no Content ID equivalent: using a protected recording means "
+                        "negotiating with the label directly.")
+            elif intent is Intent.DOCUMENTARY:
+                note = ("Documentary rates run lower than narrative, and a festival-only run prices lower "
+                        "than broadcast. Incidental or background captures may be fair use; that is a "
+                        "judgment for your attorney, not a license to buy.")
         out.append(LayerVerdict(
             layer_id=layer.layer_id, layer_label=layer.label, verdict=verdict, is_required=is_required,
             headline=_headline_for(det, jurisdiction)[:120], reasoning=det.rule_explanation,
             determination=det, holders=layer.holders, clearance=layer.clearance,
-            licensing_path=LICENSING_PATH.get(layer.layer_id) if verdict is Verdict.LICENSE_REQUIRED else None,
+            licensing_path=(INTENT_LICENSING_PATH.get((intent, layer.layer_id))
+                            or LICENSING_PATH.get(layer.layer_id)) if verdict is Verdict.LICENSE_REQUIRED else None,
             cost_band=COST_BANDS.get(intent, {}).get(layer.layer_id) if verdict is Verdict.LICENSE_REQUIRED else None,
             intent_note=note,
         ))

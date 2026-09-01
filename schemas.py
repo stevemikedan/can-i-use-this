@@ -120,6 +120,10 @@ class Intent(str, Enum):
     PODCAST = "podcast"
     COMMERCIAL = "commercial"
     FILM_TV = "film_tv"
+    # The primary audience. Shares REQUIRED_LAYERS with film/TV but not
+    # cost bands: festival-only vs broadcast rates differ, and fair use
+    # plays a larger role for incidental captures.
+    DOCUMENTARY = "documentary"
     PRINT = "print"
     GAME = "game"
     # Music-specific: user intends to commission a re-recording rather than
@@ -229,6 +233,9 @@ REQUIRED_LAYERS: dict[tuple[AssetType, Intent], frozenset[RightsLayerKind]] = {
     (AssetType.MUSIC, Intent.FILM_TV): frozenset(
         {RightsLayerKind.COMPOSITION, RightsLayerKind.SOUND_RECORDING}
     ),
+    (AssetType.MUSIC, Intent.DOCUMENTARY): frozenset(
+        {RightsLayerKind.COMPOSITION, RightsLayerKind.SOUND_RECORDING}
+    ),
     (AssetType.MUSIC, Intent.COMMERCIAL): frozenset(
         {RightsLayerKind.COMPOSITION, RightsLayerKind.SOUND_RECORDING}
     ),
@@ -249,6 +256,8 @@ REQUIRED_LAYERS: dict[tuple[AssetType, Intent], frozenset[RightsLayerKind]] = {
     ),
     # Re-recording removes the master use license from the equation.
     (AssetType.MUSIC, Intent.RERECORD): frozenset({RightsLayerKind.COMPOSITION}),
+    # Printing lyrics or sheet music never touches the master.
+    (AssetType.MUSIC, Intent.PRINT): frozenset({RightsLayerKind.COMPOSITION}),
     (AssetType.TEXT, Intent.PRINT): frozenset({RightsLayerKind.TEXT_WORK}),
     (AssetType.TEXT, Intent.COMMERCIAL): frozenset({RightsLayerKind.TEXT_WORK}),
     (AssetType.TEXT, Intent.PERSONAL): frozenset({RightsLayerKind.TEXT_WORK}),

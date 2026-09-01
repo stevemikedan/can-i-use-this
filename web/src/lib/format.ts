@@ -41,15 +41,29 @@ export function confidenceLabel(c: Confidence): string {
 
 // --- controls ↔ Intent / Jurisdiction -------------------------------------------
 
-export const INTENT_OPTIONS: { value: Intent; label: string }[] = [
-  { value: 'film_tv', label: 'Documentary — distributed' },
-  { value: 'commercial', label: 'Sample — commercial release' },
-  { value: 'rerecord', label: 'New recording — you perform it' },
+/** The distribution context: sets the cost band and licensing path. One
+ *  select, because nine buttons don't fit a row. */
+export const CONTEXT_OPTIONS: { value: Intent; label: string }[] = [
+  { value: 'documentary', label: 'Documentary' },
+  { value: 'film_tv', label: 'Film or TV' },
+  { value: 'social_video', label: 'Social video' },
+  { value: 'podcast', label: 'Podcast' },
+  { value: 'commercial', label: 'Commercial or advertising' },
+  { value: 'print', label: 'Print' },
+  { value: 'game', label: 'Game' },
+  { value: 'education', label: 'Education' },
+  { value: 'personal', label: 'Personal' },
 ]
+export const DEFAULT_CONTEXT: Intent = 'documentary'
+
 export const JURISDICTIONS: Jurisdiction[] = ['US', 'UK', 'EU']
 
 export function intentContext(intent: Intent): string {
-  return { film_tv: 'DOCUMENTARY', commercial: 'COMMERCIAL', rerecord: 'NEW RECORDING' }[intent as string] ?? intent.toUpperCase().replace('_', ' ')
+  return {
+    documentary: 'DOCUMENTARY', film_tv: 'FILM / TV', social_video: 'SOCIAL VIDEO', podcast: 'PODCAST',
+    commercial: 'COMMERCIAL', print: 'PRINT', game: 'GAME', education: 'EDUCATION',
+    personal: 'PERSONAL', rerecord: 'NEW RECORDING',
+  }[intent as string] ?? intent.toUpperCase().replace('_', ' ')
 }
 
 // --- tags ---------------------------------------------------------------------

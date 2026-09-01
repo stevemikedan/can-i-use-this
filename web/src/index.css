@@ -113,6 +113,16 @@
     background: transparent; color: var(--color-ink); border: 1px solid var(--color-ink-70);
   }
   .control:hover { border-color: var(--color-blue); }
+  select.control {
+    appearance: none; -webkit-appearance: none; font-family: inherit; max-width: 100%;
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2316233A'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+  .on-ink select.control {
+    background-color: var(--color-ink);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238FACF2'/%3E%3C/svg%3E");
+  }
   .control[aria-pressed="true"] { background: var(--color-blue); color: var(--color-paper); border-color: var(--color-blue); }
   .on-ink .control { color: var(--color-blue-on-ink); border-color: var(--color-blue-on-ink); }
   .on-ink .control:hover { filter: brightness(1.12); border-color: var(--color-blue-on-ink); }

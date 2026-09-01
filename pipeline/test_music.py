@@ -595,3 +595,37 @@ def test_release_level_license_and_nc_flips_with_intent(cache, transport, no_par
     lv2 = next(x for x in resp2.layer_verdicts if x.layer_id == "sound_recording")
     assert lv2.verdict is Verdict.CLEAR_WITH_CONDITIONS
     assert "non-commercial use only" in lv2.determination.rule_explanation
+
+
+# --- surfaced intents: notes, paths and layer requirements ------------------------
+
+def test_social_video_note_and_podcast_path(cache, transport, no_parallel):
+    transport(handler)
+    resp, em = run_music(q("West End Blues \u2014 Louis Armstrong", intent=Intent.SOCIAL_VIDEO))
+    rec = next(lv for lv in resp.layer_verdicts if lv.layer_id == "sound_recording")
+    assert rec.verdict is Verdict.LICENSE_REQUIRED
+    assert "Content ID" in rec.intent_note and "claim is not a license" in rec.intent_note
+    assert "micro-licensing" in rec.licensing_path
+
+    resp2, em2 = run_music(q("West End Blues \u2014 Louis Armstrong", intent=Intent.PODCAST))
+    rec2 = next(lv for lv in resp2.layer_verdicts if lv.layer_id == "sound_recording")
+    assert "no Content ID equivalent" in rec2.intent_note
+    assert "label directly" in rec2.licensing_path
+
+
+def test_print_needs_the_composition_only(cache, transport, no_parallel):
+    transport(handler)
+    resp, em = run_music(q("West End Blues \u2014 Louis Armstrong", intent=Intent.PRINT))
+    rec = next(lv for lv in resp.layer_verdicts if lv.layer_id == "sound_recording")
+    assert not rec.is_required and "through the composition only" in rec.intent_note
+    # WEB's composition is public domain in the US, so print rolls up clear
+    assert resp.overall_verdict is Verdict.CLEAR
+
+
+def test_documentary_has_its_own_bands_and_note(cache, transport, no_parallel):
+    transport(handler)
+    resp, em = run_music(q("West End Blues \u2014 Louis Armstrong", intent=Intent.DOCUMENTARY))
+    rec = next(lv for lv in resp.layer_verdicts if lv.layer_id == "sound_recording")
+    assert rec.verdict is Verdict.LICENSE_REQUIRED
+    assert "festival" in rec.cost_band
+    assert "fair use" in rec.intent_note and "attorney" in rec.intent_note
