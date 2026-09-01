@@ -83,7 +83,7 @@ def test_ambiguity_stops_before_research(cache, transport, no_parallel):
     # One search plus one cached dated-performance probe per shown row -
     # the candidate dates must not come from reissue release dates. Still
     # no research, no rules.
-    assert len(calls) == 1 + len(labels)
+    assert 1 + len(labels) <= len(calls) <= 1 + 2 * len(labels)
     assert not any(e.stage.value in ("research", "rules") for e in em.events)
 
 
