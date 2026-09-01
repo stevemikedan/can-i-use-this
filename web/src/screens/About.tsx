@@ -155,7 +155,7 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               ['Google ADK', 'Orchestrates the run as an agent graph: sequential stages, with the two research layers fanned out concurrently.'],
               ['Gemini 2.5 Flash', 'The reading step only, on Vertex AI. Evidence in; a cited fact or an abstention out. It never computes a term and cannot assert a fact it cannot cite.'],
               ['Parallel Search', 'On the primary request path, not a side channel. Renewal research, release research and writer corroboration run through it, and every search appears in the ledger.'],
-              ['Parallel Task', 'After the verdict, for rights-holder research: structured output with a citation per field, filling the clearance profile while the answer is already on screen. The verdict never waits for it.'],
+              ['Parallel Task', 'After the verdict, for rights-holder research: structured output with a citation per field, filling the clearance profile while the answer is already on screen. The verdict never waits for it, and its output is capped at medium: research, not registry data, superseded by the MLC if access arrives.'],
               ['The consistency layer', 'Cross-checks between facts that constrain each other: a recording dated before its composition, a writer implausibly long-lived for the work, shares that sum past 100%. A conflict degrades confidence and opens a question rather than trusting one side.'],
               ['The rules engine', 'Deterministic Python computes every term. Each determination records which rule fired and why, so a verdict can be audited line by line.'],
             ].map(([name, desc]) => (
@@ -164,6 +164,13 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
                 <div className="flex-[1_1_320px] min-w-[240px]"><P muted>{desc}</P></div>
               </div>
             ))}
+          </div>
+          <div className="mt-4">
+            <P muted>
+              Every completed record keeps its run log: what ran, which tier answered, what was cached, and
+              whether enrichment ran or was skipped. A warm query resolves in under a second, and the log is
+              how it stays legible after the fact.
+            </P>
           </div>
           <TextToggle open={stagesOpen} closed="How a query runs, stage by stage" opened="Close"
             onClick={() => setStagesOpen(!stagesOpen)} className="mt-2" />
@@ -225,6 +232,12 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               <span className="font-semibold">US-centric.</span> The US rules are the most complete; UK and EU
               determinations cover the composition (life plus 70) and the recording (70 years from publication).
               Other territories are not modelled.
+            </P>
+            <P>
+              <span className="font-semibold">Ownership shares are researched, not authoritative.</span> The
+              parties in the Clearance panel come from Parallel Task web research, capped at medium. The
+              authoritative record is the MLC&rsquo;s, and it supersedes this research if access arrives; a
+              shortfall in found shares says nothing about unclaimed shares.
             </P>
             <P>
               <span className="font-semibold">Coverage follows the sources.</span> A recording MusicBrainz has
