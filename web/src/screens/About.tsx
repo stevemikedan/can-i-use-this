@@ -103,8 +103,8 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
           </div>
           <div className="mt-2 flex flex-col">
             <SourceRow tier="Tier 1" name="License URIs"
-              role="RightsStatements.org and Creative Commons marks, which settle a layer outright. No call, no model."
-              detail="Reserved in the schema for license-marked inputs. A music inquiry has no license URI to carry, so today every inquiry starts at Tier 2." />
+              role="Creative Commons license relations on the MusicBrainz record, matched against a static table. No extra call, no model."
+              detail="A recognized license settles the layer outright and research for it stops. Attribution and share-alike surface as conditions (cleared with conditions, not clear), and an NC license does not cover a commercial use." />
             <SourceRow tier="Tier 2" name="MusicBrainz"
               role="Recordings, works, writer credits, dated performances."
               detail="The recording is selected by earliest dated session, never by first-release date, which is frequently a reissue. Calls are cached persistently, throttled, and fail soft into Tier 3." />

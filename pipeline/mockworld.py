@@ -26,12 +26,16 @@ WEB_WORK = "a97c426c-0000-0000-0000-000000000001"
 WEB_WORK2 = "ec12be9a-0000-0000-0000-000000000003"   # sibling: same title, Oliver + Clarence Williams
 BM_WORK = "3c339d3d-0000-0000-0000-000000000002"
 OTR_WORK = "f4a81d77-0000-0000-0000-000000000005"
+CC_WORK = "9d3e5b21-0000-0000-0000-000000000006"
+CC_URI = "https://creativecommons.org/licenses/by-sa/4.0/"
 RIB_WORK = "60b22df4-0000-0000-0000-000000000004"
 
 
-def rec(mbid, title, credit, date=None, work=None, begin=None):
+def rec(mbid, title, credit, date=None, work=None, begin=None, license=None):
     r = {"id": mbid, "title": title, "first-release-date": date, "score": 100,
          "artist-credit": [{"name": credit}], "relations": []}
+    if license:
+        r["relations"].append({"target-type": "url", "type": "license", "url": {"resource": license}})
     if work:
         r["relations"].append({"target-type": "work", "type": "performance", "begin": begin, "end": begin,
                                "attributes": [], "work": {"id": work, "title": title, "iswcs": []}})
@@ -58,6 +62,9 @@ RECORDINGS = [
     # released August 1939 and Wikidata carries 1939 as P577. Both defensible,
     # the pair impossible - the consistency layer's acceptance case.
     rec("otr-garland", "Over the Rainbow", "Judy Garland", "1939-09", OTR_WORK, "1938-10-07"),
+    # "Golden Hour": a CC BY-SA release; license relations on the recording
+    # and the work. Tier 1 settles both layers with no research at all.
+    rec("cc-golden", "Golden Hour", "Night Owl Static", "2019-03", CC_WORK, license=CC_URI),
     rec("otr-garland-1993", "Over the Rainbow", "Judy Garland", "1993", OTR_WORK),
     rec("lt-studio", "Later Take", "The Guards", "1999-06", "w-latertake"),
     rec("lt-live", "Later Take", "The Guards", "2001-11", "w-latertake", "2001-06-15"),
@@ -75,6 +82,9 @@ WORKS = {
     RIB_WORK: {"id": RIB_WORK, "title": "Rhapsody in Blue", "score": 100, "iswcs": [], "relations": [
         {"target-type": "artist", "type": "composer", "begin": "1924", "artist": {"id": "a-gershwin", "name": "George Gershwin"}},
         {"target-type": "url", "type": "wikidata", "url": {"resource": "https://www.wikidata.org/wiki/Q722599"}},
+    ]},
+    CC_WORK: {"id": CC_WORK, "title": "Golden Hour", "score": 100, "iswcs": [], "relations": [
+        {"target-type": "url", "type": "license", "url": {"resource": CC_URI}},
     ]},
     OTR_WORK: {"id": OTR_WORK, "title": "Over the Rainbow", "score": 100, "iswcs": [], "relations": [
         {"target-type": "artist", "type": "composer", "begin": "1939", "artist": {"id": "a-arlen", "name": "Harold Arlen"}},
@@ -142,7 +152,7 @@ def handler(req: httpx.Request) -> httpx.Response:
         title = wparts[1] if len(wparts) > 1 else None
         return httpx.Response(200, json={"works": [w for w in WORKS.values() if w["title"] == title]})
     if path == "/ws/2/recording" and "work" in p:
-        hits = [r for r in RECORDINGS if any(x["work"]["id"] == p["work"] for x in r["relations"])]
+        hits = [r for r in RECORDINGS if any(x.get("target-type") == "work" and x["work"]["id"] == p["work"] for x in r["relations"])]
         return httpx.Response(200, json={"recording-count": len(hits), "recording-offset": 0, "recordings": hits})
     if path.startswith("/ws/2/recording/"):
         mbid = path.rsplit("/", 1)[1]
@@ -194,6 +204,7 @@ CASES = {
     "reissue": {"raw_input": "Blue Moon — The Marcels", "jurisdiction": "US", "intent": "film_tv"},
     "renewal": {"raw_input": "Blue Moon — Ella Fitzgerald", "jurisdiction": "US", "intent": "film_tv"},
     "rainbow": {"raw_input": "Over the Rainbow — Judy Garland", "jurisdiction": "US", "intent": "film_tv"},
+    "cc": {"raw_input": "Golden Hour — Night Owl Static", "jurisdiction": "US", "intent": "film_tv"},
 }
 
 VOLATILE_KEYS = {"generated_at", "retrieved_at"}

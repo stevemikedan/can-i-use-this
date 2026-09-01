@@ -37,6 +37,7 @@ flowchart TD
   DE --> RC["research composition"]
   DE --> RR["research recording"]
   subgraph READ ["sources we read — cheapest tier first"]
+    T1["Tier 1 · license relations, static table — a CC mark settles the layer"]
     T2["Tier 2 · MusicBrainz, Wikidata — cached, throttled, fail-soft"]
     T3["Tier 3 · Parallel Search → Gemini reader: a cited fact, or abstain"]
   end
@@ -64,7 +65,7 @@ The distinction is the architecture. If a fact on a record ever cited one of the
 
 | Tier | Source | What we take |
 |---|---|---|
-| 1 | License URIs | RightsStatements.org / Creative Commons marks would settle a layer outright with no call and no model. Reserved in the schema; a music inquiry has no license URI to carry, so today every inquiry starts at Tier 2. |
+| 1 | License URIs | Creative Commons license relations on the MusicBrainz record, matched against a static table (`rules/licenses.py`) with no extra call and no model. A recognized license settles the layer and research stops: CC0 is clear, attribution licenses are cleared with conditions, and NC does not cover a commercial use. |
 | 2 | MusicBrainz | Recordings, works, writer credits, dated performances. Cached persistently, throttled, fails soft into Tier 3. |
 | 2 | Wikidata | Publication dates, writer death years, writer-list corroboration. |
 | 3 | Parallel **Search**, read by Gemini | Web evidence for what no API holds: renewal records, original release dates, writer corroboration. On the primary request path — every query it runs is entered in the on-screen ledger. |

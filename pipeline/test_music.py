@@ -540,3 +540,40 @@ def test_consistency_country_and_conflict_cap():
     check_conflicting_values_cap(run)
     assert comp.term_facts.first_publication_year.confidence is Confidence.MEDIUM
     assert "disagreed" in comp.term_facts.first_publication_year.reasoning
+
+
+# --- Tier 1: the static license table (rules/licenses.py) -------------------------
+
+def test_cc_by_sa_clears_both_layers_with_conditions(cache, transport, no_parallel):
+    # A CC BY-SA release: license relations on the recording and the work.
+    # Tier 1 settles both layers instantly; no search, no reader, no dates.
+    transport(handler)
+    resp, em = run_music(q("Golden Hour \u2014 Night Owl Static"))
+    assert resp.overall_verdict is Verdict.CLEAR_WITH_CONDITIONS
+    for lv in resp.layer_verdicts:
+        assert lv.verdict is Verdict.CLEAR_WITH_CONDITIONS
+        assert lv.determination.rule_id == "license_cc_by_sa"
+        assert lv.determination.confidence is Confidence.MEDIUM
+        assert "credit the creator" in lv.determination.rule_explanation
+    for layer in resp.entity.layers:
+        assert layer.existing_license is not None
+        assert layer.existing_license.sources[0].method.value == "rights_uri"
+    assert "license" in resp.overall_headline.lower()
+    assert not resp.unresolved
+
+
+def test_cc_nc_depends_on_intent(cache, transport, no_parallel):
+    # NC does not cover commercial use: the verdict flips with intent while
+    # the determination itself stays intent-neutral.
+    from rules.licenses import covers_intent, parse_license
+    lic = parse_license("https://creativecommons.org/licenses/by-nc/3.0/")
+    assert lic.code == "cc_by_nc" and lic.noncommercial
+    assert covers_intent(lic, "education") and not covers_intent(lic, "film_tv")
+
+
+def test_license_table_parses_the_family():
+    from rules.licenses import parse_license
+    assert parse_license("https://creativecommons.org/publicdomain/zero/1.0/").public_domain
+    assert parse_license("http://creativecommons.org/licenses/by/2.0/").code == "cc_by"
+    assert parse_license("https://creativecommons.org/licenses/by-nc-nd/4.0/").noderivatives
+    assert parse_license("https://example.com/all-rights-reserved") is None

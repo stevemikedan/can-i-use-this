@@ -186,6 +186,16 @@ def _parse_work_rels(relations: list, only_work: Optional[str] = None) -> list[d
     return out
 
 
+def recording_licenses(mbid: str) -> Fetched:
+    """/recording/{mbid}?inc=url-rels -> list of license URLs (Tier 1 input)."""
+    f = _mb(f"recording/{mbid}", {"inc": "url-rels"}, f"mb:recording:{mbid}:url-rels")
+    if not f.ok:
+        return f
+    f.data = [rel["url"]["resource"] for rel in f.data.get("relations") or []
+              if rel.get("target-type") == "url" and rel.get("type") == "license"]
+    return f
+
+
 def recording_works(mbid: str) -> Fetched:
     """/recording/{mbid}?inc=work-rels -> {mbid, title, date, works: [...]}."""
     f = _mb(f"recording/{mbid}", {"inc": "work-rels"}, f"mb:recording:{mbid}:work-rels")
@@ -222,8 +232,11 @@ def work_details(work_mbid: str) -> Fetched:
             })
         elif rel.get("target-type") == "url" and rel.get("type") == "wikidata":
             wikidata = rel["url"]["resource"].rstrip("/").rsplit("/", 1)[-1]
+    licenses = [rel["url"]["resource"] for rel in raw.get("relations") or []
+                if rel.get("target-type") == "url" and rel.get("type") == "license"]
     f.data = {
         "work_mbid": raw.get("id"),
+        "licenses": licenses,
         "title": raw.get("title"),
         "disambiguation": raw.get("disambiguation") or "",
         "iswcs": raw.get("iswcs") or [],

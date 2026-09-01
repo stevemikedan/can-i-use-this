@@ -87,8 +87,30 @@ def _undetermined(layer: RightsLayer, j: Jurisdiction, rule_id: str, why: str,
                          rule_explanation=why, confidence=Confidence.NONE, blocked_by=blocked_by)
 
 
+def _license_determination(layer: RightsLayer, j: Jurisdiction) -> Determination:
+    """
+    Tier 1: a recognized license on the record settles the layer without
+    term arithmetic. The status is intent-independent (PUBLIC_DOMAIN for a
+    dedication, PROTECTED-but-licensed otherwise); whether the license
+    covers the user's intent (NC vs commercial) is applied at assemble
+    time via map_status_to_verdict(license_covers_intent=...).
+    """
+    from rules.licenses import license_explanation, parse_license
+    lic = parse_license(layer.existing_license.value)
+    status = DeterminationStatus.PUBLIC_DOMAIN if lic.public_domain else DeterminationStatus.PROTECTED
+    return Determination(
+        layer_id=layer.layer_id, jurisdiction=j, status=status, expiry_year=None,
+        rule_id=f"license_{lic.code}",
+        rule_explanation=license_explanation(lic, "__intent_neutral__"),
+        confidence=layer.existing_license.confidence,
+        depends_on_facts=["existing_license"],
+    )
+
+
 def determine_composition(layer: RightsLayer, j: Jurisdiction, question_ids: dict[str, str],
                           death_years: list[Optional[int]]) -> Determination:
+    if layer.existing_license is not None:
+        return _license_determination(layer, j)
     tf = layer.term_facts
     if j is Jurisdiction.US:
         if tf.first_publication_year is None:
@@ -146,6 +168,8 @@ def determine_composition(layer: RightsLayer, j: Jurisdiction, question_ids: dic
 
 
 def determine_recording(layer: RightsLayer, j: Jurisdiction, question_ids: dict[str, str]) -> Determination:
+    if layer.existing_license is not None:
+        return _license_determination(layer, j)
     tf = layer.term_facts
     basis = tf.recording_date_basis or RecordingDateBasis.UNKNOWN
     if tf.recording_first_published_year is None or basis not in TRUSTWORTHY_DATE_BASES:

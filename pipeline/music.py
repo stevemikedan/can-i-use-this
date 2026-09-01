@@ -374,6 +374,33 @@ class CompositionFacts:
     notes: list[str]
     sibling_extra: list[Writer] = field(default_factory=list)
     writer_links: list[HandoffLink] = field(default_factory=list)
+    licenses: list[str] = field(default_factory=list)
+
+
+def tier1_license(urls: list[str], where: str) -> Optional[ResearchedFact]:
+    """
+    Tier 1: the first recognized license URI among a record's license
+    relations, as a fact. MEDIUM: MusicBrainz is a single community source
+    asserting the license; the table match itself is deterministic.
+    """
+    from rules.licenses import parse_license
+    for url in urls or []:
+        lic = parse_license(url)
+        if lic is not None:
+            return ResearchedFact(
+                value=url, confidence=Confidence.MEDIUM,
+                sources=[Source(name="MusicBrainz", url=url, method=ResearchMethod.RIGHTS_URI,
+                                retrieved_at=datetime.now(timezone.utc),
+                                excerpt=f"license relation on the {where}: {lic.label}")],
+                reasoning=f"License relation on the MusicBrainz {where}, matched to {lic.label} "
+                          f"in the static license table (Tier 1).")
+    return None
+
+
+def tier1_label(fact: ResearchedFact) -> str:
+    from rules.licenses import parse_license
+    lic = parse_license(fact.value)
+    return lic.label if lic else "recognized license"
 
 
 def _writer_qid(wr: Writer, em: Emitter, notes: list[str]) -> Optional[str]:
@@ -413,6 +440,7 @@ def _research_composition(sel: Selection, em: Emitter) -> CompositionFacts:
     else:
         notes.append(f"MusicBrainz work lookup failed ({det.error})")
     qid = det.data["wikidata"] if det.ok else None
+    licenses = (det.data.get("licenses") or []) if det.ok else []
     iswcs = (w.get("iswcs") or (det.data["iswcs"] if det.ok else [])) or []
     title = (det.data["title"] if det.ok else None) or w.get("title") or ""
 
@@ -517,7 +545,7 @@ def _research_composition(sel: Selection, em: Emitter) -> CompositionFacts:
             f"{s.name} (d. {s.death_year})" if s.death_year else s.name for s in sibling_extra))
         corroborated = False
     return CompositionFacts(writers, corroborated, writer_conf, year, year_conf, year_prop,
-                            year_sources, qid, iswcs, title, notes, sibling_extra)
+                            year_sources, qid, iswcs, title, notes, sibling_extra, licenses=licenses)
 
 
 def _suggestion_candidates(hits: list[dict], limit: int = 5) -> list[Candidate]:
@@ -934,10 +962,22 @@ def stage_research_composition(run: MusicRun) -> None:
                     f"Writer death year precedes the {cf.year} publication; flagged as a likely "
                     f"translation or arrangement of an earlier work")
 
+    # Tier 1: a recognized license on the work settles this layer; renewal
+    # and every other term question is moot for the licensed use.
+    lic_fact = tier1_license(cf.licenses, "work")
+    if lic_fact is not None:
+        run.composition.existing_license = lic_fact
+        # Term questions (publication year, writers, death years) are moot
+        # for the licensed use: the license settles the layer.
+        questions.clear()
+        question_ids.clear()
+        em.emit(S.RESEARCH, "progress",
+                f"Tier 1: license relation on the work; {tier1_label(lic_fact)} from the static table, no research")
+
     # Renewal window -> the user's answer if they gave one on a re-run,
     # else Tier 3 SEARCH (primary path) and the reader
     cliff = CURRENT_YEAR - 95
-    if cf.year and cliff <= cf.year <= 1963:
+    if run.composition.existing_license is None and cf.year and cliff <= cf.year <= 1963:
         supplied = answered_fact(run.query, f"{COMPOSITION}:renewal")
         if supplied is not None:
             # The user came back with the answer to the open question. The
@@ -988,6 +1028,18 @@ def stage_research_recording(run: MusicRun) -> None:
 
     rtf = recording.term_facts
     rtf.recording_date_basis = sel.basis
+
+    # Tier 1: a license relation on the selected recording settles this
+    # layer from the static table (rules/licenses.py); the date research
+    # below is moot for the licensed use and is skipped.
+    lf = mb.recording_licenses(sel.pick["mbid"])
+    em.consulted()
+    if lf.ok:
+        lic_fact = tier1_license(lf.data, "recording")
+        if lic_fact is not None:
+            recording.existing_license = lic_fact
+            em.emit(S.RESEARCH, "progress",
+                    f"Tier 1: license relation on the recording; {tier1_label(lic_fact)} from the static table, no research")
     sel_notes = []
     if len(sel.sessions) > 1:
         sel_notes.append(f"other dated sessions by this artist: {', '.join(sel.sessions[1:6])}")
@@ -1005,7 +1057,7 @@ def stage_research_recording(run: MusicRun) -> None:
         rtf.recording_first_published_year = ResearchedFact(
             value=sel.rec_year, confidence=sel.rec_conf, sources=[sel.source],
             reasoning=why + ("; " + "; ".join(sel_notes) if sel_notes else ""))
-    if sel.basis is not RecordingDateBasis.DATED_PERFORMANCE:
+    if sel.basis is not RecordingDateBasis.DATED_PERFORMANCE and recording.existing_license is None:
         em.emit(S.RESEARCH, "progress", "No dated session on file; searching for the original release (Parallel Search)")
         out, links = search_recording_date(title, sel.pick["artist"], sel.pick["date"],
                                            announce=_announce_search(em, "original release"))

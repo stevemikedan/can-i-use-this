@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from registry import handoff_links
+from rules.licenses import covers_intent, license_explanation, parse_license
 from schemas import (
     DEFAULT_ALL_LAYERS_REQUIRED, REQUIRED_LAYERS, VERDICT_ORDER, AssetQuery, AssetType, Candidate,
     Confidence, Determination, DeterminationStatus, Intent, Jurisdiction, LayerVerdict,
@@ -72,6 +73,8 @@ def required_layers(asset_type: AssetType, intent: Intent, layers: list[RightsLa
 
 
 def _headline_for(det: Determination, j: Jurisdiction) -> str:
+    if det.rule_id.startswith("license_") and det.status is not DeterminationStatus.PUBLIC_DOMAIN:
+        return det.rule_explanation[:120]
     if det.status is DeterminationStatus.PUBLIC_DOMAIN:
         return f"Public domain in the {j.value}" + (f" since 1 January {det.expiry_year}" if det.expiry_year else "")
     if det.status is DeterminationStatus.PROTECTED:
@@ -87,7 +90,12 @@ def layer_verdicts(entity: ResolvedEntity, dets: list[Determination], jurisdicti
     out = []
     for layer in entity.layers:
         det = next(d for d in dets if d.layer_id == layer.layer_id and d.jurisdiction == jurisdiction)
-        verdict = map_status_to_verdict(det.status)
+        lic = parse_license(layer.existing_license.value) if layer.existing_license else None
+        verdict = map_status_to_verdict(det.status,
+                                        license_covers_intent=lic is not None and covers_intent(lic, intent.value))
+        if lic is not None:
+            # The determination is intent-neutral; the shown reasoning is not.
+            det = det.model_copy(update={"rule_explanation": license_explanation(lic, intent.value)})
         is_required = layer.layer_id in req
         note = None
         if not is_required and intent is Intent.RERECORD and layer.layer_id == "sound_recording":
@@ -126,6 +134,8 @@ def overall_headline(verdict: Verdict, blocking: Optional[LayerVerdict], lvs: li
         why = UNDETERMINED_WHY.get(blocking.determination.rule_id) or \
             _first_words(blocking.determination.rule_explanation, 70)
         return f"The {b} layer is blocked. {why[:1].upper() + why[1:]}."[:160]
+    if verdict is Verdict.CLEAR_WITH_CONDITIONS:
+        return ("Usable under its license. " + blocking.determination.rule_explanation)[:160]
     exp = blocking.determination.expiry_year
     tail = ""
     if others:

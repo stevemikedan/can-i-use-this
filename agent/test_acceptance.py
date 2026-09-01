@@ -20,7 +20,8 @@ from .workflow import build_graph, run_workflow
 CASES = sorted(mockworld.CASES)
 EXPECTED_VERDICT = {"blocked": "license_required", "clean": "clear", "stop": "undetermined",
                     "reissue": "undetermined", "renewal": "undetermined",
-                    "rainbow": "undetermined"}
+                    "rainbow": "undetermined",
+                    "cc": "clear_with_conditions"}
 
 
 def load(name: str) -> dict:
