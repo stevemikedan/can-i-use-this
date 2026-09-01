@@ -57,7 +57,7 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
           <h1 className="m-0 font-black text-verdict leading-none tracking-[-0.01em] uppercase text-balance max-[560px]:text-stat">
             Methodology<span className="text-blue-on-ink">.</span>
           </h1>
-          <p className="m-0 mt-5 text-headline font-medium leading-[1.3] max-w-[42ch] text-pretty text-paper">
+          <p className="m-0 mt-5 text-headline font-medium leading-[1.3] max-w-[60ch] text-pretty text-paper">
             This is a register of rights research: every verdict is built from public records, carries its
             sources, and says out loud what could not be determined.
           </p>
@@ -103,8 +103,8 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
           </div>
           <div className="mt-2 flex flex-col">
             <SourceRow tier="Tier 1" name="License URIs"
-              role="RightsStatements.org and Creative Commons marks, parsed from a static table. No call, no model."
-              detail="A CC0 or public-domain mark settles a layer outright, so it is checked before anything spends a request." />
+              role="RightsStatements.org and Creative Commons marks, which settle a layer outright. No call, no model."
+              detail="Reserved in the schema for license-marked inputs. A music inquiry has no license URI to carry, so today every inquiry starts at Tier 2." />
             <SourceRow tier="Tier 2" name="MusicBrainz"
               role="Recordings, works, writer credits, dated performances."
               detail="The recording is selected by earliest dated session, never by first-release date, which is frequently a reissue. Calls are cached persistently, throttled, and fail soft into Tier 3." />
@@ -148,8 +148,8 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
             sub="Built for the Agentic Cinema hackathon on Devpost, Parallel track." />
           <div className="pt-2 flex flex-col">
             {[
-              ['Google ADK', 'Orchestrates the run as an agent graph on Vertex AI: sequential stages, with the two research layers fanned out concurrently.'],
-              ['Gemini 2.5 Flash', 'The reading step only. Evidence in; a cited fact or an abstention out. It never computes a term and cannot assert a fact it cannot cite.'],
+              ['Google ADK', 'Orchestrates the run as an agent graph: sequential stages, with the two research layers fanned out concurrently.'],
+              ['Gemini 2.5 Flash', 'The reading step only, on Vertex AI. Evidence in; a cited fact or an abstention out. It never computes a term and cannot assert a fact it cannot cite.'],
               ['Parallel Search', 'On the primary request path, not a side channel. Renewal research, release research and writer corroboration run through it, and every search appears in the ledger.'],
               ['The rules engine', 'Deterministic Python computes every term. Each determination records which rule fired and why, so a verdict can be audited line by line.'],
             ].map(([name, desc]) => (

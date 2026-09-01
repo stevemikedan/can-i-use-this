@@ -39,7 +39,7 @@ export default function Disambiguation({ resp, params, onPick, onComposition, on
           <h1 className="m-0 font-black text-verdict leading-none tracking-[-0.01em] uppercase text-balance max-[560px]:text-stat">
             Which one<span className="text-blue-on-ink">?</span>
           </h1>
-          <p className="m-0 mt-5 text-headline font-medium leading-[1.3] max-w-[42ch] text-pretty text-paper">
+          <p className="m-0 mt-5 text-headline font-medium leading-[1.3] max-w-[60ch] text-pretty text-paper">
             “{title}” has been recorded by {nArtists ?? 'many'} different artists, and each master is separately
             owned. Research stops here until you point at one.
           </p>

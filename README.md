@@ -37,7 +37,6 @@ flowchart TD
   DE --> RC["research composition"]
   DE --> RR["research recording"]
   subgraph READ ["sources we read — cheapest tier first"]
-    T1["Tier 1 · license URIs, static table"]
     T2["Tier 2 · MusicBrainz, Wikidata — cached, throttled, fail-soft"]
     T3["Tier 3 · Parallel Search → Gemini reader: a cited fact, or abstain"]
   end
@@ -51,7 +50,7 @@ flowchart TD
   DEST -- "you bring the answer back, it re-runs" --> Q
 ```
 
-The stages run as a **Google ADK agent graph** (`agent/workflow.py`) on Vertex AI — sequential agents wrapping plain-Python stage functions, with the two research stages fanned out in parallel. The graph reproduces the pipeline's frozen acceptance fixtures exactly; the pipeline stays canonical and testable without an agent runtime.
+The stages run as a **Google ADK agent graph** (`agent/workflow.py`) — sequential agents wrapping plain-Python stage functions, with the two research stages fanned out in parallel. The graph's one model call is the reading step, Gemini 2.5 Flash on Vertex AI. The graph reproduces the pipeline's frozen acceptance fixtures exactly; the pipeline stays canonical and testable without an agent runtime.
 
 **Identify stops on ambiguity.** A title with no artist and many artists in the results returns candidates instead of researching — researching an ambiguous entity produces confidently wrong output, the worst failure mode this product has.
 
@@ -65,7 +64,7 @@ The distinction is the architecture. If a fact on a record ever cited one of the
 
 | Tier | Source | What we take |
 |---|---|---|
-| 1 | RightsStatements.org / Creative Commons URIs | A license mark settles a layer outright. Static table, no call, no model. |
+| 1 | License URIs | RightsStatements.org / Creative Commons marks would settle a layer outright with no call and no model. Reserved in the schema; a music inquiry has no license URI to carry, so today every inquiry starts at Tier 2. |
 | 2 | MusicBrainz | Recordings, works, writer credits, dated performances. Cached persistently, throttled, fails soft into Tier 3. |
 | 2 | Wikidata | Publication dates, writer death years, writer-list corroboration. |
 | 3 | Parallel **Search**, read by Gemini | Web evidence for what no API holds: renewal records, original release dates, writer corroboration. On the primary request path — every query it runs is entered in the on-screen ledger. |
@@ -103,7 +102,7 @@ Three times during the build a source returned a plausible fact that had never a
 - **An incomplete author list silently shortening a term.** MusicBrainz credited *West End Blues* to King Oliver but not Clarence Williams, and life+70 runs from the last surviving author. Oliver died 1938, Williams 1965 — a 27-year error in the direction that gets someone sued.
 - **A name search returning the wrong person.** "Clarence Williams" on Wikidata returned the actor who died in 2021, not the songwriter who died in 1965, and nothing about the result looked wrong.
 
-All three are the same failure: a plausible answer built on a fact that was never actually established. That is why every fact carries sources and confidence, or isn't treated as a fact. Each became a rule — a recording's date must come from a trustworthy basis; a writer list must be corroborated before life+70 is applied, and an uncorroborated list *blocks* the determination rather than shading it; people are resolved through identifier links between databases, never by name. When a rule can't be met the layer is undetermined and the response names the fact that would settle it.
+All three are the same failure: a plausible answer built on a fact that was never actually established. That is why every fact carries sources and confidence, or isn't treated as a fact. Each became a rule — a recording's date must come from a trustworthy basis; a writer list must be corroborated before life+70 is applied, and an uncorroborated list *blocks* the determination rather than shading it; people are resolved through identifier links between databases first, with a name-search fallback that announces itself on the record. When a rule can't be met the layer is undetermined and the response names the fact that would settle it.
 
 ## Setup and run
 
@@ -136,7 +135,7 @@ Runtime AI is limited to Google Cloud AI services and Parallel; everything else 
 
 - **The full flow is live**: Entry → streamed research (an accession log — every source consulted entered as it returns, failures struck through, corrected never erased) → the verdict record with layer ledger, cited evidence trail, open questions with answer controls, clearance paths and handoff links → disambiguation when a title is ambiguous.
 - **Cue sheet mode** (`/cues`): paste a list, one verdict row per cue, most restrictive first, with the blocking reason per row. **Export**: CSV, Markdown to clipboard, PDF via the print stylesheet.
-- **Answer and re-run**: the renewal question takes Yes / No / Still unknown with an optional source attestation, and the verdict updates under the confidence policy above.
+- **Answer and re-run**: the renewal question takes Renewed / Not renewed with an optional source attestation, and the verdict updates under the confidence policy above. Not answering is the third state; the question just stays open.
 - Both reference queries produce the expected cited two-layer verdict — *West End Blues* in ~8 s cold, *Rhapsody in Blue* in ~19 s cold, under a second warm. Over live evidence the reader resolved one of four renewal windows (Blue Moon, medium, from a publisher's notice) and declined the other three honestly.
 - 180+ tests across the rules engine, cache layer, Parallel wrappers, link registry, pipeline, reader schema, graph and API. The ADK graph reproduces the pipeline's frozen acceptance fixtures exactly.
 - Not yet built: MLC integration (access pending). Text/film shares the skeleton and was cut for the submission — see `docs/ENDGAME.md`.

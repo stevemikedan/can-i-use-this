@@ -88,7 +88,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
             <h1 key={stampKey} className="restamp m-0 font-black text-verdict leading-none tracking-[-0.01em] uppercase text-balance max-[560px]:text-stat">
               {VERDICT_WORD[resp.overall_verdict]}<span className="text-blue-on-ink">.</span>
             </h1>
-            <p className="m-0 mt-5 text-headline font-medium leading-[1.3] max-w-[40ch] text-pretty text-paper">{resp.overall_headline}</p>
+            <p className="m-0 mt-5 text-headline font-medium leading-[1.3] max-w-[60ch] text-pretty text-paper">{resp.overall_headline}</p>
           </div>
           <div className="flex flex-col gap-[22px]">
             <Controls intent={intent} jurisdiction={jurisdiction} onIntent={onIntent} onJurisdiction={onJurisdiction} onInk busy={busy} />
