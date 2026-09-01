@@ -28,6 +28,11 @@ BM_WORK = "3c339d3d-0000-0000-0000-000000000002"
 OTR_WORK = "f4a81d77-0000-0000-0000-000000000005"
 CC_WORK = "9d3e5b21-0000-0000-0000-000000000006"
 CC_URI = "https://creativecommons.org/licenses/by-sa/4.0/"
+GS_WORK = "1e7c9a44-0000-0000-0000-000000000007"
+GS_URI = "https://creativecommons.org/licenses/by-nc-sa/3.0/"
+# Release-level licenses, keyed by recording mbid (the NIN Ghosts pattern:
+# the CC license sits on the release, not the recording or work).
+RELEASE_LICENSES = {"gs-1": [GS_URI]}
 RIB_WORK = "60b22df4-0000-0000-0000-000000000004"
 
 
@@ -65,6 +70,7 @@ RECORDINGS = [
     # "Golden Hour": a CC BY-SA release; license relations on the recording
     # and the work. Tier 1 settles both layers with no research at all.
     rec("cc-golden", "Golden Hour", "Night Owl Static", "2019-03", CC_WORK, license=CC_URI),
+    rec("gs-1", "Ghost Signal", "Night Owl Static", "2020-01", GS_WORK),
     rec("otr-garland-1993", "Over the Rainbow", "Judy Garland", "1993", OTR_WORK),
     rec("lt-studio", "Later Take", "The Guards", "1999-06", "w-latertake"),
     rec("lt-live", "Later Take", "The Guards", "2001-11", "w-latertake", "2001-06-15"),
@@ -83,6 +89,7 @@ WORKS = {
         {"target-type": "artist", "type": "composer", "begin": "1924", "artist": {"id": "a-gershwin", "name": "George Gershwin"}},
         {"target-type": "url", "type": "wikidata", "url": {"resource": "https://www.wikidata.org/wiki/Q722599"}},
     ]},
+    GS_WORK: {"id": GS_WORK, "title": "Ghost Signal", "score": 100, "iswcs": [], "relations": []},
     CC_WORK: {"id": CC_WORK, "title": "Golden Hour", "score": 100, "iswcs": [], "relations": [
         {"target-type": "url", "type": "license", "url": {"resource": CC_URI}},
     ]},
@@ -142,6 +149,11 @@ def handler(req: httpx.Request) -> httpx.Response:
             return httpx.Response(200, json={"entities": {q: WD.get(q, {"id": q, "missing": ""}) for q in ids}})
         q = WD_SEARCH.get(p.get("search"))
         return httpx.Response(200, json={"search": [{"id": q, "label": p["search"], "description": "x"}] if q else []})
+    if path == "/ws/2/release" and "recording" in p:
+        urls = RELEASE_LICENSES.get(p["recording"], [])
+        releases = [{"id": f"rel-{i}", "relations": [
+            {"target-type": "url", "type": "license", "url": {"resource": u}}]} for i, u in enumerate(urls)]
+        return httpx.Response(200, json={"releases": releases})
     if path == "/ws/2/recording" and "query" in p:
         parts = p["query"].split('"')
         title = parts[1] if len(parts) > 1 else None   # loose/fuzzy queries are unquoted: no mock matches

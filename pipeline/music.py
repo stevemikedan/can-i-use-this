@@ -1040,6 +1040,17 @@ def stage_research_recording(run: MusicRun) -> None:
             recording.existing_license = lic_fact
             em.emit(S.RESEARCH, "progress",
                     f"Tier 1: license relation on the recording; {tier1_label(lic_fact)} from the static table, no research")
+    if recording.existing_license is None:
+        # Most CC albums carry the license on the RELEASE, not the recording
+        # (NIN's Ghosts). One extra cached call covers the common case.
+        rf = mb.release_licenses(sel.pick["mbid"])
+        em.consulted()
+        if rf.ok:
+            lic_fact = tier1_license(rf.data, "release")
+            if lic_fact is not None:
+                recording.existing_license = lic_fact
+                em.emit(S.RESEARCH, "progress",
+                        f"Tier 1: license relation on the release; {tier1_label(lic_fact)} from the static table, no research")
     sel_notes = []
     if len(sel.sessions) > 1:
         sel_notes.append(f"other dated sessions by this artist: {', '.join(sel.sessions[1:6])}")

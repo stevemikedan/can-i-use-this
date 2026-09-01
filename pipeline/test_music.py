@@ -577,3 +577,21 @@ def test_license_table_parses_the_family():
     assert parse_license("http://creativecommons.org/licenses/by/2.0/").code == "cc_by"
     assert parse_license("https://creativecommons.org/licenses/by-nc-nd/4.0/").noderivatives
     assert parse_license("https://example.com/all-rights-reserved") is None
+
+
+def test_release_level_license_and_nc_flips_with_intent(cache, transport, no_parallel):
+    # The NIN Ghosts pattern: the CC license sits on the release. And NC does
+    # not cover a commercial use, so the same record flips with intent.
+    transport(handler)
+    resp, em = run_music(q("Ghost Signal \u2014 Night Owl Static"))       # film_tv
+    lv = next(x for x in resp.layer_verdicts if x.layer_id == "sound_recording")
+    assert lv.verdict is Verdict.LICENSE_REQUIRED
+    assert lv.determination.rule_id == "license_cc_by_nc_sa"
+    layer = next(l for l in resp.entity.layers if l.layer_id == "sound_recording")
+    assert layer.existing_license.sources[0].excerpt.startswith("license relation on the release")
+    assert "does not cover commercial use" in lv.determination.rule_explanation
+
+    resp2, em2 = run_music(q("Ghost Signal \u2014 Night Owl Static", intent=Intent.EDUCATION))
+    lv2 = next(x for x in resp2.layer_verdicts if x.layer_id == "sound_recording")
+    assert lv2.verdict is Verdict.CLEAR_WITH_CONDITIONS
+    assert "non-commercial use only" in lv2.determination.rule_explanation

@@ -196,6 +196,26 @@ def recording_licenses(mbid: str) -> Fetched:
     return f
 
 
+def release_licenses(recording_mbid: str) -> Fetched:
+    """
+    /release?recording={mbid}&inc=url-rels -> license URLs across the
+    recording's releases. The pattern most CC albums follow: the license
+    relation sits on the release (NIN's Ghosts is the canonical case), not
+    on the recording or work entities.
+    """
+    f = _mb("release", {"recording": recording_mbid, "inc": "url-rels", "limit": "25"},
+            f"mb:release-licenses:{recording_mbid}")
+    if not f.ok:
+        return f
+    urls = []
+    for release in f.data.get("releases") or []:
+        for rel in release.get("relations") or []:
+            if rel.get("target-type") == "url" and rel.get("type") == "license":
+                urls.append(rel["url"]["resource"])
+    f.data = urls
+    return f
+
+
 def recording_works(mbid: str) -> Fetched:
     """/recording/{mbid}?inc=work-rels -> {mbid, title, date, works: [...]}."""
     f = _mb(f"recording/{mbid}", {"inc": "work-rels"}, f"mb:recording:{mbid}:work-rels")
