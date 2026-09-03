@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PipelineEvent, QueryParams, RightsResponse } from './types'
 import { checkCached, runQuery, streamQuery } from './lib/api'
-import { splitQuery } from './lib/format'
 import Entry from './screens/Entry'
 import Progress from './screens/Progress'
 import Resume from './screens/Resume'
@@ -13,11 +12,6 @@ import { Boundary, ErrorScreen, NotFound } from './screens/Status'
 import { paramsFromUrl, permalinkFor } from './lib/export'
 import { setNavHandler } from './lib/nav'
 import { Footer } from './components/ui'
-
-// Development fixtures: real RightsResponses captured from the pipeline
-// (web/src/dev/*.json). ?fixture=<name> renders one without running a query.
-const FIXTURES = import.meta.glob<RightsResponse>('./dev/*.json', { import: 'default' })
-const fixtureNames = Object.keys(FIXTURES).map((p) => p.replace('./dev/', '').replace('.json', '')).sort()
 
 type Screen = 'entry' | 'progress' | 'result' | 'disambiguation' | 'notfound' | 'boundary' | 'error' | 'about' | 'cues' | 'resume'
 
@@ -46,19 +40,6 @@ export default function App() {
   const [resumeAt, setResumeAt] = useState<string | null>(null)   // permalink: when the record was researched
   const stopStream = useRef<(() => void) | null>(null)
   const abort = useRef<AbortController | null>(null)
-
-  const fixtureParam = new URLSearchParams(window.location.search).get('fixture')
-  useEffect(() => {
-    if (!fixtureParam) return
-    const loader = FIXTURES[`./dev/${fixtureParam}.json`]
-    if (!loader) return
-    loader().then((r) => {
-      const { title, artist } = splitQuery(r.query.raw_input)
-      setParams({ title, artist: artist ?? undefined, intent: r.query.intent, jurisdiction: r.query.jurisdiction })
-      setResp(r)
-      setScreen(routeFor(r))
-    })
-  }, [fixtureParam])
 
   /** Full run with the streamed progress screen. */
   const research = useCallback((p: QueryParams) => {
@@ -132,7 +113,6 @@ export default function App() {
   // the record was researched recently enough that the re-run is effectively
   // instant; otherwise the reader chooses whether to spend a research run.
   useEffect(() => {
-    if (fixtureParam) return
     const p = paramsFromUrl(window.location.search)
     if (!p) return
     setParams(p)
@@ -144,15 +124,6 @@ export default function App() {
       .catch(() => { setResumeAt(null); setScreen('resume') })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const devBar = fixtureParam && (
-    <div className="no-print max-w-[920px] mx-auto px-6 pt-3 flex gap-x-3 gap-y-1 items-baseline flex-wrap text-meta">
-      <span className="eyebrow text-ink-70">Dev — fixture</span>
-      {fixtureNames.map((n) => (
-        <a key={n} href={`?fixture=${n}`} className={`font-mono ${n === fixtureParam ? 'text-ink font-semibold no-underline' : ''}`}>{n}</a>
-      ))}
-    </div>
-  )
 
   const body = (() => {
     switch (screen) {
@@ -202,7 +173,6 @@ export default function App() {
 
   return (
     <>
-      {devBar}
       {body}
       <Footer />
     </>
