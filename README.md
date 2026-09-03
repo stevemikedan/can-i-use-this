@@ -24,7 +24,7 @@ One thing you search for is usually several separately-owned works with differen
 
 Same song, and both jurisdictions say no — but blocked on *different layers*. In the US the composition is free and the master is not; in the UK and EU the master expired decades ago and the composition runs until 2036, because life+70 follows the last surviving co-writer (Clarence Williams, d. 1965). Most tools flatten this into one answer and get it wrong. Handling it correctly is the entire product.
 
-The verdict is three-dimensional — `f(layer, jurisdiction, intent)`. A re-recording needs only the composition, so the same search gives a different answer when the master stops mattering.
+The verdict is three-dimensional — `f(layer, jurisdiction, intent)`. The table shows the first two; the third changes which layers need clearing at all: a re-recording needs only the composition, so the same search gives a different answer when the master stops mattering. Duration is deliberately not a fourth dimension. It scales what a license costs, never whether permission is needed.
 
 The layer model is not specific to music: a book is a work, an edition, and sometimes a translation, each with its own term and owners. The register is scoped to music because the sources are strongest there and the composition/recording split is sharpest, but the architecture does not assume it.
 
