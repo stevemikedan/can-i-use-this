@@ -102,7 +102,7 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               The layer model is not specific to music: a book is a work, an edition, and sometimes a
               translation, each with its own term and owners. The register is scoped to music because cues are the
               clearance problem filmmakers hit most, and because the music sources are strong enough
-              to support a cited answer. Nothing in the architecture is music-only.
+              to support a cited answer. The model generalizes; only the music path is built.
             </P>
           </div>
         </section>
