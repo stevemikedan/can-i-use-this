@@ -92,6 +92,13 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               every record.
             </P>
             <P muted>
+              Duration is a control for the opposite reason: it changes nothing. US copyright has no
+              short-use exception, no seven seconds, no eight bars; Bridgeport put it as &ldquo;get a
+              license or do not sample.&rdquo; Length scales what a license costs, never whether you need
+              one, and fair use is a defense a court weighs after the fact, not a rule to rely on
+              beforehand.
+            </P>
+            <P muted>
               The layer model is not specific to music: a book is a work, an edition, and sometimes a
               translation, each with its own term and owners. The register is scoped to music because the
               sources are strongest there and the composition/recording split is sharpest, but the
@@ -130,8 +137,9 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
             <Eyebrow tracking={12} className="text-ink-70">Destinations we point to</Eyebrow>
             <P muted>
               Never queried. These hold answers we cannot pull, so records link to them with the search already
-              filled in. If a fact ever cited one of these as read, that would be a bug; the distinction is the
-              architecture.
+              filled in, and Clearance drafts the sync and master-use requests themselves, filled from the
+              record with the production-specific parts left as marked blanks. If a fact ever cited one of
+              these as read, that would be a bug; the distinction is the architecture.
             </P>
           </div>
           <div className="mt-2 flex flex-col">
@@ -232,19 +240,13 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
             <P>
               <span className="font-semibold">Licensing contacts are not a database.</span> Sync licenses are
               negotiated one-off and nobody publishes prices. The register identifies the parties and the shape
-              of the negotiation, and gives cost bands as ranges, never a point estimate.
+              of the negotiation, and gives cost bands as ranges, never a point estimate. The ranges are rough
+              orders of magnitude from trade practice, not quotes.
             </P>
             <P>
               <span className="font-semibold">US-centric.</span> The US rules are the most complete; UK and EU
               determinations cover the composition (life plus 70) and the recording (70 years from publication).
               Other territories are not modelled.
-            </P>
-            <P>
-              <span className="font-semibold">No duration is safe.</span> There is no short-use exception in US
-              copyright: no seven seconds, no eight bars. Bridgeport put it as &ldquo;get a license or do not
-              sample.&rdquo; Length affects what a license costs, not whether you need one; fair use can apply
-              to short uses, but it is a defense a court weighs after the fact, not a rule to rely on
-              beforehand.
             </P>
             <P>
               <span className="font-semibold">Ownership shares are researched, not authoritative.</span> The
