@@ -70,10 +70,10 @@ export function Boundary({ note, params, onNew }: { note: string; params: QueryP
   return (
     <StatusPage word="Out of scope" glyph="." params={params}
       actions={<a href="#" onClick={(e) => { e.preventDefault(); onNew() }} className="font-semibold text-body">Try a piece of music instead →</a>}>
-      <div className="text-body leading-[1.55] max-w-[66ch]">{note}</div>
-      <div className="text-body leading-[1.55] text-ink-70 max-w-[66ch]">
-        This register researches music: compositions and sound recordings, separately. Other kinds of work are
-        recognized and declined honestly rather than researched badly.
+      <div className="text-body leading-[1.55] max-w-[80ch]">{note}</div>
+      <div className="text-body leading-[1.55] text-ink-70 max-w-[80ch]">
+        This register researches music: compositions and sound recordings, separately. Other kinds of work
+        are not covered, and the schema reserves the shape for them.
       </div>
     </StatusPage>
   )
