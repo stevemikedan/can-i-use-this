@@ -26,7 +26,7 @@ Same song, and both jurisdictions say no — but blocked on *different layers*. 
 
 The verdict is three-dimensional — `f(layer, jurisdiction, intent)`. The table shows the first two; the third changes which layers need clearing at all: a re-recording needs only the composition, so the same search gives a different answer when the master stops mattering. Duration is deliberately not a fourth dimension. It scales what a license costs, never whether permission is needed.
 
-The layer model is not specific to music: a book is a work, an edition, and sometimes a translation, each with its own term and owners. The register is scoped to music because the sources are strongest there and the composition/recording split is sharpest, but the architecture does not assume it.
+The layer model is not specific to music: a book is a work, an edition, and sometimes a translation, each with its own term and owners. The register is scoped to music because cues are the clearance problem filmmakers hit most; that the sources are strongest there and the composition/recording split is sharpest is what makes a cited answer possible. The architecture does not assume the scope.
 
 ## Architecture
 

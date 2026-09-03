@@ -100,9 +100,10 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
             </P>
             <P muted>
               The layer model is not specific to music: a book is a work, an edition, and sometimes a
-              translation, each with its own term and owners. The register is scoped to music because the
-              sources are strongest there and the composition/recording split is sharpest, but the
-              architecture does not assume it.
+              translation, each with its own term and owners. The register is scoped to music because cues are the
+              clearance problem filmmakers hit most; that the sources are strongest there and the
+              composition/recording split is sharpest is what makes a cited answer possible. The
+              architecture does not assume the scope.
             </P>
           </div>
         </section>
