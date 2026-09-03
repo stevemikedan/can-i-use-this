@@ -272,7 +272,6 @@ const DURATION_PHRASE: Record<string, string> = {
 
 export function licenseRequest(resp: RightsResponse, params: QueryParams, layerId: string,
   enrichedParties?: { name: string; role: string }[]): string {
-  const layer = resp.entity.layers.find((l) => l.layer_id === layerId)
   const writers = resp.entity.creators.map((c) => c.value).join(', ')
   const year = resp.entity.year?.value
   const isSync = layerId === 'composition'
