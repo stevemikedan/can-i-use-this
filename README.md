@@ -26,6 +26,8 @@ Same song, and both jurisdictions say no — but blocked on *different layers*. 
 
 The verdict is three-dimensional — `f(layer, jurisdiction, intent)`. A re-recording needs only the composition, so the same search gives a different answer when the master stops mattering.
 
+The layer model is not specific to music: a book is a work, an edition, and sometimes a translation, each with its own term and owners. The register is scoped to music because the sources are strongest there and the composition/recording split is sharpest, but the architecture does not assume it.
+
 ## Architecture
 
 ```mermaid
@@ -159,7 +161,7 @@ Runtime AI is limited to Google Cloud AI services and Parallel; everything else 
 - **No database publishes sync licensing contacts or prices.** Sync is negotiated one-off. The tool identifies the parties and the shape of the negotiation, and gives cost bands as ranges, never a point estimate.
 - **US-centric.** The US rules are the most complete; UK and EU cover the composition (life+70) and the recording (70 years from publication). Other territories are not modelled.
 - **MLC access pending.** Ownership splits and unclaimed shares — the data that decides whether a work can be fully cleared at all — live in the MLC's database. Until API access arrives, records link to its public search.
-- **Music only.** Books, film, images, fonts and trademarks are recognized and declined honestly, not researched.
+- **Music only.** The register handles music; other kinds of work are not covered, and the schema reserves the shape for them.
 
 ## Repository
 

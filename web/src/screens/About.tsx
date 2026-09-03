@@ -91,6 +91,12 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               distributed film and a re-recording need different layers), which is why both are controls on
               every record.
             </P>
+            <P muted>
+              The layer model is not specific to music: a book is a work, an edition, and sometimes a
+              translation, each with its own term and owners. The register is scoped to music because the
+              sources are strongest there and the composition/recording split is sharpest, but the
+              architecture does not assume it.
+            </P>
           </div>
         </section>
 
@@ -248,8 +254,9 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
             </P>
             <P>
               <span className="font-semibold">Coverage follows the sources.</span> A recording MusicBrainz has
-              not dated, or a work Wikidata has not described, ends in an open question, not an answer. Music
-              only: books, film, images, fonts and trademarks are recognized and declined honestly.
+              not dated, or a work Wikidata has not described, ends in an open question, not an answer. The
+              register handles music; other kinds of work are not covered, and the schema reserves the shape
+              for them.
             </P>
           </div>
         </section>

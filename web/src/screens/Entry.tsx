@@ -120,8 +120,8 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
         <section className="mt-16 border-t-2 border-dashed border-ink-20 pt-5 flex flex-col gap-2">
           <Eyebrow className="text-ink-70">Scope of the register</Eyebrow>
           <p className="m-0 text-body leading-[1.55] text-ink-70 max-w-[80ch]">
-            Music only: compositions and sound recordings, researched separately. Books, film and images are
-            recognized but not researched. Territories: US, UK, EU.
+            Music only: compositions and sound recordings, researched separately. Other kinds of work are not
+            covered yet. Territories: US, UK, EU.
             {' '}<a href="/about" onClick={(e) => { e.preventDefault(); onAbout() }}>How the register works, and its limits →</a>
           </p>
         </section>
