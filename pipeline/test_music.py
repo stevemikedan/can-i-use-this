@@ -687,6 +687,6 @@ def test_duration_scales_the_band_never_the_verdict(cache, transport, no_paralle
     assert short.overall_verdict is base.overall_verdict
     assert [d.model_dump() for d in short.all_determinations] == [d.model_dump() for d in base.all_determinations]
     rec = next(l for l in short.layer_verdicts if l.layer_id == "sound_recording")
-    assert "bottom of the range" in rec.cost_band and "not the need" in rec.cost_band
+    assert "low end" in rec.cost_band and "whether you need permission" in rec.cost_band
     rec_base = next(l for l in base.layer_verdicts if l.layer_id == "sound_recording")
-    assert "bottom of the range" not in rec_base.cost_band
+    assert "low end" not in rec_base.cost_band

@@ -55,12 +55,13 @@ COST_BANDS = {
 # Qualitative on purpose: the bands are ranges, and pretending a per-second
 # rate exists would be a point estimate wearing a costume.
 DURATION_BAND_NOTE = {
-    Duration.UNDER_10S: "A use under ten seconds typically prices at the bottom of the range, sometimes "
-                        "below it. Length changes the price, not the need.",
-    Duration.S10_TO_30: "A 10-30 second use typically prices in the lower half of the range.",
-    Duration.S30_TO_60: "A 30-60 second use typically prices around the middle of the range.",
-    Duration.OVER_60S: "Uses over a minute price across the full range; a featured or title use prices "
-                       "above it.",
+    Duration.UNDER_10S: "A cue this short usually prices at the low end, and some holders will go under "
+                        "their stated minimum for brief background use. Length changes the price, not "
+                        "whether you need permission.",
+    Duration.S10_TO_30: "A cue of 10-30 seconds usually prices in the lower half of the range.",
+    Duration.S30_TO_60: "A cue of 30-60 seconds usually prices around the middle of the range.",
+    Duration.OVER_60S: "A cue over a minute prices across the full range, and a featured or title use "
+                       "prices above it.",
 }
 
 # Where the practical path differs from the generic one, by (intent, layer).

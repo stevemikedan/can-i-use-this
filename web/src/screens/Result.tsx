@@ -5,7 +5,7 @@ import type { ClearanceEnrichment, HandoffLink, Intent, LayerVerdict, QueryParam
 import { fetchClearance } from '../lib/api'
 import { Band, Controls, Doc, Eyebrow, SectionHead, Stamp, Tag, TextToggle, Ticks } from '../components/ui'
 import { EFFORT_LABEL, FACT_LABEL, METHOD_LABEL, VERDICT_WORD, confidenceLabel, expiryLine, factValue, pct, shortDate, sourceHref, splitQuery } from '../lib/format'
-import { VERDICT_SEVERITY, csvRow, CSV_HEADER, downloadText, safeFilename, toMarkdown, toPrintHtml } from '../lib/export'
+import { VERDICT_SEVERITY, csvRow, CSV_HEADER, downloadText, licenseRequest, safeFilename, toMarkdown, toPrintHtml } from '../lib/export'
 
 const ORDER = VERDICT_SEVERITY
 
@@ -30,6 +30,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
     : openState
   const toggle = (k: string) => setOpenState((s) => ({ ...s, [k]: !s[k] }))
   const [copied, setCopied] = useState(false)
+  const [reqCopied, setReqCopied] = useState<string | null>(null)
   const [stampKey, setStampKey] = useState(0)
   // Rights-holder enrichment: fetched after the verdict renders, never
   // before. On fixtures or endpoint failure it stays null and the static
@@ -171,8 +172,23 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
                       <div className="text-body leading-[1.55]">
                         {l.licensing_path}.{l.cost_band ? ` Typically ${l.cost_band}.` : ''}
                       </div>
+                      <button type="button" className="text-toggle !text-meta self-start no-print"
+                        onClick={() => {
+                          navigator.clipboard?.writeText(licenseRequest(resp, params, l.layer_id,
+                            enrich?.layers?.[l.layer_id]?.holders?.map((h) => ({ name: h.name.value, role: h.role }))))
+                          setReqCopied(l.layer_id)
+                          setTimeout(() => setReqCopied(null), 1600)
+                        }}>
+                        {reqCopied === l.layer_id ? 'Request copied ✓'
+                          : `Copy ${l.layer_id === 'composition' ? 'sync' : 'master use'} request`}
+                      </button>
                     </div>
                   ))}
+                  <div className="text-meta font-medium leading-[1.7] text-ink-70 max-w-[70ch]">
+                    Cost bands are rough orders of magnitude from trade practice, not quotes; nobody
+                    publishes sync prices. The request templates carry the standard fields publishers
+                    expect, with the production-specific parts left as marked blanks.
+                  </div>
                   {actLinks.length > 0 && (
                     <div className="flex flex-col gap-3 pt-2">
                       <Eyebrow tracking={12} className="text-ink-70">Where to find them</Eyebrow>

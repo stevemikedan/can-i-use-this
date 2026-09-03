@@ -243,6 +243,73 @@ export function toPrintHtml(resp: RightsResponse, params: QueryParams): string {
   return out.join('\n')
 }
 
+// --- licensing requests -------------------------------------------------------------
+//
+// The open questions say exactly what to check and where; clearance says
+// exactly what to send and to whom. A sync request is a standard form and
+// publishers expect the same fields, so the record fills what it knows and
+// leaves the production-specific parts as marked blanks. Sync and master
+// use are separate negotiations, so a two-layer block gets two requests.
+
+const INTENT_PRODUCTION: Record<string, string> = {
+  documentary: 'a documentary',
+  film_tv: 'a film / television production',
+  social_video: 'an online video',
+  podcast: 'a podcast',
+  commercial: 'a commercial / advertisement',
+  print: 'a print publication',
+  game: 'a video game',
+  education: 'an educational production',
+  personal: 'a personal project',
+  rerecord: 'a new recording we will produce ourselves',
+}
+
+const TERRITORY_NAME: Record<string, string> = { US: 'the United States', UK: 'the United Kingdom', EU: 'the European Union' }
+
+const DURATION_PHRASE: Record<string, string> = {
+  under_10s: 'under 10 seconds', s10_30: '10\u201330 seconds', s30_60: '30\u201360 seconds', over_60s: 'over one minute',
+}
+
+export function licenseRequest(resp: RightsResponse, params: QueryParams, layerId: string,
+  enrichedParties?: { name: string; role: string }[]): string {
+  const layer = resp.entity.layers.find((l) => l.layer_id === layerId)
+  const writers = resp.entity.creators.map((c) => c.value).join(', ')
+  const year = resp.entity.year?.value
+  const isSync = layerId === 'composition'
+  const parties = (enrichedParties ?? []).map((p) => p.name).join(', ')
+  const to = parties || (isSync ? 'the publisher of record' : 'the label or current master owner')
+  const kind = isSync ? 'synchronization license' : 'master use license'
+  const subjectOf = isSync
+    ? `the musical composition \u201c${params.title}\u201d${writers ? ` (written by ${writers}${year ? `, ${year}` : ''})` : ''}`
+    : `the sound recording of \u201c${params.title}\u201d${params.artist ? ` by ${params.artist}` : ''}`
+  const other = isSync
+    ? `The specific recording in the cut${params.artist ? ` is by ${params.artist}` : ''} and its master is being licensed separately.`
+    : 'The underlying composition is being licensed separately with the publisher.'
+  const production = INTENT_PRODUCTION[params.intent] ?? 'a production'
+  const duration = params.duration ? DURATION_PHRASE[params.duration] : '[DURATION OF USE]'
+  return [
+    `Subject: ${isSync ? 'Sync' : 'Master use'} license request \u2014 \u201c${params.title}\u201d${params.artist && !isSync ? ` (${params.artist})` : ''}`,
+    '',
+    `To ${to}:`,
+    '',
+    `I am seeking a ${kind} for ${subjectOf}.`,
+    '',
+    `Production: [PRODUCTION TITLE] \u2014 ${production}`,
+    'Use: [HOW THE CUE IS USED \u2014 scene, background or featured]',
+    `Duration of use: ${duration}`,
+    `Territory: ${TERRITORY_NAME[params.jurisdiction] ?? params.jurisdiction} [or worldwide, if needed]`,
+    'Term: [TERM \u2014 e.g. 10 years, or perpetuity]',
+    'Media: [MEDIA \u2014 e.g. festivals, streaming, broadcast]',
+    'Budget: [MUSIC BUDGET OR FEE OFFERED]',
+    '',
+    other,
+    '',
+    'Please let me know the fee and any conditions, or who currently administers these rights if they have moved.',
+    '',
+    '[NAME / PRODUCTION COMPANY / CONTACT]',
+  ].join('\n')
+}
+
 // --- delivery ----------------------------------------------------------------------
 
 export function downloadText(filename: string, text: string, mime: string): void {

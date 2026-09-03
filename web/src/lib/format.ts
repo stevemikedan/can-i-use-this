@@ -65,7 +65,7 @@ export const DURATION_OPTIONS: { value: NonNullable<QueryParams['duration']>; la
 
 /** The misconception the duration control exists to correct. */
 export const NO_SAFE_HARBOR =
-  'No duration is safe: US copyright has no short-use exception, so the verdict is unchanged. ' +
+  'US copyright has no short-use exception. No duration is safe, and the verdict does not change. ' +
   'Length affects what a license costs, not whether you need one. Fair use can apply to short uses, ' +
   'but it is a defense a court weighs after the fact, not a rule to rely on beforehand.'
 
