@@ -673,3 +673,20 @@ def test_candidate_rows_prefer_the_dated_performance(cache, transport, no_parall
                  for c in resp.entity.alternate_candidates}
     assert any(d.startswith("recorded 1961") for d in by_artist.values())
     assert any(d.startswith("earliest release on file") for d in by_artist.values())
+
+
+def test_duration_scales_the_band_never_the_verdict(cache, transport, no_parallel):
+    # No short-use safe harbor: every determination is identical with and
+    # without a duration; only the cost band carries the scaling note.
+    from schemas import Duration
+    transport(handler)
+    base, _ = run_music(q("West End Blues \u2014 Louis Armstrong"))
+    short, _ = run_music(AssetQuery(raw_input="West End Blues \u2014 Louis Armstrong",
+                                    intent=Intent.FILM_TV, jurisdiction=Jurisdiction.US,
+                                    asset_type_hint=AssetType.MUSIC, duration=Duration.UNDER_10S))
+    assert short.overall_verdict is base.overall_verdict
+    assert [d.model_dump() for d in short.all_determinations] == [d.model_dump() for d in base.all_determinations]
+    rec = next(l for l in short.layer_verdicts if l.layer_id == "sound_recording")
+    assert "bottom of the range" in rec.cost_band and "not the need" in rec.cost_band
+    rec_base = next(l for l in base.layer_verdicts if l.layer_id == "sound_recording")
+    assert "bottom of the range" not in rec_base.cost_band

@@ -14,6 +14,7 @@ from typing import Optional
 from registry import handoff_links
 from rules.licenses import covers_intent, license_explanation, parse_license
 from schemas import (
+    Duration,
     DEFAULT_ALL_LAYERS_REQUIRED, REQUIRED_LAYERS, VERDICT_ORDER, AssetQuery, AssetType, Candidate,
     Confidence, Determination, DeterminationStatus, Intent, Jurisdiction, LayerVerdict,
     ResolvedEntity, RightsLayer, RightsResponse, UnresolvedQuestion, Verdict,
@@ -48,6 +49,18 @@ COST_BANDS = {
     Intent.EDUCATION: {"composition": "$0–$250; classroom use is often covered by statutory exemptions or the "
                                       "institution's blanket licenses",
                        "sound_recording": "$0–$250; check the institution's blanket licenses before negotiating"},
+}
+
+# Length scales the price within the band, never the need for a license.
+# Qualitative on purpose: the bands are ranges, and pretending a per-second
+# rate exists would be a point estimate wearing a costume.
+DURATION_BAND_NOTE = {
+    Duration.UNDER_10S: "A use under ten seconds typically prices at the bottom of the range, sometimes "
+                        "below it. Length changes the price, not the need.",
+    Duration.S10_TO_30: "A 10-30 second use typically prices in the lower half of the range.",
+    Duration.S30_TO_60: "A 30-60 second use typically prices around the middle of the range.",
+    Duration.OVER_60S: "Uses over a minute price across the full range; a featured or title use prices "
+                       "above it.",
 }
 
 # Where the practical path differs from the generic one, by (intent, layer).
@@ -91,6 +104,13 @@ LICENSING_PATH = {
 }
 
 
+def _band(intent: Intent, layer_id: str, duration: Optional[Duration]) -> Optional[str]:
+    band = COST_BANDS.get(intent, {}).get(layer_id)
+    if band and duration is not None:
+        band = f"{band}. {DURATION_BAND_NOTE[duration]}"
+    return band
+
+
 def required_layers(asset_type: AssetType, intent: Intent, layers: list[RightsLayer]) -> set[str]:
     kinds = REQUIRED_LAYERS.get((asset_type, intent))
     if kinds is None:
@@ -111,7 +131,7 @@ def _headline_for(det: Determination, j: Jurisdiction) -> str:
 
 
 def layer_verdicts(entity: ResolvedEntity, dets: list[Determination], jurisdiction: Jurisdiction,
-                   intent: Intent) -> list[LayerVerdict]:
+                   intent: Intent, duration: Optional[Duration] = None) -> list[LayerVerdict]:
     req = required_layers(entity.asset_type, intent, entity.layers)
     out = []
     for layer in entity.layers:
@@ -147,7 +167,7 @@ def layer_verdicts(entity: ResolvedEntity, dets: list[Determination], jurisdicti
             determination=det, holders=layer.holders, clearance=layer.clearance,
             licensing_path=(INTENT_LICENSING_PATH.get((intent, layer.layer_id))
                             or LICENSING_PATH.get(layer.layer_id)) if verdict is Verdict.LICENSE_REQUIRED else None,
-            cost_band=COST_BANDS.get(intent, {}).get(layer.layer_id) if verdict is Verdict.LICENSE_REQUIRED else None,
+            cost_band=_band(intent, layer.layer_id, duration) if verdict is Verdict.LICENSE_REQUIRED else None,
             intent_note=note,
         ))
     return out
@@ -204,7 +224,7 @@ def cache_key(entity: ResolvedEntity) -> Optional[str]:
 
 def assemble(query: AssetQuery, entity: ResolvedEntity, dets: list[Determination],
              questions: list[UnresolvedQuestion], em: Emitter, *, extra: Optional[dict] = None) -> RightsResponse:
-    lvs = layer_verdicts(entity, dets, query.jurisdiction, query.intent)
+    lvs = layer_verdicts(entity, dets, query.jurisdiction, query.intent, duration=query.duration)
     verdict, blocking = roll_up(lvs)
     headline = overall_headline(verdict, blocking, lvs, query.jurisdiction)
     ids = [i for l in entity.layers for i in l.identifiers]

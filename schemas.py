@@ -634,6 +634,22 @@ class Alternative(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+class Duration(str, Enum):
+    """
+    How much of the work is used. Deliberately NOT an input to any
+    determination: US copyright has no short-use safe harbor (no seven
+    seconds, no eight bars; Bridgeport went as far as "get a license or do
+    not sample"). Length scales what a license costs, never whether one is
+    needed - the control exists to correct that misconception, and the cost
+    bands are the only thing it touches.
+    """
+
+    UNDER_10S = "under_10s"
+    S10_TO_30 = "s10_30"
+    S30_TO_60 = "s30_60"
+    OVER_60S = "over_60s"
+
+
 class UserAnswer(BaseModel):
     """
     A user's answer to an UnresolvedQuestion, supplied on resubmission.
@@ -663,6 +679,9 @@ class AssetQuery(BaseModel):
         default_factory=dict,
         description="question_id -> the user's answer, on a re-run after they "
                     "settle an open question. See pipeline/user_facts.py.")
+    duration: Duration | None = Field(
+        None, description="Length of the use. Scales cost bands only; never a "
+                          "determination input (no short-use safe harbor exists).")
 
 
 class ResolvedEntity(BaseModel):

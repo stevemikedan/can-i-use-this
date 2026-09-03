@@ -344,6 +344,7 @@
   "query": {
     "asset_type_hint": "music",
     "disambiguation_choice": null,
+    "duration": null,
     "intent": "film_tv",
     "jurisdiction": "US",
     "raw_input": "Golden Hour — Night Owl Static",

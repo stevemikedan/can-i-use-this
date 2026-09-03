@@ -234,6 +234,13 @@ export default function About({ onNewInquiry }: { onNewInquiry: () => void }) {
               Other territories are not modelled.
             </P>
             <P>
+              <span className="font-semibold">No duration is safe.</span> There is no short-use exception in US
+              copyright: no seven seconds, no eight bars. Bridgeport put it as &ldquo;get a license or do not
+              sample.&rdquo; Length affects what a license costs, not whether you need one; fair use can apply
+              to short uses, but it is a defense a court weighs after the fact, not a rule to rely on
+              beforehand.
+            </P>
+            <P>
               <span className="font-semibold">Ownership shares are researched, not authoritative.</span> The
               parties in the Clearance panel come from Parallel Task web research, capped at medium. The
               authoritative record is the MLC&rsquo;s, and it supersedes this research if access arrives; a

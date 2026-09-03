@@ -2,7 +2,7 @@
 // verdicts, determinations and confidences arrive from the API and are
 // rendered as they are. docs/design-system.md §2 (stamps, ticks) and §4.
 
-import type { Confidence, Determination, Intent, Jurisdiction, LinkTier, ResearchMethod, Source, Verdict } from '../types'
+import type { QueryParams, Confidence, Determination, Intent, Jurisdiction, LinkTier, ResearchMethod, Source, Verdict } from '../types'
 
 // --- stamps ↔ Verdict ---------------------------------------------------------
 
@@ -55,6 +55,19 @@ export const CONTEXT_OPTIONS: { value: Intent; label: string }[] = [
   { value: 'personal', label: 'Personal' },
 ]
 export const DEFAULT_CONTEXT: Intent = 'documentary'
+
+export const DURATION_OPTIONS: { value: NonNullable<QueryParams['duration']>; label: string }[] = [
+  { value: 'under_10s', label: 'Under 10s' },
+  { value: 's10_30', label: '10–30s' },
+  { value: 's30_60', label: '30–60s' },
+  { value: 'over_60s', label: 'Over a minute' },
+]
+
+/** The misconception the duration control exists to correct. */
+export const NO_SAFE_HARBOR =
+  'No duration is safe: US copyright has no short-use exception, so the verdict is unchanged. ' +
+  'Length affects what a license costs, not whether you need one. Fair use can apply to short uses, ' +
+  'but it is a defense a court weighs after the fact, not a rule to rely on beforehand.'
 
 export const JURISDICTIONS: Jurisdiction[] = ['US', 'UK', 'EU']
 

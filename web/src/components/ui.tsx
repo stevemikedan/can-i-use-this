@@ -1,8 +1,8 @@
 // Shared primitives — docs/design-system.md §5 "Shared".
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
-import type { Confidence, Intent, Jurisdiction, Verdict } from '../types'
-import { CONTEXT_OPTIONS, DEFAULT_CONTEXT, JURISDICTIONS, TICKS, VERDICT_COLOR, VERDICT_UNDERLINE, VERDICT_WORD, confidenceLabel } from '../lib/format'
+import type { QueryParams, Confidence, Intent, Jurisdiction, Verdict } from '../types'
+import { CONTEXT_OPTIONS, DEFAULT_CONTEXT, DURATION_OPTIONS, JURISDICTIONS, NO_SAFE_HARBOR, TICKS, VERDICT_COLOR, VERDICT_UNDERLINE, VERDICT_WORD, confidenceLabel } from '../lib/format'
 import { nav } from '../lib/nav'
 
 export function Eyebrow({ children, className = '', tracking = 14 }: { children: ReactNode; className?: string; tracking?: 12 | 14 }) {
@@ -72,8 +72,8 @@ export function TextToggle({ open, closed, opened, onClick, className = '' }:
  *  layers need clearing at all (a re-recording drops the master). Picking a
  *  context implies the original recording; the last context is remembered so
  *  toggling usage back restores it. */
-export function Controls({ intent, jurisdiction, onIntent, onJurisdiction, onInk = false, busy = false }:
-  { intent: Intent; jurisdiction: Jurisdiction; onIntent: (i: Intent) => void; onJurisdiction: (j: Jurisdiction) => void; onInk?: boolean; busy?: boolean }) {
+export function Controls({ intent, jurisdiction, onIntent, onJurisdiction, duration = null, onDuration, onInk = false, busy = false }:
+  { intent: Intent; jurisdiction: Jurisdiction; onIntent: (i: Intent) => void; onJurisdiction: (j: Jurisdiction) => void; duration?: QueryParams['duration'] | null; onDuration?: (d: QueryParams['duration'] | undefined) => void; onInk?: boolean; busy?: boolean }) {
   const labelCls = onInk ? 'text-paper-72' : 'text-ink-70'
   const rerecord = intent === 'rerecord'
   const [lastContext, setLastContext] = useState<Intent>(rerecord ? DEFAULT_CONTEXT : intent)
@@ -102,6 +102,20 @@ export function Controls({ intent, jurisdiction, onIntent, onJurisdiction, onInk
           <div className={`text-meta font-medium ${labelCls} max-w-[52ch] leading-[1.5]`}>
             A re-recording clears the composition only; the master stops mattering.
           </div>
+        )}
+        {onDuration && (
+          <>
+            <Eyebrow className={`${labelCls} mt-2`}>Duration of use</Eyebrow>
+            <div className="flex gap-2 flex-wrap" role="group" aria-label="Duration of use">
+              {DURATION_OPTIONS.map((o) => (
+                <button key={o.value} type="button" className="control" aria-pressed={duration === o.value}
+                  onClick={() => onDuration(duration === o.value ? undefined : o.value)}>{o.label}</button>
+              ))}
+            </div>
+            {(duration === 'under_10s' || duration === 's10_30') && (
+              <div className={`text-meta font-medium ${labelCls} max-w-[60ch] leading-[1.6]`}>{NO_SAFE_HARBOR}</div>
+            )}
+          </>
         )}
       </div>
       <div className="flex flex-col gap-[10px]">

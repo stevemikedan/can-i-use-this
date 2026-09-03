@@ -167,6 +167,7 @@ export default function App() {
             <Result resp={resp} params={params} busy={busy}
               onIntent={(intent) => requery({ ...params, intent })}
               onJurisdiction={(jurisdiction) => requery({ ...params, jurisdiction })}
+              onDuration={(duration) => requery({ ...params, duration })}
               onAnswer={(questionId, answer, attestation) =>
                 requery({ ...params, answers: { ...(params.answers ?? {}), [questionId]: { answer, attestation: attestation || null } } })}
               onNewInquiry={toEntry}

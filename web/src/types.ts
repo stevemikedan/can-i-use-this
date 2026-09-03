@@ -200,6 +200,8 @@ export interface ClearanceEnrichment {
   ledger: string[]
 }
 
+export type Duration = 'under_10s' | 's10_30' | 's30_60' | 'over_60s'
+
 export interface UserAnswerParam {
   answer: boolean
   attestation?: string | null
@@ -212,4 +214,6 @@ export interface QueryParams {
   jurisdiction: Jurisdiction
   /** question_id -> the user's answer to an open question, carried on re-runs. */
   answers?: Record<string, UserAnswerParam>
+  /** Length of the use. Scales cost bands only; there is no short-use safe harbor. */
+  duration?: Duration
 }

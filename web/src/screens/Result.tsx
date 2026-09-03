@@ -14,13 +14,14 @@ export interface ResultProps {
   params: QueryParams
   busy: boolean
   onIntent: (i: Intent) => void
+  onDuration: (d: QueryParams['duration']) => void
   onJurisdiction: (j: QueryParams['jurisdiction']) => void
   onNewInquiry: () => void
   onAnswer: (questionId: string, answer: boolean, attestation: string) => void
   onBack?: () => void
 }
 
-export default function Result({ resp, params, busy, onIntent, onJurisdiction, onNewInquiry, onAnswer, onBack }: ResultProps) {
+export default function Result({ resp, params, busy, onIntent, onJurisdiction, onDuration, onNewInquiry, onAnswer, onBack }: ResultProps) {
   const { intent, jurisdiction } = params
   const [openState, setOpenState] = useState<Record<string, boolean>>({})
   const [printing, setPrinting] = useState(false)
@@ -125,7 +126,7 @@ export default function Result({ resp, params, busy, onIntent, onJurisdiction, o
             <p className="m-0 mt-5 text-headline font-medium leading-[1.3] max-w-[60ch] text-pretty text-paper">{resp.overall_headline}</p>
           </div>
           <div className="flex flex-col gap-[22px]">
-            <Controls intent={intent} jurisdiction={jurisdiction} onIntent={onIntent} onJurisdiction={onJurisdiction} onInk busy={busy} />
+            <Controls intent={intent} jurisdiction={jurisdiction} onIntent={onIntent} onJurisdiction={onJurisdiction} duration={params.duration ?? null} onDuration={onDuration} onInk busy={busy} />
             <div className="flex flex-col gap-[10px]">
               <Eyebrow className="text-paper-72">{resp.overall_verdict === 'undetermined' ? 'Status' : 'Confidence'}</Eyebrow>
               <div className="min-h-10 flex items-center">

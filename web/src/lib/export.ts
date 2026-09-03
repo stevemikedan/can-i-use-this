@@ -22,6 +22,7 @@ export function layerTitle(lv: LayerVerdict): string {
 
 export function permalinkFor(p: QueryParams): string {
   const qs = new URLSearchParams({ q: p.title + (p.artist ? ` — ${p.artist}` : ''), i: p.intent, j: p.jurisdiction })
+  if (p.duration) qs.set('d', p.duration)
   return `${window.location.origin}/?${qs.toString()}`
 }
 
@@ -35,6 +36,7 @@ export function paramsFromUrl(search: string): QueryParams | null {
     artist: artist ?? undefined,
     intent: (sp.get('i') as Intent) || 'film_tv',
     jurisdiction: (sp.get('j') as Jurisdiction) || 'US',
+    duration: (sp.get('d') as QueryParams['duration']) || undefined,
   }
 }
 

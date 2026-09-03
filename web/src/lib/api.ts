@@ -8,6 +8,7 @@ export async function runQuery(p: QueryParams, signal?: AbortSignal): Promise<Ri
     body: JSON.stringify({
       title: p.title, artist: p.artist || null, intent: p.intent, jurisdiction: p.jurisdiction,
       answers: p.answers && Object.keys(p.answers).length ? p.answers : undefined,
+      duration: p.duration ?? undefined,
     }),
     signal,
   })
@@ -46,6 +47,7 @@ export interface StreamHandlers {
 export function streamQuery(p: QueryParams, h: StreamHandlers): () => void {
   const qs = new URLSearchParams({ title: p.title, intent: p.intent, jurisdiction: p.jurisdiction })
   if (p.artist) qs.set('artist', p.artist)
+  if (p.duration) qs.set('duration', p.duration)
   const es = new EventSource(`/api/query/stream?${qs}`)
   let done = false
   es.addEventListener('progress', (e) => h.onProgress(JSON.parse((e as MessageEvent).data) as PipelineEvent))

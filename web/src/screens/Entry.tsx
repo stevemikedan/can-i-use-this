@@ -34,12 +34,13 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
   const [raw, setRaw] = useState(initial?.title ? `${initial.title}${initial.artist ? ` — ${initial.artist}` : ''}` : '')
   const [intent, setIntent] = useState<Intent>(initial?.intent ?? 'film_tv')
   const [jurisdiction, setJurisdiction] = useState<Jurisdiction>(initial?.jurisdiction ?? 'US')
+  const [duration, setDuration] = useState<QueryParams['duration']>(initial?.duration)
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => { inputRef.current?.focus() }, [])
 
   const submit = (title: string, artist?: string) => {
     if (!title.trim()) return
-    onSubmit({ title: title.trim(), artist: artist?.trim() || undefined, intent, jurisdiction })
+    onSubmit({ title: title.trim(), artist: artist?.trim() || undefined, intent, jurisdiction, duration })
   }
   const submitRaw = () => {
     for (const sep of [' — ', ' – ', ' - ', ' by ']) {
@@ -80,7 +81,7 @@ export default function Entry({ busy, error, initial, onSubmit, onAbout, onCues 
             Title and artist works best, as in <span className="font-mono">“Aliens Exist — blink-182”</span>; a title alone lists who recorded it.
           </div>
           <div className="mt-8">
-            <Controls intent={intent} jurisdiction={jurisdiction} onIntent={setIntent} onJurisdiction={setJurisdiction} />
+            <Controls intent={intent} jurisdiction={jurisdiction} onIntent={setIntent} onJurisdiction={setJurisdiction} duration={duration} onDuration={setDuration} />
           </div>
           <div className="mt-7">
             <button type="button" className="btn-primary" disabled={busy} onClick={submitRaw}>

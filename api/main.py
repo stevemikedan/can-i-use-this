@@ -43,7 +43,7 @@ from agent.reader import default_reader
 from agent.workflow import run_workflow
 from pipeline.events import Emitter
 from research import parallel_client as pc
-from schemas import AssetQuery, AssetType, Intent, Jurisdiction, PipelineEvent, RightsResponse, UserAnswer
+from schemas import AssetQuery, AssetType, Intent, Jurisdiction, PipelineEvent, RightsResponse, UserAnswer, Duration
 from sources.cache import get_cache
 
 log = logging.getLogger("api")
@@ -76,11 +76,13 @@ class QueryIn(BaseModel):
     # question_id -> the user's answer to an open question, on a re-run.
     # POST-only; the SSE stream does not carry answers.
     answers: dict[str, UserAnswer] = Field(default_factory=dict)
+    duration: Optional[Duration] = None
 
     def to_query(self) -> AssetQuery:
         raw = self.title.strip() + (f" — {self.artist.strip()}" if self.artist and self.artist.strip() else "")
         return AssetQuery(raw_input=raw, intent=self.intent, jurisdiction=self.jurisdiction,
-                          asset_type_hint=AssetType.MUSIC, user_answers=self.answers)
+                          asset_type_hint=AssetType.MUSIC, user_answers=self.answers,
+                          duration=self.duration)
 
 
 def _check_jurisdiction(j: Jurisdiction) -> None:
@@ -214,9 +216,11 @@ async def query_stream(
     artist: Optional[str] = Query(None, max_length=200),
     intent: Intent = Intent.FILM_TV,
     jurisdiction: Jurisdiction = Jurisdiction.US,
+    duration: Optional[Duration] = None,
 ) -> StreamingResponse:
     _check_jurisdiction(jurisdiction)
-    q = QueryIn(title=title, artist=artist, intent=intent, jurisdiction=jurisdiction).to_query()
+    q = QueryIn(title=title, artist=artist, intent=intent, jurisdiction=jurisdiction,
+                duration=duration).to_query()
     return StreamingResponse(_stream(q), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
