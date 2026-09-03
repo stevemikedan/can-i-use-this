@@ -108,7 +108,7 @@ SELECT   work-rels sweep on top candidates → collect distinct work MBIDs
 
 **Three hard-won rules, each from a real failure:**
 
-1. **`first-release-date` may never drive a confident determination.** It returned a 1975 reissue for a 1928 session — 42 years wrong on the one fact CLASSICS depends on. Only a dated performance relation, label matrix data, or Tier 3 research counts. See `RecordingDateBasis` in `schemas.py`.
+1. **`first-release-date` may never drive a confident determination.** It returned a 1975 reissue for a 1928 session — 47 years wrong on the one fact CLASSICS depends on. Only a dated performance relation, label matrix data, or Tier 3 research counts. See `RecordingDateBasis` in `schemas.py`.
 
 2. **Writer lists must be corroborated against Wikidata.** MusicBrainz gave King Oliver without Clarence Williams for West End Blues. US terms are unaffected (95-year rule), but life+70 runs from the *last surviving* author, so an incomplete list silently produces wrong EU/UK answers.
 
@@ -335,7 +335,7 @@ Recording reversals so the reasoning isn't lost and doesn't get re-litigated.
 | Aug 24 | Alternatives engine reduced to curated static | Same user value, no runtime research cost |
 | Aug 24 | Monitor and batch cut | Not load-bearing; schedule was underwater |
 | Aug 25 | **Spike passed; music architecture revised** | Work links exist and Wikidata is clean. Real risks are recording selection and true first-publication date |
-| Aug 25 | `first-release-date` may never drive a confident determination | Returned a 1975 reissue for a 1928 session — 42 years wrong |
+| Aug 25 | `first-release-date` may never drive a confident determination | Returned a 1975 reissue for a 1928 session — 47 years wrong |
 | Aug 25 | Writer lists cross-checked against Wikidata | MB omitted a co-writer; life+70 needs the last surviving author |
 | Aug 25 | Renewal promoted to Tier 3 research | 4 of 6 real cases hit the 1931-1963 window; auto-undetermined would gut the product |
 | Aug 25 | Caching promoted from optimization to requirement | Recording selection costs 20-30s at the MB rate limit |

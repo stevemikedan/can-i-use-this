@@ -106,7 +106,7 @@ Open questions can be answered. When you settle one — a renewal record found i
 
 Five times, a source returned a plausible fact that had never actually been established, and each would have become a confident wrong verdict with no visible tell:
 
-- **A reissue date read as a publication date.** MusicBrainz's `first-release-date` for the 1928 Armstrong *West End Blues* session was 1975 — a 42-year error on the one input the CLASSICS calculation depends on.
+- **A reissue date read as a publication date.** MusicBrainz's `first-release-date` for the 1928 Armstrong *West End Blues* session was 1975 — a 47-year error on the one input the CLASSICS calculation depends on.
 - **An incomplete author list silently shortening a term.** MusicBrainz credited *West End Blues* to King Oliver but not Clarence Williams, and life+70 runs from the last surviving author. Oliver died 1938, Williams 1965 — a 27-year error in the direction that gets someone sued.
 - **A name search returning the wrong person.** "Clarence Williams" on Wikidata returned the actor who died in 2021, not the songwriter who died in 1965, and nothing about the result looked wrong.
 - **A writer dead before the stated publication.** Kurt Weill died in 1950; the record for *Mack the Knife* stated a 1954 US publication. The usual cause is a translation or arrangement carrying its own authors, so the derivative check blocks life+70 rather than computing it from the wrong deaths.

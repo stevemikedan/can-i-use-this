@@ -473,7 +473,7 @@ class TermFacts(BaseModel):
 
     # SPIKE FINDING (Aug 2026): where the recording year came from matters
     # more than the year itself. MusicBrainz first-release-date returned a
-    # 1975 reissue for a 1928 session — a 42-year error on the single fact
+    # 1975 reissue for a 1928 session — a 47-year error on the single fact
     # the entire CLASSICS calculation depends on.
     #
     # Only DATED_PERFORMANCE may drive a confident determination.
