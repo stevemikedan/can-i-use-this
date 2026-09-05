@@ -9,7 +9,7 @@ import { Band, Doc, Eyebrow, SectionHead } from '../components/ui'
 import { intentContext } from '../lib/format'
 
 const SECTIONS = [
-  { key: 'identify', title: 'I. Identify the work', stages: ['classify', 'identify'], last: 'identify', caret: 'Consulting the registries' },
+  { key: 'identify', title: 'I. Identify the work', stages: ['classify', 'identify'], last: 'identify', caret: 'Searching MusicBrainz for the work and its recordings' },
   { key: 'decompose', title: 'II. Rights layers', stages: ['decompose'], last: 'decompose', caret: 'Splitting into separately-owned works' },
   { key: 'research', title: 'III. Research — both layers', stages: ['research'], last: 'research', caret: 'Researching, cheapest tier first' },
   { key: 'rules', title: 'IV. Determination', stages: ['rules', 'compare', 'assemble'], last: 'assemble', caret: 'Applying the rules' },
@@ -96,7 +96,7 @@ export default function Progress({ params, events, onCancel }: { params: QueryPa
           {['Composition', 'Sound recording'].map((name) => (
             <div key={name} className={`flex flex-col gap-1 py-[10px] px-4 rounded-6 min-w-[150px] border ${decomposed ? 'border-solid' : 'border-dashed'} border-paper-25`}>
               <div className="text-meta font-semibold tracking-[0.1em] uppercase">{name}</div>
-              <div className="font-bold text-body uppercase tracking-[0.04em] text-paper-72">{decomposed ? 'Researching…' : 'Decomposing…'}</div>
+              <div className="font-bold text-body uppercase tracking-[0.04em] text-paper-72">{decomposed ? 'Researching…' : 'Pending…'}</div>
             </div>
           ))}
         </div>

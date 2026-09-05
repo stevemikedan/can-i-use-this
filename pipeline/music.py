@@ -687,8 +687,14 @@ def recording_question(title: str, artist: str, date_on_file: Optional[str], lin
     lead_text, lead_links = _lead(lead, f"the original release was {lead.value}" if lead else "")
     return UnresolvedQuestion(
         question_id=f"{RECORDING}:first_publication",
-        question=f'In what year was the recording of "{title}" by {artist} first released?',
-        why_it_matters=f"The US term for pre-1972 recordings runs from first publication. MusicBrainz only has a release from {date_on_file or 'an unknown year'}, which may be a reissue."
+        question=(f'Is {date_on_file} the first release of "{title}" by {artist}, or a later reissue?'
+                  if date_on_file else
+                  f'In what year was the recording of "{title}" by {artist} first released?'),
+        why_it_matters=(f"The recording term runs from first publication. The only date on file for this "
+                        f"recording is {date_on_file}, which may be a reissue rather than the original "
+                        f"release, so it is shown as a lead but not used to compute a term."
+                        if date_on_file else
+                        "The recording term runs from first publication, and no release year is on file.")
                        + lead_text,
         if_yes="A confirmed year lets the CLASSICS Act schedule compute the expiry exactly.",
         if_no="Without a year the recording layer stays undetermined and the roll-up cannot be clear.",
