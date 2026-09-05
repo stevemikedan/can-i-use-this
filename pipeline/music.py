@@ -724,7 +724,8 @@ def publication_floor(rec_tf: TermFacts) -> Optional[ResearchedFact]:
     f = rec_tf.recording_first_published_year
     basis = rec_tf.recording_date_basis
     if (f is not None and f.value >= 1978
-            and basis in (RecordingDateBasis.DATED_PERFORMANCE, RecordingDateBasis.RESEARCHED)):
+            and basis in (RecordingDateBasis.DATED_PERFORMANCE, RecordingDateBasis.RESEARCHED,
+                          RecordingDateBasis.USER_PROVIDED)):
         return ResearchedFact(
             value=f.value, confidence=Confidence.LOW, sources=list(f.sources),
             reasoning=f"Inferred from the recording: distributing the {f.value} recording embodying "
@@ -896,7 +897,17 @@ def stage_research_composition(run: MusicRun) -> None:
     writer_names = [w.name for w in cf.writers]
 
     tf = composition.term_facts
-    if cf.year:
+    supplied_pub = answered_fact(run.query, f"{COMPOSITION}:publication_year")
+    if supplied_pub is not None:
+        # The user answered the open publication-year question on a re-run.
+        # USER_PROVIDED, capped at MEDIUM; a bare (LOW) year that implies public
+        # domain is still withheld by LOW_CONFIDENCE_PD_RULE in determine.py.
+        tf.first_publication_year = supplied_pub
+        composition.label = f"Composition ({supplied_pub.value})"
+        em.emit(S.RESEARCH, "progress",
+                f"Publication year answered by you: {supplied_pub.value} "
+                f"({supplied_pub.confidence.value} confidence)")
+    elif cf.year:
         reasoning = f"Wikidata {cf.year_prop}" + (" corroborated by MusicBrainz composer-relation date" if cf.year_conf is Confidence.HIGH else "")
         tf.first_publication_year = ResearchedFact(value=cf.year, confidence=cf.year_conf,
                                                    sources=cf.year_sources,
@@ -1062,6 +1073,7 @@ def stage_research_recording(run: MusicRun) -> None:
 
     rtf = recording.term_facts
     rtf.recording_date_basis = sel.basis
+    supplied_rec = answered_fact(run.query, f"{RECORDING}:first_publication")
 
     # Tier 1: a license relation on the selected recording settles this
     # layer from the static table (rules/licenses.py); the date research
@@ -1134,7 +1146,8 @@ def stage_research_recording(run: MusicRun) -> None:
         rtf.recording_first_published_year = ResearchedFact(
             value=sel.rec_year, confidence=sel.rec_conf, sources=[sel.source],
             reasoning=why + ("; " + "; ".join(sel_notes) if sel_notes else ""))
-    if sel.basis is not RecordingDateBasis.DATED_PERFORMANCE and recording.existing_license is None:
+    if (sel.basis is not RecordingDateBasis.DATED_PERFORMANCE and recording.existing_license is None
+            and supplied_rec is None):
         em.emit(S.RESEARCH, "progress", "No dated session on file; searching for the original release (Parallel Search)")
         out, links = search_recording_date(title, sel.pick["artist"], sel.pick["date"],
                                            announce=_announce_search(em, "original release"))
@@ -1156,6 +1169,21 @@ def stage_research_recording(run: MusicRun) -> None:
             # the finding as a lead (LOW_CONFIDENCE_PD_RULE in determine.py).
             question_ids["recording_pub_year"] = f"{RECORDING}:first_publication"
             questions.append(recording_question(title, sel.pick["artist"], sel.pick["date"], links, lead=fact))
+
+    if supplied_rec is not None:
+        # The user answered the release-year question. USER_PROVIDED basis is
+        # trustworthy for the reissue question (asserted as the real first
+        # release), so the term computes and the year may seed the section-101
+        # floor; confidence stays capped at MEDIUM and the asymmetry guard
+        # still withholds a low-confidence public-domain outcome.
+        rtf.recording_first_published_year = supplied_rec
+        rtf.recording_date_basis = RecordingDateBasis.USER_PROVIDED
+        recording.label = f"Sound recording ({supplied_rec.value})"
+        questions[:] = [x for x in questions if x.question_id != f"{RECORDING}:first_publication"]
+        question_ids.pop("recording_pub_year", None)
+        em.emit(S.RESEARCH, "progress",
+                f"Release year answered by you: {supplied_rec.value} "
+                f"({supplied_rec.confidence.value} confidence)")
 
 
 def stage_consistency(run: MusicRun) -> None:

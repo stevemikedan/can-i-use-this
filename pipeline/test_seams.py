@@ -99,3 +99,45 @@ def test_cc_layer_beside_a_blocked_layer(cache, transport, no_parallel):
     assert comp.verdict is Verdict.UNDETERMINED
     assert resp.overall_verdict is Verdict.UNDETERMINED
     assert "composition" in resp.overall_headline.lower()
+
+
+# --- user-supplied year facts (pipeline/user_facts.py, generalized) --------------
+
+def test_user_recording_year_computes_and_closes(cache, transport, fake_parallel):
+    # The Marcels' Blue Moon recording is FIRST_RELEASE_DATE (a possible
+    # reissue), so it normally opens the release-year question. A user answer
+    # settles it: USER_PROVIDED basis, the term computes, the question closes.
+    transport(handler)
+    ans = {"sound_recording:first_publication": UserAnswer(
+        value=1961, attestation="Colpix single, first US pressing")}
+    resp, _ = run_music(q("Blue Moon — The Marcels", answers=ans))
+    rec = next(l for l in resp.entity.layers if l.layer_id == "sound_recording")
+    assert rec.term_facts.recording_date_basis.value == "user_provided"
+    assert rec.term_facts.recording_first_published_year.value == 1961
+    assert rec.term_facts.recording_first_published_year.confidence is Confidence.MEDIUM
+    lv = next(x for x in resp.layer_verdicts if x.layer_id == "sound_recording")
+    assert lv.determination.status is not DeterminationStatus.UNDETERMINED
+    assert "sound_recording:first_publication" not in [u.question_id for u in resp.unresolved]
+    src = rec.term_facts.recording_first_published_year.sources[0]
+    assert src.method.value == "user_provided" and not src.authoritative
+
+
+def test_user_recording_year_bare_is_low(cache, transport, fake_parallel):
+    transport(handler)
+    ans = {"sound_recording:first_publication": UserAnswer(value=1961)}
+    resp, _ = run_music(q("Blue Moon — The Marcels", answers=ans))
+    rec = next(l for l in resp.entity.layers if l.layer_id == "sound_recording")
+    assert rec.term_facts.recording_first_published_year.confidence is Confidence.LOW
+
+
+def test_user_publication_year_overrides_and_is_sourced(cache, transport, fake_parallel):
+    # Supplying the composition publication year wins over research and is
+    # marked asserted-by-you; the same code path serves a year-blocked record.
+    transport(handler)
+    ans = {"composition:publication_year": UserAnswer(
+        value=1934, attestation="US Copyright Office registration E-pub 1934")}
+    resp, _ = run_music(q("Blue Moon — The Marcels", answers=ans))
+    comp = next(l for l in resp.entity.layers if l.layer_id == "composition")
+    py = comp.term_facts.first_publication_year
+    assert py.value == 1934 and py.confidence is Confidence.MEDIUM
+    assert py.sources[0].method.value == "user_provided" and not py.sources[0].authoritative

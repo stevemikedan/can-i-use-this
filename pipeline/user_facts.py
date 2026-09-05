@@ -67,11 +67,34 @@ def _renewal(ans: UserAnswer) -> ResearchedFact:
                      "You report that no renewal record was found.")
 
 
+def user_year_fact(ans: UserAnswer, lead: str) -> ResearchedFact:
+    """A user-supplied year -> a ResearchedFact[int] sourced to the user.
+    MEDIUM with an attestation, LOW without; same policy as the boolean case."""
+    att = (ans.attestation or "").strip()
+    conf = Confidence.MEDIUM if att else Confidence.LOW
+    return ResearchedFact(
+        value=ans.value, confidence=conf,
+        sources=[Source(name=USER_SOURCE_NAME, url=None, method=ResearchMethod.USER_PROVIDED,
+                        retrieved_at=datetime.now(timezone.utc),
+                        excerpt=att[:200] or None, authoritative=False)],
+        reasoning=f"{lead} {ans.value}." + (f" Attested: {att}" if att else " No source was given."))
+
+
+def _publication_year(ans: UserAnswer) -> ResearchedFact:
+    return user_year_fact(ans, "You report the composition was first published in")
+
+
+def _recording_year(ans: UserAnswer) -> ResearchedFact:
+    return user_year_fact(ans, "You report the recording was first released in")
+
+
 # question_id -> handler. One entry today (renewal is the flagship and the
 # only boolean question); publication year and the rest are entries here,
 # not a redesign.
 HANDLERS: dict[str, Callable[[UserAnswer], ResearchedFact]] = {
     "composition:renewal": _renewal,
+    "composition:publication_year": _publication_year,
+    "sound_recording:first_publication": _recording_year,
 }
 
 
@@ -80,5 +103,10 @@ def answered_fact(query: AssetQuery, question_id: str) -> Optional[ResearchedFac
     ans = query.user_answers.get(question_id)
     handler = HANDLERS.get(question_id)
     if ans is None or handler is None:
+        return None
+    # A value question needs a value; a boolean question needs an answer.
+    if handler in (_publication_year, _recording_year) and ans.value is None:
+        return None
+    if handler is _renewal and ans.answer is None:
         return None
     return handler(ans)

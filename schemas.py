@@ -210,6 +210,7 @@ class RecordingDateBasis(str, Enum):
     LABEL_MATRIX = "label_matrix"                # Session/matrix data. Trustworthy.
     RESEARCHED = "researched"                    # Tier 3 (DAHR, discographies). Trustworthy.
     FIRST_RELEASE_DATE = "first_release_date"    # MAY BE A REISSUE. Never confident.
+    USER_PROVIDED = "user_provided"              # The user asserts the real first release. Confidence capped at MEDIUM elsewhere.
     UNKNOWN = "unknown"
 
 
@@ -219,6 +220,7 @@ TRUSTWORTHY_DATE_BASES: frozenset[RecordingDateBasis] = frozenset({
     RecordingDateBasis.DATED_PERFORMANCE,
     RecordingDateBasis.LABEL_MATRIX,
     RecordingDateBasis.RESEARCHED,
+    RecordingDateBasis.USER_PROVIDED,
 })
 
 
@@ -660,7 +662,12 @@ class UserAnswer(BaseModel):
     authoritative=False always — lives in pipeline/user_facts.py.
     """
 
-    answer: bool
+    answer: bool | None = Field(
+        None, description="The boolean answer for a yes/no question (renewal).")
+    value: int | None = Field(
+        None, description="The value for a value question (a publication or "
+                          "release year). Exactly one of answer/value is set, "
+                          "by question type.")
     attestation: str | None = Field(
         None, max_length=300,
         description="The source behind the answer: an RE number and date, or "

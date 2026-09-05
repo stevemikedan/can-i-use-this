@@ -722,7 +722,7 @@
       "estimated_effort": "minutes",
       "if_no": "Without a year the recording layer stays undetermined and the roll-up cannot be clear.",
       "if_yes": "A confirmed year lets the CLASSICS Act schedule compute the expiry exactly.",
-      "question": "In what year was the recording of \"Blue Moon\" by The Marcels first released?",
+      "question": "Is 1961-01 the first release of \"Blue Moon\" by The Marcels, or a later reissue?",
       "question_id": "sound_recording:first_publication",
       "resolution_links": [
         {
@@ -748,7 +748,7 @@
         "\"Blue Moon\" The Marcels discography",
         "\"Blue Moon\" The Marcels 78 rpm"
       ],
-      "why_it_matters": "The US term for pre-1972 recordings runs from first publication. MusicBrainz only has a release from 1961-01, which may be a reissue."
+      "why_it_matters": "The recording term runs from first publication. The only date on file for this recording is 1961-01, which may be a reissue rather than the original release, so it is shown as a lead but not used to compute a term."
     }
   ]
 }
