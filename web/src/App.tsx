@@ -139,8 +139,8 @@ export default function App() {
               onIntent={(intent) => requery({ ...params, intent })}
               onJurisdiction={(jurisdiction) => requery({ ...params, jurisdiction })}
               onDuration={(duration) => requery({ ...params, duration })}
-              onAnswer={(questionId, answer, attestation) =>
-                requery({ ...params, answers: { ...(params.answers ?? {}), [questionId]: { answer, attestation: attestation || null } } })}
+              onAnswer={(questionId, payload) =>
+                requery({ ...params, answers: { ...(params.answers ?? {}), [questionId]: { ...payload, attestation: payload.attestation || null } } })}
               onNewInquiry={toEntry}
               onBack={fromCues ? toCues : undefined} />
             {error && <div className="max-w-[920px] mx-auto px-6 pb-8 text-body text-ink-70">Could not re-run the inquiry: {error}</div>}

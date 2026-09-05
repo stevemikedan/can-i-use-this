@@ -203,7 +203,8 @@ export interface ClearanceEnrichment {
 export type Duration = 'under_10s' | 's10_30' | 's30_60' | 'over_60s'
 
 export interface UserAnswerParam {
-  answer: boolean
+  answer?: boolean | null
+  value?: number | null
   attestation?: string | null
 }
 
