@@ -88,6 +88,10 @@ def _recording_year(ans: UserAnswer) -> ResearchedFact:
     return user_year_fact(ans, "You report the recording was first released in")
 
 
+def _death_year(ans: UserAnswer) -> ResearchedFact:
+    return user_year_fact(ans, "You report the last surviving writer died in")
+
+
 # question_id -> handler. One entry today (renewal is the flagship and the
 # only boolean question); publication year and the rest are entries here,
 # not a redesign.
@@ -95,6 +99,10 @@ HANDLERS: dict[str, Callable[[UserAnswer], ResearchedFact]] = {
     "composition:renewal": _renewal,
     "composition:publication_year": _publication_year,
     "sound_recording:first_publication": _recording_year,
+    # Both writer questions block UK/EU on the same fact — the last surviving
+    # writer's death year — so both take the same value answer.
+    "composition:death_years": _death_year,
+    "composition:writers": _death_year,
 }
 
 
@@ -105,7 +113,7 @@ def answered_fact(query: AssetQuery, question_id: str) -> Optional[ResearchedFac
     if ans is None or handler is None:
         return None
     # A value question needs a value; a boolean question needs an answer.
-    if handler in (_publication_year, _recording_year) and ans.value is None:
+    if handler in (_publication_year, _recording_year, _death_year) and ans.value is None:
         return None
     if handler is _renewal and ans.answer is None:
         return None

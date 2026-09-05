@@ -1007,6 +1007,23 @@ def stage_research_composition(run: MusicRun) -> None:
                     f"Writer death year precedes the {cf.year} publication; flagged as a likely "
                     f"translation or arrangement of an earlier work")
 
+    supplied_death = (answered_fact(run.query, f"{COMPOSITION}:death_years")
+                      or answered_fact(run.query, f"{COMPOSITION}:writers"))
+    if supplied_death is not None:
+        # The user supplied the last surviving writer's death year and, by
+        # answering, asserts the list is complete. USER_PROVIDED, capped MEDIUM;
+        # a bare (LOW) death year that would imply public domain is withheld by
+        # LOW_CONFIDENCE_PD_RULE in determine.py, like renewal "not filed". The
+        # rules stage reads this value for life+70 (see stage_rules).
+        tf.author_death_year = supplied_death
+        tf.writer_list_corroborated = True
+        question_ids.pop("author_death_year", None)
+        questions[:] = [x for x in questions
+                        if x.question_id not in (f"{COMPOSITION}:death_years", f"{COMPOSITION}:writers")]
+        em.emit(S.RESEARCH, "progress",
+                f"Last writer's death year answered by you: {supplied_death.value} "
+                f"({supplied_death.confidence.value} confidence)")
+
     # Tier 1: a recognized license on the work settles this layer; renewal
     # and every other term question is moot for the licensed use.
     lic_fact = tier1_license(cf.licenses, "work")
@@ -1211,7 +1228,12 @@ def stage_rules(run: MusicRun) -> None:
                     f"No publication record; inferred {floor.value} from the recording (17 U.S.C. §101, low confidence)")
     em.emit(S.RESEARCH, "complete", f"Consulted {em.sources_consulted} sources"
             + (" — Tier 3 degraded" if any(e.degraded for e in em.events) else ""))
-    death_years = [w.death_year for w in run.cf.writers] or [None]
+    cdf = run.composition.term_facts.author_death_year
+    if (cdf is not None and cdf.sources
+            and cdf.sources[0].method is ResearchMethod.USER_PROVIDED):
+        death_years = [cdf.value]
+    else:
+        death_years = [w.death_year for w in run.cf.writers] or [None]
     run.dets = determine_all(run.layers, run.question_ids, death_years)
     em.emit(S.RULES, "complete", f"{len(run.dets)} determinations: 2 layers × US / UK / EU")
     em.emit(S.COMPARE, "skipped", "No institutional rights statement to compare against")

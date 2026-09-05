@@ -141,3 +141,27 @@ def test_user_publication_year_overrides_and_is_sourced(cache, transport, fake_p
     py = comp.term_facts.first_publication_year
     assert py.value == 1934 and py.confidence is Confidence.MEDIUM
     assert py.sources[0].method.value == "user_provided" and not py.sources[0].authoritative
+
+
+def test_user_death_year_resolves_uk_life_plus_70(cache, transport, no_parallel):
+    # West End Blues' writer list is uncorroborated, so UK/EU block. Supplying
+    # the last surviving writer's death year (asserting completeness) resolves
+    # life+70 at the user-contingent confidence, and closes the writers question.
+    transport(handler)
+    ans = {"composition:writers": UserAnswer(
+        value=1965, attestation="Clarence Williams d. 1965, sole surviving co-writer")}
+    resp, _ = run_music(q("West End Blues — Louis Armstrong", j=Jurisdiction.UK, answers=ans))
+    uk = det_of(resp, "composition", Jurisdiction.UK)
+    assert uk.status is DeterminationStatus.PROTECTED and uk.expiry_year == 2036
+    assert uk.confidence is Confidence.MEDIUM
+    assert "composition:writers" not in [u.question_id for u in resp.unresolved]
+    comp = next(l for l in resp.entity.layers if l.layer_id == "composition")
+    assert comp.term_facts.author_death_year.sources[0].method.value == "user_provided"
+
+
+def test_user_death_year_bare_is_low(cache, transport, no_parallel):
+    transport(handler)
+    ans = {"composition:writers": UserAnswer(value=1965)}
+    resp, _ = run_music(q("West End Blues — Louis Armstrong", j=Jurisdiction.UK, answers=ans))
+    uk = det_of(resp, "composition", Jurisdiction.UK)
+    assert uk.status is DeterminationStatus.PROTECTED and uk.confidence is Confidence.LOW
